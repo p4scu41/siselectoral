@@ -984,12 +984,12 @@ body > .header .logo .icon {
   border-width: 10px;
   margin-left: -10px;
 }
-.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+/*.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
   height: 175px;
   padding: 10px;
   background: #3c8dbc;
   text-align: center;
-}
+}*/
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header > img {
   z-index: 5;
   height: 90px;
@@ -2548,9 +2548,9 @@ Component: timeline
     ---------
 */
 /* skin-blue navbar */
-.skin-blue .navbar {
+/*.skin-blue .navbar {
   background-color: #3c8dbc;
-}
+}*/
 .skin-blue .navbar .nav a {
   color: rgba(255, 255, 255, 0.8);
 }
@@ -2573,16 +2573,16 @@ Component: timeline
   background: #f6f6f6 !important;
 }
 /* skin-blue logo */
-.skin-blue .logo {
+/*.skin-blue .logo {
   background-color: #367fa9;
   color: #f9f9f9;
-}
+}*/
 .skin-blue .logo > a {
   color: #f9f9f9;
 }
-.skin-blue .logo:hover {
+/*.skin-blue .logo:hover {
   background: #357ca5;
-}
+}*/
 /* skin-blue content header */
 .skin-blue .right-side > .content-header {
   background: #fbfbfb;

@@ -10,7 +10,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 
 class SiteController extends Controller
-{
+ {
     public function behaviors()
     {
         return [
@@ -54,6 +54,8 @@ class SiteController extends Controller
 
     public function actionLogin()
     {
+        $this->layout = 'blank';
+
         if (!\Yii::$app->user->isGuest) {
             return $this->goHome();
         }

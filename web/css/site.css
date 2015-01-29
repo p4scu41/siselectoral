@@ -1,91 +1,45 @@
-html,
-body {
-    height: 100%;
+/* skin-blue navbar */
+.skin-blue .navbar {
+    background-image: -webkit-linear-gradient(top,#B3CF95 0,#809667 100%);
+    background-image: -o-linear-gradient(top,#B3CF95 0,#809667 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#B3CF95),to(#809667));
+    background-image: linear-gradient(to bottom,#B3CF95 0,#809667 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B3CF95', endColorstr='#809667', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-repeat: repeat-x;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    background-color: #809667;
 }
-
-.wrap {
-    min-height: 100%;
-    height: auto;
-    margin: 0 auto -60px;
-    padding: 0 0 60px;
+/* skin-blue logo */
+.skin-blue .logo {
+    background-image: -webkit-linear-gradient(top,#B3CF95 0,#809667 100%);
+    background-image: -o-linear-gradient(top,#B3CF95 0,#809667 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#B3CF95),to(#809667));
+    background-image: linear-gradient(to bottom,#B3CF95 0,#809667 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B3CF95', endColorstr='#809667', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-repeat: repeat-x;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    background-color: #809667;
+    color: #f9f9f9;
 }
-
-.wrap > .container {
-    padding: 70px 15px 20px;
+.skin-blue .logo:hover {
+    background: #00a65a;
 }
-
-.footer {
-    height: 60px;
-    background-color: #f5f5f5;
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
-}
-
-.jumbotron {
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+    background-image: -webkit-linear-gradient(top,#B3CF95 0,#809667 100%);
+    background-image: -o-linear-gradient(top,#B3CF95 0,#809667 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#B3CF95),to(#809667));
+    background-image: linear-gradient(to bottom,#B3CF95 0,#809667 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B3CF95', endColorstr='#809667', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-repeat: repeat-x;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    background-color: #B3CF95;
+    height: 175px;
+    padding: 10px;
     text-align: center;
-    background-color: transparent;
-}
-
-.jumbotron .btn {
-    font-size: 21px;
-    padding: 14px 24px;
-}
-
-.not-set {
-    color: #c55;
-    font-style: italic;
-}
-
-/* add sorting icons to gridview sort links */
-a.asc:after, a.desc:after {
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    font-family: 'Glyphicons Halflings';
-    font-style: normal;
-    font-weight: normal;
-    line-height: 1;
-    padding-left: 5px;
-}
-
-a.asc:after {
-    content: /*"\e113"*/ "\e151";
-}
-
-a.desc:after {
-    content: /*"\e114"*/ "\e152";
-}
-
-.sort-numerical a.asc:after {
-    content: "\e153";
-}
-
-.sort-numerical a.desc:after {
-    content: "\e154";
-}
-
-.sort-ordinal a.asc:after {
-    content: "\e155";
-}
-
-.sort-ordinal a.desc:after {
-    content: "\e156";
-}
-
-.grid-view th {
-    white-space: nowrap;
-}
-
-.hint-block {
-    display: block;
-    margin-top: 5px;
-    color: #999;
-}
-
-.error-summary {
-    color: #a94442;
-    background: #fdf7f7;
-    border-left: 3px solid #eed3d7;
-    padding: 10px 20px;
-    margin: 0 0 15px 0;
 }

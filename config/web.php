@@ -6,6 +6,7 @@ $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'language' => 'es',
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -38,6 +39,36 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
+        'assetManager' => [
+            'bundles' => [
+                'yii\web\JqueryAsset' => [
+                    'sourcePath' => null,
+                    'js' => ['//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'],
+                    'jsOptions' => ['position' => \yii\web\View::POS_HEAD],
+                ],
+                'yii\web\BootstrapAsset' => [
+                    'sourcePath' => null,
+                    'css' => ['//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'],
+                    //'js' => ['//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'],
+                    'jsOptions' => ['position' => \yii\web\View::POS_HEAD],
+                ],
+            ],
+        ],
+        'urlManager' => [
+            //'class' => 'yii\web\UrlManager',
+            'enableStrictParsing' => true,
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                '' => 'site/index',
+                '<controller:\w+>/?' => '<controller>/index',
+                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+                'module/<module:\w+>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',
+                'site/page/view/<view:\w+>' => 'site/page',
+            ],
+        ],
     ],
     'params' => $params,
 ];
