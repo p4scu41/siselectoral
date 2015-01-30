@@ -52,6 +52,12 @@ $config = [
                     //'js' => ['//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js'],
                     'jsOptions' => ['position' => \yii\web\View::POS_HEAD],
                 ],
+                'yii\jui\JuiAsset' => [
+                    'sourcePath' => null,
+                    //'css' => ['//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'],
+                    'js' => ['@web/js/plugins/jquery-ui.min.js'],
+                    'jsOptions' => ['position' => \yii\web\View::POS_HEAD],
+                ],
             ],
         ],
         'urlManager' => [

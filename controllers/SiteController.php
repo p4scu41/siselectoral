@@ -6,8 +6,13 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\CMunicipio;
+use app\models\Puestos;
+use app\models\DetalleEstructuraMovilizacion;
 
 class SiteController extends Controller
  {
@@ -62,7 +67,7 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return Yii::$app->getResponse()->redirect(Url::to(['site/index']));
         } else {
             return $this->render('login', [
                 'model' => $model,
@@ -91,8 +96,38 @@ class SiteController extends Controller
         }
     }
 
-    public function actionAbout()
-    {
-        return $this->render('about');
+    public function actionPositiontree() {
+        $municipios = ArrayHelper::map(
+            CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio')
+                ->all(), 'IdMunicipio', 'DescMunicipio'
+        );
+        $puestos = ArrayHelper::map(
+            Puestos::find()
+                ->select(['IdPuesto', 'Descripcion'])
+                ->orderBy('Descripcion')
+                ->all(), 'IdPuesto', 'Descripcion'
+        );
+        $filtros = [
+            'localidad' => 'Localidad',
+            'distrito' => 'Distrito',
+            'seccion' => 'Sección',
+            'organizacion' => 'Organización'
+            
+        ];
+        
+        $post = Yii::$app->request->post();
+        
+        $estructura = new DetalleEstructuraMovilizacion();
+        $tree = $estructura->getTree(34259);
+
+        return $this->render('positionTree', [
+            'municipios' => $municipios,
+            'puestos' => $puestos,
+            'filtros' => $filtros,
+            'tree' => $tree,
+        ]);
     }
+
 }

@@ -1,6 +1,8 @@
 <?php
 
 use yii\helpers\Url;
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -11,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="form-box" id="login-box">
     <div class="header">Iniciar Sesi&oacute;n</div>
-    <form action="<?= Url::to(['site/index']) ?>" method="post">
+    <form action="<?= Url::to(['site/login']) ?>" method="post">
         <div class="body bg-gray">
             <div class="form-group">
                 <input type="text" name="user" class="form-control" placeholder="Usuario"/>

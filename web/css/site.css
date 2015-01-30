@@ -43,3 +43,20 @@
     padding: 10px;
     text-align: center;
 }
+.form-inline .form-group {
+    margin-bottom: 10px;
+    padding-right: 10px;
+}
+#div_loading {
+    background: url(../img/loader.gif) no-repeat scroll center center #FFF;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: inherit;
+    background-color: #000;
+    filter: alpha(opacity=20);
+    -moz-opacity: 0.2;
+    -khtml-opacity: 0.2;
+    opacity: 0.2;
+    z-index: 1000;
+}

@@ -1,6 +1,9 @@
 <?php
 /* @var $this yii\web\View */
-$this->title = 'Sistema Estratégico - Panel de Control';
+$this->title = 'Panel de Control';
+$this->params['breadcrumbs'][] = $this->title;
+
+$this->registerJsFile(\yii\helpers\Url::to('@web//js/AdminLTE/dashboard.js'), ['position' => \yii\web\View::POS_END]);
 ?>
 <!-- Small boxes (Stat box) -->
 <div class="row">
@@ -93,10 +96,6 @@ $this->title = 'Sistema Estratégico - Panel de Control';
             <div class="box-header">
                 <i class="fa fa-th"></i>
                 <h3 class="box-title">Tendencia de promoción</h3>
-                <div class="box-tools pull-right">
-                    <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                    <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
-                </div>
             </div>
             <div class="box-body border-radius-none">
                 <div class="chart" id="line-chart" style="height: 250px;"></div>

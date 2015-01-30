@@ -1,3 +1,9 @@
+<?php
+
+use yii\helpers\Url;
+
+/* @var $this yii\web\View */
+?>
 <!-- header logo: style can be found in header.less -->
 <header class="header">
     <a href="index.php" class="logo">
@@ -78,7 +84,7 @@
                                 <a href="#" class="btn btn-default btn-flat">Configuraciones</a>
                             </div>
                             <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">Salir</a>
+                                <a href="<?= Url::to(['site/logout']) ?>" class="btn btn-default btn-flat">Salir</a>
                             </div>
                         </li>
                     </ul>
