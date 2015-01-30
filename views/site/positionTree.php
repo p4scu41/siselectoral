@@ -8,6 +8,8 @@ use yii\helpers\Url;
 $this->title = 'Estructura';
 $this->params['breadcrumbs'][] = $this->title;
 
+$this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";');
+$this->registerJs('urlBranch="'.Url::toRoute('site/getbranch', true).'";');
 $this->registerJsFile(Url::to('@web/js/positionTree.js'));
 //$this->registerJsFile(Url::to('@web/js/plugins/fancytree/jquery.fancytree.js', ['position' => \yii\web\View::POS_READY]));
 $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
@@ -26,8 +28,8 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                     <!--<form class="form-inline" method="POST" action="#resultSearch">-->
                     <?php $form = ActiveForm::begin([
                                 'options' => ['class' => 'form-inline'],
-                                /*'id' => 'test-form',
-                                'enableClientValidation'=> true,
+                                'id' => 'formBuscar',
+                                /*'enableClientValidation'=> true,
                                 'enableAjaxValidation'=> false,
                                 'validateOnSubmit' => true,
                                 'validateOnChange' => true,
@@ -45,8 +47,8 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                             </div>
                         </div>
                         <p><a class="btn btn-default" href="#modalAddFilter" data-toggle="modal">
-                                <span class="glyphicon glyphicon-check"></span>Agregar Filtro</a></p>
-                        <p><button type="submit" class="btn btn-success">Buscar</button></p>
+                            <span class="glyphicon glyphicon-check"></span>Agregar Filtro</a></p>
+                        <p><button type="button" class="btn btn-success" id="btnBuscar">Buscar</button></p>
                     <?php ActiveForm::end(); ?>
                     <!--</form>-->
                 </div>
@@ -57,7 +59,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
     </div><!--/.col (left) -->
 </div>   <!-- /.row -->
 
-<?= $tree ?>
+<div id="treeContainer"></div>
 
 <div class="modal fade" id="modalAddFilter">
     <div class="modal-dialog">

@@ -9,7 +9,6 @@ $(document).ready(function(){
             $('#filtros').parent().addClass('has-error');
             $('#alertFilter').show();
         } else {
-            $('#modalAddFilter').modal('toggle');
             $text = $('#filtros option:selected').text();
             $input = '<div class="form-group">'+
                         '<label for="'+$selected+'">'+$text+'</label> '+
@@ -18,8 +17,29 @@ $(document).ready(function(){
                         '</select>'+
                     '</div>';
             $('#bodyForm').append($input);
+            $('#filtros option:selected').remove();
+            $('#modalAddFilter').modal('toggle');
         }
     });
     
-    $("#PositionTree").fancytree({clickFolderMode: 3});
+    $('#btnBuscar').click(function(){
+        $parametros = $('#formBuscar').serialize();
+        
+        $("#treeContainer").fancytree({
+            clickFolderMode: 3,
+            source:[{"key": "34260", "title": "CS TUXTLA GUTIERREZ 1", "folder": true, "lazy": true},{"key": "34261", "title": "CS TUXTLA GUTIERREZ 2", "folder": true, "lazy": true}],
+            /*source: {
+                url: urlTree+'?'+$parametros,
+                cache: false
+            },*/
+            lazyLoad: function(event, data) {
+                var node = data.node;
+                // Issue an ajax request to load child nodes
+                data.result = {
+                    url: urlBranch,
+                    data: {idNodo: node.key}
+                }
+            }
+        });
+    });
 });

@@ -96,7 +96,8 @@ class SiteController extends Controller
         }
     }
 
-    public function actionPositiontree() {
+    public function actionPositiontree() 
+    {
         $municipios = ArrayHelper::map(
             CMunicipio::find()
                 ->select(['IdMunicipio', 'DescMunicipio'])
@@ -117,17 +118,27 @@ class SiteController extends Controller
             
         ];
         
-        $post = Yii::$app->request->post();
-        
-        $estructura = new DetalleEstructuraMovilizacion();
-        $tree = $estructura->getTree(34259);
-
         return $this->render('positionTree', [
             'municipios' => $municipios,
             'puestos' => $puestos,
             'filtros' => $filtros,
-            'tree' => $tree,
         ]);
     }
-
+    
+    public function actionGettree() 
+    {
+        $post = Yii::$app->request->post();
+        
+        $estructura = new DetalleEstructuraMovilizacion();
+        $tree = $estructura->getTree(34259);
+        
+        return $tree;
+    }
+    
+    public function actionGetbranch($idNodo) 
+    {
+        $estructura = new DetalleEstructuraMovilizacion();
+        $tree = $estructura->getBranch($idNodo);
+        return $tree;
+    }
 }

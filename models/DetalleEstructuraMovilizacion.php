@@ -23,8 +23,6 @@ use Yii;
  */
 class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 {
-    public $tree = null;
-    
     /**
      * @inheritdoc
      */
@@ -68,13 +66,13 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     }
     
     public function getTree($idNodo) {
-        $this->tree = '<div id="PositionTree"><ul id="treeData" style="display: none;">';
+        $tree = '[';
         
-        $this->tree .= $this->buildTree($idNodo);
+        $tree .= $this->buildTree($idNodo);
 
-        $this->tree .= '<ul></div>';
+        $tree .= ']';
 
-        return $this->tree;
+        return str_replace('},]', '}]', $tree);
     }
     
     public function buildTree($idNodo) {
@@ -86,18 +84,49 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 ->count();
         
         if ($count > 0) {
-            $tree .='<li class="folder" data-iconclass="glyphicon glyphicon-user">'.$nodo->IdNodoEstructuraMov.' '.$nodo->Descripcion.' ['.$count.']<ul>';
-            $child = $this->find()->where(['IdPuestoDepende' => $idNodo])->all();;
+            $tree .= '{"key": "'.$nodo->IdNodoEstructuraMov.'", "title": "'.$nodo->Descripcion.'",'.
+                     ' "folder": true, "lazy": true, "children": [';
+            $child = $this->find()->where(['IdPuestoDepende' => $idNodo])->all();
 
             foreach ($child as $row) {
                 $tree .= $this->buildTree($row->IdNodoEstructuraMov);
             }
 
-            $tree .='</ul></li>';
+            $tree .= ']},';
         } else {
-            $tree .='<li data-iconclass="fa fa-user">'.$nodo->IdNodoEstructuraMov.'</li>';
+            $tree .= '{"key": "'.$nodo->IdNodoEstructuraMov.'", "title": "'.$nodo->Descripcion.'"},';
         }
 
-        return $tree;
+        return str_replace('},]', '}]', $tree);
+    }
+    
+    public function getBranch($idNodo) {
+        $tree = '[';
+
+        $count = $this->find()
+                ->where(['IdPuestoDepende' => $idNodo])
+                ->count();
+        
+        if ($count > 0) {
+            $child = $this->find()->where(['IdPuestoDepende' => $idNodo])->all();;
+
+            foreach ($child as $row) {
+                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$row->Descripcion.'"';
+                
+                $count = $this->find()
+                    ->where(['IdPuestoDepende' => $row->IdNodoEstructuraMov])
+                    ->count();
+                
+                if ($count > 0) { 
+                    $tree .= ', "folder": true, "lazy": true';
+                }
+                
+                $tree .= '},';                    
+            }
+        }
+        
+        $tree .=']';
+
+        return str_replace('},]', '}]', $tree);
     }
 }
