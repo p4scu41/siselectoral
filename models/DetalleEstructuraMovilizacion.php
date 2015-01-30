@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Puestos;
 
 /**
  * This is the model class for table "DetalleEstructuraMovilizacion".
@@ -65,16 +66,90 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         ];
     }
     
-    public function getTree($idNodo) {
+    /**
+     * Obtiene los nodos raices del árbol de la estructura 
+     * 
+     * @param Array $filtros
+     * @return JSON Personalizado para fancytree
+     */
+    public function getTree($filtros) {
         $tree = '[';
         
-        $tree .= $this->buildTree($idNodo);
+        $child = $this->find()->where($filtros)->all();;
+
+        foreach ($child as $row) {
+            $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
+            
+            $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.'", '.
+                        '"data": { "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
+
+            $count = $this->find()
+                ->where(['IdPuestoDepende' => $row->IdNodoEstructuraMov])
+                ->count();
+
+            if ($count > 0) { 
+                $tree .= '"glyphicon glyphicon-user"}, "folder": true, "lazy": true';
+            } else {
+                $tree .= '"fa fa-user"}';
+            }
+
+            $tree .= '},';                    
+        }
 
         $tree .= ']';
 
         return str_replace('},]', '}]', $tree);
     }
     
+    /**
+     * Obtiene los nodos hijos directos de un nodo especifico
+     * 
+     * @param Int $idNodo
+     * @return JSON Personalizado para fancytree
+     */
+    public function getBranch($idNodo) {
+        $tree = '[';
+
+        $count = $this->find()
+                ->where(['IdPuestoDepende' => $idNodo])
+                ->count();
+        
+        if ($count > 0) {
+            $child = $this->find()->where(['IdPuestoDepende' => $idNodo])->all();;
+
+            foreach ($child as $row) {
+                $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
+            
+                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.'", '.
+                            '"data": { "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
+                //$tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$row->Descripcion.'", "data": { "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
+                
+                $count = $this->find()
+                    ->where(['IdPuestoDepende' => $row->IdNodoEstructuraMov])
+                    ->count();
+                
+                if ($count > 0) { 
+                   $tree .= '"glyphicon glyphicon-user"} , "folder": true, "lazy": true';
+                } else {
+                    $tree .= '"fa fa-user"}';
+                }
+                
+                $tree .= '},';                    
+            }
+        }
+        
+        $tree .=']';
+
+        return str_replace('},]', '}]', $tree);
+    }
+    
+    /**
+     * Construye todo el arbol a partir de un nodo raíz
+     * 
+     * @param Int $idNodo
+     * @return JSON personalizado para fancytree
+     * @deprecated since version 1
+     */
     public function buildTree($idNodo) {
         $nodo = $this->find()->where(['IdNodoEstructuraMov' => $idNodo])->one();
         $tree = '';
@@ -100,33 +175,4 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         return str_replace('},]', '}]', $tree);
     }
     
-    public function getBranch($idNodo) {
-        $tree = '[';
-
-        $count = $this->find()
-                ->where(['IdPuestoDepende' => $idNodo])
-                ->count();
-        
-        if ($count > 0) {
-            $child = $this->find()->where(['IdPuestoDepende' => $idNodo])->all();;
-
-            foreach ($child as $row) {
-                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$row->Descripcion.'"';
-                
-                $count = $this->find()
-                    ->where(['IdPuestoDepende' => $row->IdNodoEstructuraMov])
-                    ->count();
-                
-                if ($count > 0) { 
-                    $tree .= ', "folder": true, "lazy": true';
-                }
-                
-                $tree .= '},';                    
-            }
-        }
-        
-        $tree .=']';
-
-        return str_replace('},]', '}]', $tree);
-    }
 }

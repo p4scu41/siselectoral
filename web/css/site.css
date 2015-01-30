@@ -60,3 +60,10 @@
     opacity: 0.2;
     z-index: 1000;
 }
+.imgPerson {
+    height: 180px;
+    width: 160px;
+}
+#containerPerson .well {
+    margin-bottom: 0 !important;
+}

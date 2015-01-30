@@ -130,7 +130,14 @@ class SiteController extends Controller
         $post = Yii::$app->request->post();
         
         $estructura = new DetalleEstructuraMovilizacion();
-        $tree = $estructura->getTree(34259);
+        
+        unset($post['_csrf']);
+        unset($post['localidad']);
+        unset($post['distrito']);
+        unset($post['seccion']);
+        unset($post['organizacion']);
+        
+        $tree = $estructura->getTree($post);
         
         return $tree;
     }

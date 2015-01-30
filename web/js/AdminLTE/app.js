@@ -1017,10 +1017,16 @@ $(window).load(function() {
     }
 })(window.jQuery || window.Zepto);
 
-window.onload = function() {
+function hiddeLoading()
+{
 	$('#div_loading').fadeOut(1000);
-};
+}
 
-window.onbeforeunload = function() {
+function showLoading()
+{
 	$('#div_loading').show();
 }
+
+window.onload = hiddeLoading;
+
+window.onbeforeunload = showLoading;
