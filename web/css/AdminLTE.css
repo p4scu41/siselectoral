@@ -140,9 +140,9 @@ h6,
   margin-top: 5px;
 }
 /* All images should be responsive */
-img {
+/*img {
   max-width: 100% !important;
-}
+}*/
 .sort-highlight {
   background: #f4f4f4;
   border: 1px dashed #ddd;
@@ -1968,7 +1968,7 @@ Component: timeline
   cursor: inherit;
   display: block;
 }
-.btn.btn-app {
+/*.btn.btn-app {
   position: relative;
   padding: 15px 5px;
   margin: 0 0 10px 10px;
@@ -2009,7 +2009,7 @@ Component: timeline
   right: -10px;
   font-size: 10px;
   font-weight: 400;
-}
+}*/
 .btn.btn-social-old {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -2613,11 +2613,11 @@ Component: timeline
 .skin-blue .sidebar > .sidebar-menu > li > a {
   margin-right: 1px;
 }
-.skin-blue .sidebar > .sidebar-menu > li > a:hover,
+/*.skin-blue .sidebar > .sidebar-menu > li > a:hover,
 .skin-blue .sidebar > .sidebar-menu > li.active > a {
   color: #222;
   background: #f9f9f9;
-}
+}*/
 .skin-blue .sidebar > .sidebar-menu > li > .treeview-menu {
   margin: 0 1px;
   background: #f9f9f9;

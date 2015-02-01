@@ -34,7 +34,7 @@ use yii\helpers\Url;
                             <ul class="menu">
                                 <li>
                                     <a href="#">
-                                        <i class="ion ion-ios7-people info"></i> 5 nuevos coordinadores de promotor
+                                        <i class="ion ion-person-add info"></i> 5 nuevos coordinadores de promotor
                                     </a>
                                 </li>
                                 <li>
@@ -55,7 +55,7 @@ use yii\helpers\Url;
                                 </li>
                                 <li>
                                     <a href="#">
-                                        <i class="ion ion-ios7-person danger"></i> Cambios en la estructura de Teopisca
+                                        <i class="fa fa-sitemap danger"></i> Cambios en la estructura de Teopisca
                                     </a>
                                 </li>
                             </ul>

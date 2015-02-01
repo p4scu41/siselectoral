@@ -1,4 +1,29 @@
 $(document).ready(function(){
+    $("#treeContainer").fancytree({
+        extensions: ["table"],
+        table: {
+            indentation: 50
+        },
+        source: [],
+        checkbox: false,
+        clickFolderMode: 3,
+        lazyLoad: function(event, data) {
+            var node = data.node;
+            // Issue an ajax request to load child nodes
+            data.result = {
+                url: urlBranch,
+                data: {idNodo: node.key}
+            };
+        },
+        renderColumns: function(event, data) {
+            var node = data.node,
+            $tdList = $(node.tr).find(">td");
+            $tdList.eq(1).html('<button type="button" class="btn btn-success btn-sm center-block">Ver</button>');
+        }
+    });
+    
+    var tree = $("#treeContainer").fancytree("getTree");
+
     $('#btnAddFilter').click(function(){
         $('#filtros').parent().removeClass('has-error');
         $('#alertFilter').hide();
@@ -35,7 +60,7 @@ $(document).ready(function(){
             $('#municipio').parent().removeClass('has-error');
         }
         
-        if ($('#puesto').val() == "") {
+        /*if ($('#puesto').val() == "") {
             $('#puesto').parent().addClass('has-error');
             $('#alertResult').html('Debe seleccionar un puesto');
             $('#alertResult').show();
@@ -43,51 +68,38 @@ $(document).ready(function(){
         } else {
             $('#alertResult').hide();
             $('#puesto').parent().removeClass('has-error');
-        }
+        }*/
         
-        $("#treeContainer").fancytree({
-            extensions: ["table"],
-            table: {
-                indentation: 50
-            },
-            checkbox: false,
-            clickFolderMode: 3,
-            source: $.ajax({
+        $('#loadIndicator').show();
+        
+        tree.reload(
+            $.ajax({
                 url: urlTree,
                 dataType: "json",
                 data: $parametros,
                 type: "POST",
             }).done(function(response){
+                $('#loadIndicator').hide();
                 if (response.length == 0) {
                     $('#alertResult').html('No se encontraron resultados en la b&uacute;squeda');
                     $('#alertResult').show();
+                    $("#treeContainer").attr({'style': 'display: none'});
                 } else {
                     $('#alertResult').hide();
                     $("#treeContainer").removeAttr('style');
-                    
+
                     $('#treeContainer').ScrollTo();
                 }
-            }),
-            lazyLoad: function(event, data) {
-                var node = data.node;
-                // Issue an ajax request to load child nodes
-                data.result = {
-                    url: urlBranch,
-                    data: {idNodo: node.key}
-                };
-            },
-            renderColumns: function(event, data) {
-                var node = data.node,
-                $tdList = $(node.tr).find(">td");
-                $tdList.eq(1).html('<button type="button" class="btn btn-success btn-sm center-block">Ver</button>');
-            }
-        });
+            })
+        );
         
-         $("#treeContainer").delegate("button", "click", function(e){
+        $("#treeContainer").delegate("button", "click", function(e){
+            $('#loadIndicator').show();
             var node = $.ui.fancytree.getNode(e);
             //var $button = $(e.target);
             e.stopPropagation();  // prevent fancytree activate for this row
             if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
+                $('#loadIndicator').hide();
                 $('#modalNoPerson').modal('show');
             } else {
                 $.ajax({
@@ -124,7 +136,6 @@ $(document).ready(function(){
                     
                     for($fila in $datos) {
                         var valor = response[$datos[$fila].colum];
-                        console.log(valor);
                         valor = (valor == null ? '' : valor);
                         valor = (valor == '' ? '&nbsp;' : valor);
                         
@@ -147,9 +158,16 @@ $(document).ready(function(){
                     }
                     $('#imgPerson').attr('src', $('#imgPerson').data('path')+sexo+'.png');
                     
+                    $('#btnViewPerson').data('id', node.data.persona);
+                    
+                    $('#loadIndicator').hide();
                     $('#modalPerson').modal('show');
                 });
             }
         });
+    });
+    
+    $('#btnViewPerson').click(function(){
+        $(this).attr('href', $(this).data('url')+'?id='+$(this).data('id'));
     });
 });

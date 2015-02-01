@@ -49,7 +49,9 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                         </div>
                         <p><a class="btn btn-default" href="#modalAddFilter" data-toggle="modal">
                             <span class="glyphicon glyphicon-check"></span>Agregar Filtro</a></p>
-                        <p><button type="button" class="btn btn-success" id="btnBuscar">Buscar</button></p>
+                            <p><button type="button" class="btn btn-success" id="btnBuscar">Buscar</button> &nbsp; 
+                                <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
+                            </p>
                     <?php ActiveForm::end(); ?>
                     <!--</form>-->
                 </div>
@@ -64,20 +66,22 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
     No se encontraron resultados en la b&uacute;squeda
 </div>
 
-<table id="treeContainer" class="table-condensed table-striped table-bordered table-hover" style="display: none">
-    <colgroup>
-        <col width="*"></col>
-        <col width="80px"></col>
-    </colgroup>
-    <thead>
-        <tr> 
-            <th class="text-center">Puesto</th> 
-            <th class="text-center">Asignaci&oacute;n</th> 
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table id="treeContainer" class="table table-condensed table-striped table-bordered table-hover" style="display: none">
+        <colgroup>
+            <col width="*"></col>
+            <col width="80px"></col>
+        </colgroup>
+        <thead>
+            <tr> 
+                <th class="text-center">Puesto</th> 
+                <th class="text-center">Asignaci&oacute;n</th> 
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
 <div class="modal fade" id="modalAddFilter">
     <div class="modal-dialog">
@@ -133,7 +137,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-success" id="btnViewPerson">Ver mas detalles</button>
+                <a href="" data-url="<?= Url::toRoute('padron/persona', true); ?>" class="btn btn-success" id="btnViewPerson">Ver mas detalles</a>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -150,8 +154,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                 <div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-success" id="btnAddFilter">Aceptar</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

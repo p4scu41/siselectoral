@@ -75,6 +75,10 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     public function getTree($filtros) {
         $tree = '[';
         
+        if(empty($filtros['IdPuesto'])) {
+            $filtros['IdPuesto'] = $this->getMaxPuestoOnMuni($filtros['Municipio']);
+        }
+        
         $child = $this->find()->where($filtros)->all();;
 
         foreach ($child as $row) {
@@ -175,4 +179,25 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         return str_replace('},]', '}]', $tree);
     }
     
+    /**
+     * Obtiene el ID del puesto con mayor jerarquía (basado en el nivel) dentro de un municipio, 
+     * 
+     * @param INT $idMuni ID del Municipio
+     * @return INT Id del puesto
+     */
+    function getMaxPuestoOnMuni($idMuni) {
+        $sql = 'SELECT TOP (1)
+                [DetalleEstructuraMovilizacion].[IdPuesto]
+            FROM 
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN
+                [Puestos] ON [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto]
+            WHERE 
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
+            ORDER BY [Nivel] ASC';
+        
+        $Puesto = $this->findBySql($sql)->one();
+        
+        return $Puesto->IdPuesto;
+    }
 }

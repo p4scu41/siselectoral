@@ -15,8 +15,8 @@ use yii\helpers\Url;
             <i class="fa fa-sitemap"></i> <span>Estructura</span>
         </a>
     </li>
-    <li>
-        <a href="#">
+    <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron') !== false ? 'active' : '' ?>">
+        <a href="<?= Url::to(['padron/index']) ?>">
             <i class="fa fa-users"></i> <span>Padron</span>
         </a>
     </li>
