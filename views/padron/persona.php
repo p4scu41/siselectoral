@@ -145,38 +145,41 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
 </div>
 
 <div>
-    <div class="well well-sm"><strong>Coordinado por:</strong></div>
-    <div class="media">
-        <div class="media-left">
-            <a href="#"><img class="media-object imgPerson img-rounded" src="/siselectoral/web/img/avatar/M.png"></a>
-        </div>
-        <div class="media-body">
-            <h4 class="media-heading">Nombre Apellido Paterno Apellido Materno</h4>
-            <p>Municipio: Tuxtla Gutiérrez. Edad: 25 años. Género: Masculino. Organización: Campesinos Unidos A.C. Puesto: Coordinador Regional. </p>
-            <a href="personDetails.php" class="btn btn-default">Ver</a>
-        </div>
-    </div><br>
-    <div class="well well-sm"><strong>Coordina a:</strong></div>
-    <div class="media">
-        <div class="media-left">
-            <a href="#"><img class="media-object imgPerson img-rounded" src="/siselectoral/web/img/avatar/M.png"></a>
-        </div>
-        <div class="media-body">
-            <h4 class="media-heading">Nombre Apellido Paterno Apellido Materno</h4>
-            <p>Municipio: Tuxtla Gutiérrez. Edad: 25 años. Género: Masculino. Organización: Campesinos Unidos A.C. Puesto: Coordinador Regional. </p>
-            <a href="personDetails.php" class="btn btn-default">Ver</a>
-        </div>
-    </div>
-    <hr>
-    <div class="media">
-        <div class="media-left">
-            <img class="media-object imgPerson img-rounded" src="/siselectoral/web/img/avatar/M.png">
-        </div>
-        <div class="media-body">
-            <h4 class="media-heading">Nombre Apellido Paterno Apellido Materno</h4>
-            <p>Municipio: Tuxtla Gutiérrez. Edad: 25 años. Género: Masculino. Organización: Campesinos Unidos A.C. Puesto: Coordinador Regional. </p>
-            <a href="personDetails.php" class="btn btn-default">Ver</a>
-        </div>
-    </div>
-    <hr>
+    <?php
+    if(!empty($jefe)) {
+        echo '<div class="well well-sm"><strong>Coordinado por:</strong></div>
+            <div class="media">
+                <div class="media-left">
+                    <a href="#"><img class="media-object imgPerson img-rounded" src="/siselectoral/web/img/avatar/'.$jefe['SEXO'].'.png"></a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">'.($jefe['APELLIDO_PATERNO'].' '.$jefe['APELLIDO_MATERNO'].' '.$jefe['NOMBRE']).'</h4>
+                    <p><strong>Puesto:</strong> '.$jefe['puesto'].'. <strong>Domicilio:</strong> '.$jefe['CALLE'].
+                    '. <strong>E-Mail:</strong> '.$dependiente['CORREOELECTRONICO'].'. <strong>Tel. Móvil:</strong> '.$dependiente['TELMOVIL'].'</p>
+                    <a href="'.Url::toRoute(['padron/persona', 'id' => $jefe['CLAVEUNICA']], true).'" class="btn btn-default">Ver</a>
+                </div>
+            </div>
+            <hr>';
+    }
+    ?>
+    <?php
+    if(!empty($dependientes)) {
+        echo '<div class="well well-sm"><strong>Coordina a:</strong></div>';
+        
+        foreach ($dependientes as $dependiente) {
+            echo '<div class="media">
+                <div class="media-left">
+                    <a href="#"><img class="media-object imgPerson img-rounded" src="/siselectoral/web/img/avatar/'.$dependiente['SEXO'].'.png"></a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">'.($dependiente['APELLIDO_PATERNO'].' '.$dependiente['APELLIDO_MATERNO'].' '.$dependiente['NOMBRE']).'</h4>
+                    <p><strong>Puesto:</strong> '.$dependiente['puesto'].'. <strong>Domicilio:</strong> '.$dependiente['CALLE'].
+                    '. <strong>E-Mail:</strong> '.$dependiente['CORREOELECTRONICO'].'. <strong>Tel. Móvil:</strong> '.$dependiente['TELMOVIL'].'</p>
+                    <a href="'.Url::toRoute(['padron/persona', 'id' => $dependiente['CLAVEUNICA']], true).'" class="btn btn-default">Ver</a>
+                </div>
+            </div>
+            <hr>';
+        }
+    }
+    ?>
 </div>

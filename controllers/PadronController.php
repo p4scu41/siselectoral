@@ -43,9 +43,14 @@ class PadronController extends \yii\web\Controller
         
         $puestoPersona = $puesto->Descripcion.' - '.$estructura->Descripcion;
         
+        $dependientes = $estructura->getDependientes($estructura->IdNodoEstructuraMov);
+        $jefe = $estructura->getJefe($idNodoEstruc);
+        
         return $this->render('persona', [
             'persona' => $persona,
             'puesto' => $puestoPersona,
+            'dependientes' => $dependientes,
+            'jefe' => $jefe,
         ]);
     }
 

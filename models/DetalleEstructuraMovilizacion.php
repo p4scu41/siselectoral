@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\models\Puestos;
+use app\models\PadronGlobal;
 
 /**
  * This is the model class for table "DetalleEstructuraMovilizacion".
@@ -185,7 +186,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param INT $idMuni ID del Municipio
      * @return INT Id del puesto
      */
-    function getMaxPuestoOnMuni($idMuni) {
+    public function getMaxPuestoOnMuni($idMuni) {
         $sql = 'SELECT TOP (1)
                 [DetalleEstructuraMovilizacion].[IdPuesto]
             FROM 
@@ -199,5 +200,51 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $Puesto = $this->findBySql($sql)->one();
         
         return $Puesto->IdPuesto;
+    }
+    
+    /**
+     * Obtiene los nodos depientes
+     * 
+     * @param Int $idNodoEstruc IdPuestoDepende
+     * @return Array Persona
+     */
+    public function getDependientes($idNodoEstruc) {
+        $nodosDependientes = $this->find()->where('IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\' AND '.
+                'IdPuestoDepende = '.$idNodoEstruc)->all();
+        $personasDependientes = array();
+        
+        foreach ($nodosDependientes as $nodo) {
+            //$persona = PadronGlobal::find(['CLAVEUNICA'=>$nodo->IdPersonaPuesto])->asArray()->one();
+            $persona = $this->findBySql('SELECT * FROM [PadronGlobal] WHERE [CLAVEUNICA] = \''.
+                            $nodo->IdPersonaPuesto.'\'')->asArray()->one();
+            //$puesto = Puestos::find(['IdPuesto'=>$nodo->IdPuesto])->asArray()->one();
+            $puesto = $this->findBySql('SELECT * FROM [Puestos] WHERE [IdPuesto] = \''.
+                            $nodo->IdPuesto.'\'')->asArray()->one();
+            
+            $persona['puesto'] = $puesto['Descripcion'].' - '.$nodo->Descripcion;
+            
+            $personasDependientes[] = $persona;
+        }
+        
+        return $personasDependientes;
+    }
+    
+    /**
+     * Obtiene los nodos depientes
+     * 
+     * @param Int $idNodoEstruc IdPuestoDepende
+     * @return Array Persona
+     */
+    public function getJefe() {
+        $nodo = $this->find()->where('IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\' AND '.
+                    'IdNodoEstructuraMov = '.$this->IdPuestoDepende)->one();
+        
+        //$jefe = $this->findBySql('SELECT * FROM [PadronGlobal] WHERE [CLAVEUNICA] = \''.$nodo->IdPersonaPuesto.'\'')->one();
+        $jefe = PadronGlobal::find(['CLAVEUNICA'=>$nodo->IdPersonaPuesto])->asArray()->one();
+        $puesto = Puestos::find(['IdPuesto'=>$nodo->IdPuesto])->one();
+        
+        $jefe['puesto'] = $puesto->Descripcion.' - '.$nodo->Descripcion;
+        
+        return $jefe;
     }
 }
