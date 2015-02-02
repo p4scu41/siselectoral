@@ -16,7 +16,7 @@ use yii\helpers\Url;
         </a>
     </li>
     <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron') !== false ? 'active' : '' ?>">
-        <a href="<?= Url::to(['padron/index']) ?>">
+        <a href="#">
             <i class="fa fa-users"></i> <span>Padron</span>
         </a>
     </li>

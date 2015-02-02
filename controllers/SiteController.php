@@ -16,6 +16,8 @@ use app\models\DetalleEstructuraMovilizacion;
 
 class SiteController extends Controller
  {
+    public $defaultAction = 'positiontree';
+    
     public function behaviors()
     {
         return [

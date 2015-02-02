@@ -11,7 +11,7 @@ class PadronController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        return 'Inicio';
+        return $this->render('index');
     }
     /**
      * Obtiene los datos de una persona
