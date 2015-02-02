@@ -32,6 +32,7 @@ class AppAsset extends AssetBundle
         'js/plugins/sparkline/jquery.sparkline.min.js',
         'js/plugins/jqueryKnob/jquery.knob.js',
         'js/plugins/jquery.fancytree-all.min.js',
+        'js/plugins/jquery.dotdotdot.js',
         'js/AdminLTE/app.js',
     ];
     public $depends = [

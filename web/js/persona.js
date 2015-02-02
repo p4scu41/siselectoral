@@ -45,3 +45,7 @@ $('#modalMap').on('shown.bs.modal', function () {
     google.maps.event.trigger(map, "resize");
     map.setCenter(myLatlng);
 });
+
+/*$(document).ready(function(){
+    $('.puesto').dotdotdot();
+});*/

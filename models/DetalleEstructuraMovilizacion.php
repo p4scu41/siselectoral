@@ -203,7 +203,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     }
     
     /**
-     * Obtiene los nodos depientes
+     * Obtiene los nodos dependientes
      * 
      * @param Int $idNodoEstruc IdPuestoDepende
      * @return Array Persona
@@ -230,20 +230,49 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     }
     
     /**
-     * Obtiene los nodos depientes
+     * Obtiene la cantidad y la descripción de los nodos dependientes
      * 
-     * @param Int $idNodoEstruc IdPuestoDepende
+     * @return Array Persona
+     */
+    public function getCountDepen() {
+        $cantidad = null;
+        
+        $count = Yii::$app->db->createCommand('SELECT COUNT(*) AS total, [IdPuesto]
+            FROM [DetalleEstructuraMovilizacion]
+            WHERE [IdPuestoDepende] = '.$this->IdNodoEstructuraMov.' AND
+            [IdPersonaPuesto] != \'00000000-0000-0000-0000-000000000000\'
+            GROUP BY [IdPuesto]')->queryOne();
+        
+        if($count != null) {
+            $puesto = $this->findBySql('SELECT * FROM [Puestos] WHERE [IdPuesto] = \''.
+                                $count['IdPuesto'].'\'')->one();
+            $descrip = explode(' ', ucwords(mb_strtolower($puesto->Descripcion)));
+            $descrip[0] = substr($descrip[0], 0, 1).'.';
+
+            $cantidad = Array('cantidad'=>$count['total'], 'puesto'=>implode($descrip, ' '));
+        }
+        
+        return $cantidad;
+    }
+    
+    /**
+     * Obtiene el nodo jefe del objeto actual
+     * 
      * @return Array Persona
      */
     public function getJefe() {
+        $jefe = null;
         $nodo = $this->find()->where('IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\' AND '.
                     'IdNodoEstructuraMov = '.$this->IdPuestoDepende)->one();
         
-        //$jefe = $this->findBySql('SELECT * FROM [PadronGlobal] WHERE [CLAVEUNICA] = \''.$nodo->IdPersonaPuesto.'\'')->one();
-        $jefe = PadronGlobal::find(['CLAVEUNICA'=>$nodo->IdPersonaPuesto])->asArray()->one();
-        $puesto = Puestos::find(['IdPuesto'=>$nodo->IdPuesto])->one();
-        
-        $jefe['puesto'] = $puesto->Descripcion.' - '.$nodo->Descripcion;
+        if($nodo != null)
+        {
+            $jefe = Yii::$app->db->createCommand('SELECT * FROM [PadronGlobal] WHERE [CLAVEUNICA] = \''.
+                    $nodo->IdPersonaPuesto.'\'')->queryOne();
+            $puesto = Puestos::find(['IdPuesto'=>$nodo->IdPuesto])->one();
+
+            $jefe['puesto'] = $puesto->Descripcion.' - '.$nodo->Descripcion;
+        }
         
         return $jefe;
     }

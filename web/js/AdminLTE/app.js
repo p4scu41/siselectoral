@@ -1024,8 +1024,8 @@ function hiddeLoading()
 
 function showLoading()
 {
+    $("body").animate({scrollTop:0}, '300');
 	$('#div_loading').show();
-    $('#div_loading').ScrollTo();
 }
 
 window.onload = hiddeLoading;

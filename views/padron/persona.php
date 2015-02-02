@@ -26,14 +26,14 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                     <div class="row">
                         <div class="col-md-4 text-center">
                             <div>
-                                <img src="/siselectoral/web/img/avatar/M.png" class="img-rounded imgPerson" id="imgPerson">
+                                <img src="/siselectoral/web/img/avatar/<?= ($persona->SEXO) ?>.png" class="img-rounded imgPerson" id="imgPerson">
                                 <h3 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO) ? $persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE : '&nbsp;'; ?></h3>
                             </div>
                             <div>
                                 <span class="btn btn-app btn-sm btn-yellow">
-                                    <span class="line-height-1 bigger-170"> 2 </span>
+                                    <span class="line-height-1 bigger-170"><?= (int)$numDepend['cantidad'] ?></span>
                                     <br>
-                                    <span class=""> C. Seccional </span>
+                                    <span class="puesto"><?= ($numDepend['puesto'] != '' ? $numDepend['puesto'] : 'Sin Dependencias') ?></span>
                                 </span>
                                 <span class="btn btn-app btn-sm btn-pink">
                                     <span class="line-height-1 bigger-170"> 4 </span>

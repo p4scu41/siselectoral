@@ -58,7 +58,7 @@
     -moz-opacity: 0.2;
     -khtml-opacity: 0.2;
     opacity: 0.2;
-    z-index: 1000;
+    z-index: 10000;
 }
 .imgPerson {
     height: 180px;
@@ -86,7 +86,8 @@
 	padding: 12px 0 8px;
 	margin: 2px;
 	line-height: 1.7;
-	position: relative
+	position: relative;
+    overflow: hidden;
 }
 .btn-app, .btn-app.btn-default, .btn-app.no-hover:hover, .btn-app.btn-default.no-hover:hover, .btn-app.disabled:hover, .btn-app.btn-default.disabled:hover {
 	background:  #b4c2cc!important;
