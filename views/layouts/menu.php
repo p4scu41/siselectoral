@@ -15,10 +15,14 @@ use yii\helpers\Url;
             <i class="fa fa-sitemap"></i> <span>Estructura</span>
         </a>
     </li>
-    <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron') !== false ? 'active' : '' ?>">
+    <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'padron') !== false ? 'active' : '' ?>">
         <a href="#">
-            <i class="fa fa-users"></i> <span>Padron</span>
+            <i class="fa fa-users"></i> <span>Persona</span>
+            <i class="fa fa-angle-left pull-right"></i>
         </a>
+        <ul class="treeview-menu" style="display: none;">
+            <li class=""><a href="#" style="margin-left: 10px;"><i class="fa fa-search"></i> Buscar</a></li>
+        </ul>
     </li>
     <li>
         <a href="#">

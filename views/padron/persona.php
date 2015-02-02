@@ -26,7 +26,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                     <div class="row">
                         <div class="col-md-4 text-center">
                             <div>
-                                <img src="/siselectoral/web/img/avatar/<?= ($persona->SEXO) ?>.png" class="img-rounded imgPerson" id="imgPerson">
+                                <img src="<?= Url::to('@web/img/avatar/').($persona->SEXO) ?>.png" class="img-rounded imgPerson" id="imgPerson">
                                 <h3 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO) ? $persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE : '&nbsp;'; ?></h3>
                             </div>
                             <div>
@@ -150,7 +150,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
         echo '<div class="well well-sm"><strong>Coordinado por:</strong></div>
             <div class="media">
                 <div class="media-left">
-                    <a href="#"><img class="media-object imgPerson img-rounded" src="/siselectoral/web/img/avatar/'.$jefe['SEXO'].'.png"></a>
+                    <a href="#"><img class="media-object imgPerson img-rounded" src="'.Url::to('@web/img/avatar/').$jefe['SEXO'].'.png"></a>
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">'.($jefe['APELLIDO_PATERNO'].' '.$jefe['APELLIDO_MATERNO'].' '.$jefe['NOMBRE']).'</h4>
@@ -169,7 +169,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
         foreach ($dependientes as $dependiente) {
             echo '<div class="media">
                 <div class="media-left">
-                    <a href="#"><img class="media-object imgPerson img-rounded" src="/siselectoral/web/img/avatar/'.$dependiente['SEXO'].'.png"></a>
+                    <a href="#"><img class="media-object imgPerson img-rounded" src="'.Url::to('@web/img/avatar/').$dependiente['SEXO'].'.png"></a>
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">'.($dependiente['APELLIDO_PATERNO'].' '.$dependiente['APELLIDO_MATERNO'].' '.$dependiente['NOMBRE']).'</h4>
