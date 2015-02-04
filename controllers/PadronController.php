@@ -4,56 +4,183 @@ namespace app\controllers;
 
 use Yii;
 use app\models\PadronGlobal;
+use app\models\PadronGlobalSearch;
 use app\models\DetalleEstructuraMovilizacion;
 use app\models\Puestos;
+use app\models\CMunicipio;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
-class PadronController extends \yii\web\Controller
+/**
+ * PadronController implements the CRUD actions for PadronGlobal model.
+ */
+class PadronController extends Controller
 {
-    public function actionIndex()
+    public function behaviors()
     {
-        return $this->render('index');
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+        ];
     }
+
     /**
      * Obtiene los datos de una persona
-     * 
+     *
      * @param uniqueidentifier $id ID del padron
      * @return JSON Datos de la persona
      */
     public function actionGet($id)
     {
         try {
-            $padron = new PadronGlobal();
+            $persona = PadronGlobal::findOne(['CLAVEUNICA'=>$id])->attributes;
 
-            $persona = $padron->findOne(['CLAVEUNICA'=>$id])->attributes;
-            
             return json_encode($persona);
         } catch (Exception $e) {
             return null;
         }
     }
-    
+
     /**
-     * 
+     * Muestra los datos de la persona en un puesto determinado
+     *
+     * @param UID $id Identificador de la persona
+     * @return View Vista con detalles de la persona
      */
     public function actionPersona($id)
     {
-        $persona = json_decode($this->actionGet($id));
+        $persona = PadronGlobal::findOne(['CLAVEUNICA'=>$id]);
         $estructura = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => $id]);
-        $puesto = Puestos::findOne(['IdPuesto' => $estructura->IdPuesto]);
-        
-        $puestoPersona = $puesto->Descripcion.' - '.$estructura->Descripcion;
-        
-        $dependientes = $estructura->getDependientes($estructura->IdNodoEstructuraMov);
-        $jefe = $estructura->getJefe();
-        $numDepend = $estructura->getCountDepen();
-        
+
+        if($estructura != null) {
+            $puesto = Puestos::findOne(['IdPuesto' => $estructura->IdPuesto]);
+
+            $puestoPersona = $puesto->Descripcion.' - '.$estructura->Descripcion;
+
+            $dependientes = $estructura->getDependientes();
+
+            if($estructura->IdPuesto == 12) {
+                $secciones = $estructura->getSecciones();
+            }
+            $jefe = $estructura->getJefe();
+            $numDepend = $estructura->getCountDepen();
+        }
+
         return $this->render('persona', [
             'persona' => $persona,
             'puesto' => $puestoPersona,
             'dependientes' => $dependientes,
             'jefe' => $jefe,
             'numDepend' => $numDepend,
+            'secciones' => $secciones,
         ]);
     }
 
+
+    /**
+     * Lists all PadronGlobal models.
+     * @return mixed
+     */
+    public function actionBuscar()
+    {
+        $searchModel = new PadronGlobalSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $municipios = ArrayHelper::map(
+            CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio')
+                ->all(), 'IdMunicipio', 'DescMunicipio'
+        );
+
+        return $this->render('buscar', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'municipios' => $municipios,
+
+        ]);
+    }
+
+    /**
+     * Displays a single PadronGlobal model.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Creates a new PadronGlobal model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new PadronGlobal();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->CLAVEUNICA]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Updates an existing PadronGlobal model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->CLAVEUNICA]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Deletes an existing PadronGlobal model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the PadronGlobal model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return PadronGlobal the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = PadronGlobal::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('La página solicitada no existe');
+        }
+    }
 }

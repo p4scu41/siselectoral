@@ -72,31 +72,31 @@ class PadronGlobal extends \yii\db\ActiveRecord
     {
         return [
             'CLAVEUNICA' => 'Claveunica',
-            'CONS_ALF_POR_SECCION' => 'Cons  Alf  Por  Seccion',
-            'ALFA_CLAVE_ELECTORAL' => 'Alfa  Clave  Electoral',
-            'FECHA_NACI_CLAVE_ELECTORAL' => 'Fecha  Naci  Clave  Electoral',
-            'LUGAR_NACIMIENTO' => 'Lugar  Nacimiento',
+            'CONS_ALF_POR_SECCION' => 'Cons Alf Por Seccion',
+            'ALFA_CLAVE_ELECTORAL' => 'Alfa Clave Electoral',
+            'FECHA_NACI_CLAVE_ELECTORAL' => 'Fecha Naci Clave Electoral',
+            'LUGAR_NACIMIENTO' => 'Lugar Nacimiento',
             'SEXO' => 'Sexo',
-            'DIGITO_VERIFICADOR' => 'Digito  Verificador',
-            'CLAVE_HOMONIMIA' => 'Clave  Homonimia',
+            'DIGITO_VERIFICADOR' => 'Digito Verificador',
+            'CLAVE_HOMONIMIA' => 'Clave Homonimia',
             'NOMBRES' => 'Nombres',
             'NOMBRE' => 'Nombre',
-            'APELLIDO_PATERNO' => 'Apellido  Paterno',
-            'APELLIDO_MATERNO' => 'Apellido  Materno',
+            'APELLIDO_PATERNO' => 'Apellido Paterno',
+            'APELLIDO_MATERNO' => 'Apellido Materno',
             'CALLE' => 'Calle',
-            'NUM_INTERIOR' => 'Num  Interior',
-            'NUM_EXTERIOR' => 'Num  Exterior',
+            'NUM_INTERIOR' => 'Num Interior',
+            'NUM_EXTERIOR' => 'Num Exterior',
             'COLONIA' => 'Colonia',
-            'CODIGO_POSTAL' => 'Codigo  Postal',
-            'FOLIO_NACIONAL' => 'Folio  Nacional',
-            'EN_LISTA_NOMINAL' => 'En  Lista  Nominal',
+            'CODIGO_POSTAL' => 'Codigo Postal',
+            'FOLIO_NACIONAL' => 'Folio Nacional',
+            'EN_LISTA_NOMINAL' => 'En Lista Nominal',
             'ENTIDAD' => 'Entidad',
             'DISTRITO' => 'Distrito',
             'MUNICIPIO' => 'Municipio',
             'SECCION' => 'Seccion',
             'LOCALIDAD' => 'Localidad',
             'MANZANA' => 'Manzana',
-            'NUM_EMISION_CREDENCIAL' => 'Num  Emision  Credencial',
+            'NUM_EMISION_CREDENCIAL' => 'Num Emision Credencial',
             'DISTRITOLOCAL' => 'Distritolocal',
             'CORREOELECTRONICO' => 'Correoelectronico',
             'TELMOVIL' => 'Telmovil',
@@ -104,8 +104,62 @@ class PadronGlobal extends \yii\db\ActiveRecord
             'CASILLA' => 'Casilla',
             'IDPADRON' => 'Idpadron',
             'DOMICILIO' => 'Domicilio',
-            'DES_LOC' => 'Des  Loc',
-            'NOM_LOC' => 'Nom  Loc',
+            'DES_LOC' => 'Des Loc',
+            'NOM_LOC' => 'Nom Loc',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMunicipio()
+    {
+        return $this->hasOne(CMunicipio::className(), ['IdMunicipio' => 'MUNICIPIO']);
+    }
+
+    /**
+     * Calcula la edad a partir de la fecha de nacimiento
+     *
+     * @return Int Edad
+     */
+    public function getEdad()
+    {
+        $fecha = time() - strtotime( $this->getfechaNac('Y-m-d') );
+        $edad = floor($fecha / 31557600); // 60s * 60m * 24h * 365.25d
+
+        return $edad;
+    }
+
+    /**
+     * Obtiene la fecha de nacimiento, si no se encuentra la
+     * obtiene de la columna ALFA_CLAVE_ELECTORAL
+     *
+     * @return Date Fecha de nacimiento
+     */
+    public function getFechaNac($format = 'd-m-Y')
+    {
+        $fechaNac = $this->FECHA_NACI_CLAVE_ELECTORAL;
+
+        if(empty($fechaNac)) {
+            $y = '19'.substr($this->ALFA_CLAVE_ELECTORAL, 6, 2);
+            $m = substr($this->ALFA_CLAVE_ELECTORAL, 8, 2);
+            $d = substr($this->ALFA_CLAVE_ELECTORAL, 10, 2);
+            $fechaNac = $y.'-'.$m.'-'.$d;
+        }
+
+        $objFecha = date($format, strtotime($fechaNac));
+
+        return $objFecha;
+    }
+
+    /**
+     * Obtiene la descripción del género a partir del sexo
+     *
+     * @return String Género
+     */
+    public function getGenero()
+    {
+        $genero = array('H'=>'Hombre', 'M'=>'Mujer');
+        return $genero[$this->SEXO];
     }
 }

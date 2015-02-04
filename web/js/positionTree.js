@@ -1,10 +1,28 @@
 $(document).ready(function(){
     $("#treeContainer").fancytree({
-        extensions: ["table"],
+        extensions: ["table", "persist"],
         table: {
             indentation: 50
         },
-        source: [],
+        persist: {
+            expandLazy: true,
+            //overrideSource: true, // true: cookie takes precedence over `source` data attributes.
+            store: "auto" // 'cookie', 'local': use localStore, 'session': sessionStore
+        },
+        source: $.ajax({
+                url: urlTree,
+                dataType: "json",
+                data: $.cookie('parametros') ? $.cookie('parametros') : {'_csrf': $('input[name=_csrf]').val() },
+                type: "POST",
+            }).done(function(response){
+                $('#loadIndicator').hide();
+                if (response.length != 0) {
+                    $('#alertResult').hide();
+                    $("#treeContainer").removeAttr('style');
+
+                    $('#treeContainer').ScrollTo();
+                }
+            }),
         checkbox: false,
         clickFolderMode: 3,
         lazyLoad: function(event, data) {
@@ -18,18 +36,22 @@ $(document).ready(function(){
         renderColumns: function(event, data) {
             var node = data.node,
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).html('<button type="button" class="btn btn-success btn-sm center-block">Ver</button>');
+            if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
+                $tdList.eq(1).html('<button type="button" class="btn btn-danger btn-sm center-block"><span class="glyphicon glyphicon-user"></span></button>');
+            } else {
+                $tdList.eq(1).html('<button type="button" class="btn btn-success btn-sm center-block"><span class="glyphicon glyphicon-user"></span></button>');
+            }
         }
     });
-    
+
     var tree = $("#treeContainer").fancytree("getTree");
 
     $('#btnAddFilter').click(function(){
         $('#filtros').parent().removeClass('has-error');
         $('#alertFilter').hide();
-        
+
         $selected = $('#filtros').val();
-        
+
         if ($selected == '')  {
             $('#filtros').parent().addClass('has-error');
             $('#alertFilter').show();
@@ -46,10 +68,12 @@ $(document).ready(function(){
             $('#modalAddFilter').modal('toggle');
         }
     });
-    
+
     $('#btnBuscar').click(function(){
         $parametros = $('#formBuscar').serialize();
-        
+        // Se guardan los parámetros en una cookie para precargar la última búsqueda al entrar en esta sección
+        $.cookie('parametros', $parametros);
+
         if ($('#municipio').val() == "") {
             $('#municipio').parent().addClass('has-error');
             $('#alertResult').html('Debe seleccionar un municipio');
@@ -59,19 +83,9 @@ $(document).ready(function(){
             $('#alertResult').hide();
             $('#municipio').parent().removeClass('has-error');
         }
-        
-        /*if ($('#puesto').val() == "") {
-            $('#puesto').parent().addClass('has-error');
-            $('#alertResult').html('Debe seleccionar un puesto');
-            $('#alertResult').show();
-            return false;
-        } else {
-            $('#alertResult').hide();
-            $('#puesto').parent().removeClass('has-error');
-        }*/
-        
+
         $('#loadIndicator').show();
-        
+
         tree.reload(
             $.ajax({
                 url: urlTree,
@@ -92,12 +106,13 @@ $(document).ready(function(){
                 }
             })
         );
-        
+
         $("#treeContainer").delegate("button", "click", function(e){
             $('#loadIndicator').show();
             var node = $.ui.fancytree.getNode(e);
             //var $button = $(e.target);
             e.stopPropagation();  // prevent fancytree activate for this row
+            e.preventDefault();
             if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
                 $('#loadIndicator').hide();
                 $('#modalNoPerson').modal('show');
@@ -112,7 +127,7 @@ $(document).ready(function(){
                                       response.APELLIDO_MATERNO+' '+
                                       response.NOMBRE;
                     var sexo = 'U';
-                    
+
                     $datos = [
                         {'colum': 'CALLE', 'label': 'Domicilio'},
                         {'colum': 'CORREOELECTRONICO', 'label': 'E-mail'},
@@ -122,51 +137,51 @@ $(document).ready(function(){
                         {'colum': 'SEXO', 'label': 'Género'},
                         {'colum': 'DISTRITO', 'label': 'Distrito'},
                     ];
-                    
+
                     $tplFila = '<div class="form-group">'+
                         '<label class="col-sm-3 control-label">Puesto</label>'+
                         '<div class="col-sm-9">'+
                             '<div class="well well-sm">'+node.data.puesto+'</div>'+
                         '</div>'+
                     '</div>';
-                    
+
                     $('#nombreCompleto').html($nombreCompleto);
                     $('#frmPersonDetails').html('');
                     $('#frmPersonDetails').append($tplFila);
-                    
+
                     for($fila in $datos) {
                         var valor = response[$datos[$fila].colum];
                         valor = (valor == null ? '' : valor);
                         valor = (valor == '' ? '&nbsp;' : valor);
-                        
+
                         if($datos[$fila].colum == 'SEXO') {
                             sexo = valor;
                         }
-                        
+
                         $tplFila = '<div class="form-group">'+
                             '<label class="col-sm-3 control-label">'+$datos[$fila].label+'</label>'+
                             '<div class="col-sm-9">'+
                                 '<div class="well well-sm">'+valor+'</div>'+
                             '</div>'+
                         '</div>';
-                
+
                         $('#frmPersonDetails').append($tplFila);
                     }
-                    
+
                     if (sexo == '') {
                         sexo = 'U';
                     }
                     $('#imgPerson').attr('src', $('#imgPerson').data('path')+sexo+'.png');
-                    
+
                     $('#btnViewPerson').data('id', node.data.persona);
-                    
+
                     $('#loadIndicator').hide();
                     $('#modalPerson').modal('show');
                 });
             }
         });
     });
-    
+
     $('#btnViewPerson').click(function(){
         $(this).attr('href', $(this).data('url')+'?id='+$(this).data('id'));
     });

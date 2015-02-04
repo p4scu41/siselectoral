@@ -5,12 +5,12 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-$this->title = 'Estructura';
+$this->title = 'Estrategia Municipal';
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";');
-$this->registerJs('urlBranch="'.Url::toRoute('site/getbranch', true).'";');
-$this->registerJs('urlPerson="'.Url::toRoute('padron/get', true).'";');
+$this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlBranch="'.Url::toRoute('site/getbranch', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlPerson="'.Url::toRoute('padron/get', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJsFile(Url::to('@web/js/positionTree.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery-scrollto.js'));
 $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
@@ -26,7 +26,6 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                     <h3 class="panel-title">Buscar</h3>
                 </div>
                 <div class="panel-body">
-                    <!--<form class="form-inline" method="POST" action="#resultSearch">-->
                     <?php $form = ActiveForm::begin([
                                 'options' => ['class' => 'form-inline'],
                                 'id' => 'formBuscar',
@@ -48,12 +47,12 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                             </div>
                         </div>
                         <p><a class="btn btn-default" href="#modalAddFilter" data-toggle="modal">
-                            <span class="glyphicon glyphicon-check"></span>Agregar Filtro</a></p>
-                            <p><button type="button" class="btn btn-success" id="btnBuscar">Buscar</button> &nbsp; 
-                                <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
-                            </p>
+                            <span class="glyphicon glyphicon-check"></span>Agregar Filtro</a>
+                        </p>
+                        <p><button type="button" class="btn btn-success" id="btnBuscar">Buscar</button> &nbsp;
+                            <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
+                        </p>
                     <?php ActiveForm::end(); ?>
-                    <!--</form>-->
                 </div>
             </div>
 
@@ -73,9 +72,9 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             <col width="80px"></col>
         </colgroup>
         <thead>
-            <tr> 
-                <th class="text-center">Puesto</th> 
-                <th class="text-center">Asignaci&oacute;n</th> 
+            <tr>
+                <th class="text-center">Puesto</th>
+                <th class="text-center">Asignaci&oacute;n</th>
             </tr>
         </thead>
         <tbody>

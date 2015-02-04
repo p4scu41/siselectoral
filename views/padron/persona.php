@@ -1,11 +1,9 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-$this->title = 'Padrón';
+$this->title = 'Datos Personales';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['breadcrumbs'][] = 'Persona';
 $this->registerJsFile('http://maps.google.com/maps/api/js?sensor=false');
@@ -19,15 +17,16 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
 
             <div class="panel panel-success" id="containerPerson">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Datos Personales</h3>
+                    <h3 class="panel-title inline">Datos Personales</h3>
+                    <a href="<?= Yii::$app->request->referrer; ?>" class="btn btn-success pull-right btn-sm"><i class="fa fa-mail-reply"></i> Regresar</a>
                 </div>
-                
+
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-4 text-center">
                             <div>
                                 <img src="<?= Url::to('@web/img/avatar/').($persona->SEXO) ?>.png" class="img-rounded imgPerson" id="imgPerson">
-                                <h3 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO) ? $persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE : '&nbsp;'; ?></h3>
+                                <h3 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE); ?></h3>
                             </div>
                             <div>
                                 <span class="btn btn-app btn-sm btn-yellow">
@@ -94,7 +93,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Género</label>
                                     <div class="col-sm-10">
-                                        <div class="well well-sm"><?= ($persona->SEXO) ? $persona->SEXO : '&nbsp;'; ?></div>
+                                        <div class="well well-sm"><?= ($persona->SEXO) ? $persona->genero : '&nbsp;'; ?></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -103,12 +102,18 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                         <div class="well well-sm"><?= ($persona->DISTRITO) ? $persona->DISTRITO: '&nbsp;'; ?></div>
                                     </div>
                                 </div>
+                                <?php if ($secciones) { ?>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Secciones coordinadas</label>
+                                    <div class="col-sm-10">
+                                        <div class="well well-sm"><?= $secciones; ?></div>
+                                    </div>
+                                </div>
+                                <?php } ?>
                             </form>
                         </div>
                     </div>
-                    
-                    
-                    
+
                 </div>
             </div>
 
@@ -119,7 +124,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
 
 <div class="text-center">
     <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#modalMap">
-        <span class="glyphicon glyphicon-globe"></span> 
+        <span class="glyphicon glyphicon-globe"></span>
         <span class="fa fa-map-marker"></span> Ver Mapa
     </button>
 </div>
@@ -165,7 +170,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
     <?php
     if(!empty($dependientes)) {
         echo '<div class="well well-sm"><strong>Coordina a:</strong></div>';
-        
+
         foreach ($dependientes as $dependiente) {
             echo '<div class="media">
                 <div class="media-left">

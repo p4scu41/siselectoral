@@ -72,6 +72,25 @@
     color: #222;
     background: #dff0d8;
 }
+.skin-blue .sidebar > .sidebar-menu > li.treeview.active > a {
+    color: black;
+    background-color: #E5E5E5;
+}
+.skin-blue .treeview-menu > li.active,
+.skin-blue .treeview-menu > li:hover {
+    background: #dff0d8;
+}
+
+.skin-blue .treeview-menu > li.active,
+.skin-blue .treeview-menu > li:hover {
+    background: #dff0d8;
+}
+.sidebar .sidebar-menu .treeview-menu > li > a {
+    padding: 9px 5px 9px 15px;
+    display: block;
+    font-size: 14px;
+    margin: 0px 0px;
+}
 /******** INICIO - Importado de AceAdmin ***********/
 .btn.btn-app {
 	display: inline-block;
@@ -406,4 +425,22 @@
 #mapContainer {
     min-width: 200px;
     min-height: 200px;
+}
+a {
+  color: #297E4A;
+}
+a:hover,
+a:active,
+a:focus {
+  outline: none;
+  text-decoration: none;
+  color: #21B65C;
+}
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+  background-color: #297E4A;
 }

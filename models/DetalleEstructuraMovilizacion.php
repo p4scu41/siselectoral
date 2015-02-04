@@ -66,49 +66,54 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             'Descripcion' => 'Descripcion',
         ];
     }
-    
+
     /**
-     * Obtiene los nodos raices del árbol de la estructura 
-     * 
+     * Obtiene los nodos raices del árbol de la estructura
+     *
      * @param Array $filtros
      * @return JSON Personalizado para fancytree
      */
     public function getTree($filtros) {
+        if(empty(array_filter($filtros))) {
+            return '[]';
+        }
+
         $tree = '[';
-        
+
         if(empty($filtros['IdPuesto'])) {
             $filtros['IdPuesto'] = $this->getMaxPuestoOnMuni($filtros['Municipio']);
         }
-        
+
         $child = $this->find()->where($filtros)->all();;
 
         foreach ($child as $row) {
             $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
-            
-            $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.'", '.
-                        '"data": { "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
 
             $count = $this->find()
                 ->where(['IdPuestoDepende' => $row->IdNodoEstructuraMov])
                 ->count();
 
-            if ($count > 0) { 
+            $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.
+                        ($count > 0 ? '['.$count.']' : '').'", '.
+                        '"data": { "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
+
+            if ($count > 0) {
                 $tree .= '"glyphicon glyphicon-user"}, "folder": true, "lazy": true';
             } else {
                 $tree .= '"fa fa-user"}';
             }
 
-            $tree .= '},';                    
+            $tree .= '},';
         }
 
         $tree .= ']';
 
         return str_replace('},]', '}]', $tree);
     }
-    
+
     /**
      * Obtiene los nodos hijos directos de un nodo especifico
-     * 
+     *
      * @param Int $idNodo
      * @return JSON Personalizado para fancytree
      */
@@ -118,39 +123,39 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $count = $this->find()
                 ->where(['IdPuestoDepende' => $idNodo])
                 ->count();
-        
+
         if ($count > 0) {
             $child = $this->find()->where(['IdPuestoDepende' => $idNodo])->all();;
 
             foreach ($child as $row) {
                 $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
-            
-                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.'", '.
-                            '"data": { "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
-                //$tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$row->Descripcion.'", "data": { "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
-                
+
                 $count = $this->find()
                     ->where(['IdPuestoDepende' => $row->IdNodoEstructuraMov])
                     ->count();
-                
-                if ($count > 0) { 
+
+                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.
+                            ($count > 0 ? '['.$count.']' : '').'", '.
+                            '"data": { "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
+
+                if ($count > 0) {
                    $tree .= '"glyphicon glyphicon-user"} , "folder": true, "lazy": true';
                 } else {
                     $tree .= '"fa fa-user"}';
                 }
-                
-                $tree .= '},';                    
+
+                $tree .= '},';
             }
         }
-        
+
         $tree .=']';
 
         return str_replace('},]', '}]', $tree);
     }
-    
+
     /**
      * Construye todo el arbol a partir de un nodo raíz
-     * 
+     *
      * @param Int $idNodo
      * @return JSON personalizado para fancytree
      * @deprecated since version 1
@@ -162,7 +167,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $count = $this->find()
                 ->where(['IdPuestoDepende' => $idNodo])
                 ->count();
-        
+
         if ($count > 0) {
             $tree .= '{"key": "'.$nodo->IdNodoEstructuraMov.'", "title": "'.$nodo->Descripcion.'",'.
                      ' "folder": true, "lazy": true, "children": [';
@@ -179,40 +184,39 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         return str_replace('},]', '}]', $tree);
     }
-    
+
     /**
-     * Obtiene el ID del puesto con mayor jerarquía (basado en el nivel) dentro de un municipio, 
-     * 
+     * Obtiene el ID del puesto con mayor jerarquía (basado en el nivel) dentro de un municipio,
+     *
      * @param INT $idMuni ID del Municipio
      * @return INT Id del puesto
      */
     public function getMaxPuestoOnMuni($idMuni) {
         $sql = 'SELECT TOP (1)
                 [DetalleEstructuraMovilizacion].[IdPuesto]
-            FROM 
+            FROM
                 [DetalleEstructuraMovilizacion]
             INNER JOIN
                 [Puestos] ON [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto]
-            WHERE 
+            WHERE
                 [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
             ORDER BY [Nivel] ASC';
-        
+
         $Puesto = $this->findBySql($sql)->one();
-        
+
         return $Puesto->IdPuesto;
     }
-    
+
     /**
      * Obtiene los nodos dependientes
-     * 
-     * @param Int $idNodoEstruc IdPuestoDepende
+     *
      * @return Array Persona
      */
-    public function getDependientes($idNodoEstruc) {
+    public function getDependientes() {
         $nodosDependientes = $this->find()->where('IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\' AND '.
-                'IdPuestoDepende = '.$idNodoEstruc)->all();
+                'IdPuestoDepende = '.$this->IdNodoEstructuraMov)->all();
         $personasDependientes = array();
-        
+
         foreach ($nodosDependientes as $nodo) {
             //$persona = PadronGlobal::find(['CLAVEUNICA'=>$nodo->IdPersonaPuesto])->asArray()->one();
             $persona = $this->findBySql('SELECT * FROM [PadronGlobal] WHERE [CLAVEUNICA] = \''.
@@ -220,29 +224,29 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             //$puesto = Puestos::find(['IdPuesto'=>$nodo->IdPuesto])->asArray()->one();
             $puesto = $this->findBySql('SELECT * FROM [Puestos] WHERE [IdPuesto] = \''.
                             $nodo->IdPuesto.'\'')->asArray()->one();
-            
+
             $persona['puesto'] = $puesto['Descripcion'].' - '.$nodo->Descripcion;
-            
+
             $personasDependientes[] = $persona;
         }
-        
+
         return $personasDependientes;
     }
-    
+
     /**
      * Obtiene la cantidad y la descripción de los nodos dependientes
-     * 
+     *
      * @return Array Persona
      */
     public function getCountDepen() {
         $cantidad = null;
-        
+
         $count = Yii::$app->db->createCommand('SELECT COUNT(*) AS total, [IdPuesto]
             FROM [DetalleEstructuraMovilizacion]
             WHERE [IdPuestoDepende] = '.$this->IdNodoEstructuraMov.' AND
             [IdPersonaPuesto] != \'00000000-0000-0000-0000-000000000000\'
             GROUP BY [IdPuesto]')->queryOne();
-        
+
         if($count != null) {
             $puesto = $this->findBySql('SELECT * FROM [Puestos] WHERE [IdPuesto] = \''.
                                 $count['IdPuesto'].'\'')->one();
@@ -251,20 +255,20 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
             $cantidad = Array('cantidad'=>$count['total'], 'puesto'=>implode($descrip, ' '));
         }
-        
+
         return $cantidad;
     }
-    
+
     /**
      * Obtiene el nodo jefe del objeto actual
-     * 
+     *
      * @return Array Persona
      */
     public function getJefe() {
         $jefe = null;
         $nodo = $this->find()->where('IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\' AND '.
                     'IdNodoEstructuraMov = '.$this->IdPuestoDepende)->one();
-        
+
         if($nodo != null)
         {
             $jefe = Yii::$app->db->createCommand('SELECT * FROM [PadronGlobal] WHERE [CLAVEUNICA] = \''.
@@ -273,7 +277,48 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
             $jefe['puesto'] = $puesto->Descripcion.' - '.$nodo->Descripcion;
         }
-        
+
         return $jefe;
+    }
+
+    /**
+     * Obtiene los nodos dependientes
+     *
+     * @param Int $idNodoEstruc IdPuestoDepende
+     * @return Array Persona
+     */
+    public function getSecciones() {
+        $nodosDependientes = Yii::$app->db->createCommand('SELECT SUBSTRING([Descripcion], 4, LEN([Descripcion])) AS seccion
+            FROM [DetalleEstructuraMovilizacion]
+            WHERE IdPuestoDepende = '.$this->IdNodoEstructuraMov.'
+                ORDER BY seccion ASC')->queryAll();
+        $secciones = $nodosDependientes[0]['seccion'];
+        $actual = $nodosDependientes[0]['seccion'];
+        // Parche para que pueda leer el ultimo nodo
+        $nodosDependientes[count($nodosDependientes)] = array('seccion'=>0);
+        $ultimo = 0;
+
+        for ($i = 0; $i<count($nodosDependientes); $i++) {
+            if($actual != $nodosDependientes[$i]['seccion']) {
+                $secciones .= ' - '.$ultimo.', '.$nodosDependientes[$i]['seccion'];
+                $actual = $nodosDependientes[$i]['seccion'];
+
+                // Detecta números que esten solos, sin consecutivos antes y despues de su posición
+                if (($actual+1) != ($nodosDependientes[$i+1]['seccion'])) {
+                    $secciones .= ', '.$nodosDependientes[$i+1]['seccion'];
+                    $actual = $nodosDependientes[$i+1]['seccion'];
+                    $i++;
+                }
+            }
+
+            $ultimo = $nodosDependientes[$i]['seccion'];
+            $actual++;
+
+        }
+
+        $secciones = str_replace(', 0, ', '', $secciones);
+        $secciones = str_replace(', 0', '', $secciones);
+
+        return $secciones;
     }
 }

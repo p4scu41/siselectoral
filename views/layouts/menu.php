@@ -7,12 +7,12 @@ use yii\helpers\Url;
 <ul class="sidebar-menu">
     <li class="<?= (Yii::$app->request->getPathInfo() == '' || strpos(Yii::$app->request->getPathInfo(), 'site/index') != false) ? 'active' : '' ?>" >
         <a href="<?= Url::to(['site/index']) ?>">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+            <i class="fa fa-dashboard"></i> <span>Inicio</span>
         </a>
     </li>
     <li class="<?= Yii::$app->request->getPathInfo() == 'site/positiontree' ? 'active' : '' ?>">
         <a href="<?= Url::to(['site/positiontree']) ?>">
-            <i class="fa fa-sitemap"></i> <span>Estructura</span>
+            <i class="fa fa-sitemap"></i> <span>Estrategia Municipal</span>
         </a>
     </li>
     <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'padron') !== false ? 'active' : '' ?>">
@@ -21,7 +21,9 @@ use yii\helpers\Url;
             <i class="fa fa-angle-left pull-right"></i>
         </a>
         <ul class="treeview-menu" style="display: none;">
-            <li class=""><a href="#" style="margin-left: 10px;"><i class="fa fa-search"></i> Buscar</a></li>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron/buscar') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['padron/buscar']) ?>" style="margin-left: 10px;"><i class="fa fa-search"></i> Buscar</a>
+            </li>
         </ul>
     </li>
     <li>
