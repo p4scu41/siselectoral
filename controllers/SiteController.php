@@ -17,7 +17,7 @@ use app\models\DetalleEstructuraMovilizacion;
 class SiteController extends Controller
  {
     public $defaultAction = 'positiontree';
-    
+
     public function behaviors()
     {
         return [
@@ -98,7 +98,7 @@ class SiteController extends Controller
         }
     }
 
-    public function actionPositiontree() 
+    public function actionPositiontree()
     {
         $municipios = ArrayHelper::map(
             CMunicipio::find()
@@ -117,37 +117,46 @@ class SiteController extends Controller
             'distrito' => 'Distrito',
             'seccion' => 'Sección',
             'organizacion' => 'Organización'
-            
+
         ];
-        
+
+        DetalleEstructuraMovilizacion::getResumen(102);
+
         return $this->render('positionTree', [
             'municipios' => $municipios,
             'puestos' => $puestos,
             'filtros' => $filtros,
         ]);
     }
-    
-    public function actionGettree() 
+
+    public function actionGettree()
     {
         $post = Yii::$app->request->post();
-        
+
         $estructura = new DetalleEstructuraMovilizacion();
-        
+
         unset($post['_csrf']);
         unset($post['localidad']);
         unset($post['distrito']);
         unset($post['seccion']);
         unset($post['organizacion']);
-        
+
         $tree = $estructura->getTree($post);
-        
+
         return $tree;
     }
-    
-    public function actionGetbranch($idNodo) 
+
+    public function actionGetbranch($idNodo)
     {
         $estructura = new DetalleEstructuraMovilizacion();
         $tree = $estructura->getBranch($idNodo);
         return $tree;
+    }
+
+    public function actionGetresumen($idMuni)
+    {
+        $resumen = DetalleEstructuraMovilizacion::getResumen($idMuni);
+
+        return json_encode($resumen);
     }
 }

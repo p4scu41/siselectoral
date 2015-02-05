@@ -40,7 +40,7 @@ use yii\helpers\Url;
                         <?php echo $form->field($model, 'SEXO')->dropDownList(['M'=>'Mujer', 'H'=>'Hombre'], ['prompt' => 'Elija una opción']) ?>
 
                         <p><div class="form-group">
-                            <?= Html::submitButton('Buscar', ['class' => 'btn btn-success']) ?>
+                            <?= Html::submitButton('<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Buscar', ['class' => 'btn btn-success']) ?>
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </div></p>
 

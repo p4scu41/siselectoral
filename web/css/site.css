@@ -444,3 +444,29 @@ a:focus {
 .pagination > .active > span:focus {
   background-color: #297E4A;
 }
+
+// Doble scroll http://jsfiddle.net/TBnqw/2096/
+.responsive_table {
+    width: 100%;
+    display: inline-table;
+    white-space: normal;
+}
+#scroller_wrapper, #container_wrapper{
+    width: 98%; border: none 0px RED;
+    overflow-x: scroll; overflow-y:hidden;
+}
+#scroller_wrapper{height: 16px; }
+#scroller { width: 500px; height: 16px; }
+#container { width: 500px; overflow: auto;}
+
+body > .header .logo span {
+    font-size: 14px;
+    font-weight: normal;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    color: #555;
+    cursor: default;
+    background-color: #dff0d8;
+    border: 1px solid #d6e9c6;
+    border-bottom-color: transparent;
+}

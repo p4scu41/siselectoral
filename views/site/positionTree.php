@@ -11,8 +11,21 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlBranch="'.Url::toRoute('site/getbranch', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlPerson="'.Url::toRoute('padron/get', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlResumen="'.Url::toRoute('site/getresumen', true).'";', \yii\web\View::POS_HEAD);
+// http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
+$this->registerJs('jQuery.browser = {};
+(function () {
+    jQuery.browser.msie = false;
+    jQuery.browser.version = 0;
+    if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
+        jQuery.browser.msie = true;
+        jQuery.browser.version = RegExp.$1;
+    }
+})();', \yii\web\View::POS_HEAD);
 $this->registerJsFile(Url::to('@web/js/positionTree.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery-scrollto.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/jquery.ba-bbq.min.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
 ?>
 <div class="row">
@@ -49,7 +62,12 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                         <p><a class="btn btn-default" href="#modalAddFilter" data-toggle="modal">
                             <span class="glyphicon glyphicon-check"></span>Agregar Filtro</a>
                         </p>
-                        <p><button type="button" class="btn btn-success" id="btnBuscar">Buscar</button> &nbsp;
+                        <p><button type="button" class="btn btn-success" id="btnBuscar">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Buscar
+                            </button> &nbsp;
+                            <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal" style="display: none;">
+                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Resumen
+                            </button> &nbsp;
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
                     <?php ActiveForm::end(); ?>
@@ -63,6 +81,12 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
 
 <div class="alert alert-danger" id="alertResult" style="display: none">
     No se encontraron resultados en la b&uacute;squeda
+</div>
+
+<div class="panel hidden-lg hidden-md hidden-sm">
+    <div class="hidden-lg hidden-md hidden-sm col-xm-12">
+        Si no logra ver toda la tabla deslice hacia la derecha <i class="fa fa-arrow-circle-right"></i>
+    </div>
 </div>
 
 <div class="table-responsive">
@@ -82,7 +106,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
     </table>
 </div>
 
-<div class="modal fade" id="modalAddFilter">
+<div class="modal fade" id="modalAddFilter" tabindex='-1'>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -105,28 +129,45 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div class="modal fade" id="modalPerson">
+<div class="modal fade" id="modalPerson" tabindex='-1'>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Persona asignada al puesto</h4>
+                <h4 class="modal-title">Detalles del puesto</h4>
             </div>
             <div class="modal-body" id="containerPerson">
                 <div class="row">
                     <div class="col-md-4 text-center">
                         <img src="" data-path="<?= Url::to('@web/img/avatar/'); ?>" class="img-rounded imgPerson" id="imgPerson">
-                        <h3 id="nombreCompleto"></h3>
+                        <h4 id="titulo_puesto"></h4>
                     </div>
                     <div class="col-md-8">
+
                         <div class="row" id="panelControl">
                             <div class="col-sm-12 col-md-12">
-                                <div class="panel panel-success">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">Detalles de la persona seleccionada</h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <form class="form-horizontal" method="POST" id="frmPersonDetails"></form>
+                                <div role="tabpanel">
+                                    <!-- Nav tabs -->
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li role="presentation"><a href="#tabPuesto" aria-controls="tabPuesto" role="tab" data-toggle="tab">Puesto</a></li>
+                                        <li role="presentation" class="active"><a href="#tabPersona" aria-controls="tabPersona" role="tab" data-toggle="tab">Persona</a></li>
+                                    </ul>
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="tab-pane" id="tabPuesto">
+                                            <div class="panel panel-success">
+                                                <div class="panel-body">
+                                                    En construcción
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane active" id="tabPersona">
+                                            <div class="panel panel-success">
+                                                <div class="panel-body">
+                                                    <form class="form-horizontal" method="POST" id="frmPersonDetails"></form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -142,15 +183,32 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div class="modal fade" id="modalNoPerson">
+<div class="modal fade" id="modalNoPerson" tabindex='-1'>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Persona asignada al puesto</h4>
+                <h4 class="modal-title">Detalles del puesto</h4>
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="modalResumen" tabindex='-1'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Resumen de la Estructura</h4>
+            </div>
+            <div class="modal-body">
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>

@@ -17,11 +17,22 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo $this->render('_search', ['model' => $searchModel, 'municipios' => $municipios]); ?>
 
     <?php if (!empty(Yii::$app->request->get())) { ?>
+
+    <div class="panel hidden-lg hidden-md hidden-sm">
+        <div class="hidden-lg hidden-md hidden-sm col-xm-12">
+            Si no logra ver toda la tabla deslice hacia la derecha <i class="fa fa-arrow-circle-right"></i>
+        </div>
+    </div>
+    <!--Doble scroll http://jsfiddle.net/TBnqw/2096/-->
+    <div id="scroller_wrapper">
+        <div id="scroller"></div>
+    </div>
+    <div id="container_wrapper">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'options' => [
-            'class' => 'grid-view table-responsive'
+            'class' => 'grid-view responsive_table'
         ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -55,5 +66,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
     <?php } ?>
+    </div>
 
 </div>

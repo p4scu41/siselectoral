@@ -4,7 +4,8 @@ namespace app\models;
 
 use Yii;
 use app\models\Puestos;
-use app\models\PadronGlobal;
+//use app\models\PadronGlobal;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "DetalleEstructuraMovilizacion".
@@ -313,12 +314,84 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
             $ultimo = $nodosDependientes[$i]['seccion'];
             $actual++;
-
         }
 
         $secciones = str_replace(', 0, ', '', $secciones);
         $secciones = str_replace(', 0', '', $secciones);
 
         return $secciones;
+    }
+
+    public static function getResumen($idMuni) {
+        $sqlTotales = 'SELECT
+                [DetalleEstructuraMovilizacion].[IdPuesto],
+                [Puestos].[Descripcion] as Puesto,
+                COUNT(*) AS Total
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos]
+                ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+            WHERE
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
+            GROUP BY
+                [DetalleEstructuraMovilizacion].[IdPuesto],[Puestos].[Descripcion], [Puestos].[Nivel]
+            ORDER BY
+                [Puestos].[Nivel]';
+
+        $sqlOcupados = 'SELECT
+                [DetalleEstructuraMovilizacion].[IdPuesto],
+                COUNT(*) AS ocupado
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos]
+                ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+            WHERE
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] != \'00000000-0000-0000-0000-000000000000\'
+            GROUP BY
+                [DetalleEstructuraMovilizacion].[IdPuesto],[Puestos].[Descripcion], [Puestos].[Nivel]
+            ORDER BY
+                [Puestos].[Nivel]';
+
+        $sqlVacantes = 'SELECT
+                [DetalleEstructuraMovilizacion].[IdPuesto],
+                COUNT(*) AS vacante
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos]
+                ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+            WHERE
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = \'00000000-0000-0000-0000-000000000000\'
+            GROUP BY
+                [DetalleEstructuraMovilizacion].[IdPuesto],[Puestos].[Descripcion], [Puestos].[Nivel]
+            ORDER BY
+                [Puestos].[Nivel]';
+
+        $totales = Yii::$app->db->createCommand($sqlTotales)->queryAll();
+        $ocupados = ArrayHelper::map(Yii::$app->db->createCommand($sqlOcupados)->queryAll(), 'IdPuesto', 'ocupado');
+        $vacantes = ArrayHelper::map(Yii::$app->db->createCommand($sqlVacantes)->queryAll(), 'IdPuesto', 'vacante');
+
+        $sumTotales = 0;
+        $sumOcupados = 0;
+        $sumVacantes = 0;
+
+        for($i=0; $i<count($totales); $i++) {
+            $totales[$i]['Ocupados'] = (int) $ocupados[$totales[$i]['IdPuesto']];
+            $totales[$i]['Vacantes'] = (int) $vacantes[$totales[$i]['IdPuesto']];
+            unset($totales[$i]['IdPuesto']);
+
+
+            $sumTotales += $totales[$i]['Total'];
+            $sumOcupados += $totales[$i]['Ocupados'];
+            $sumVacantes += $totales[$i]['Vacantes'];
+        }
+
+        array_push($totales, array('Puesto'=>'Total',
+                                   'Total'=>$sumTotales,
+                                    'Ocupados'=>$sumOcupados,
+                                    'Vacantes'=>$sumVacantes));
+
+        return $totales;
     }
 }
