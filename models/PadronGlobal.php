@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\helpers\Url;
+use app\helpers\ResizeImage;
 
 /**
  * This is the model class for table "PadronGlobal".
@@ -166,21 +167,64 @@ class PadronGlobal extends \yii\db\ActiveRecord
 
     /**
      * Obtiene la ruta del archivo de la foto a mostrar
-     * Si no existe, muestra la de "desconocido"
+     * Si no existe, muestra la de una en base al sexo
      *
      * @return String URL de la foto a mostrar
      */
     public function getFoto()
     {
-        $pathFoto = Url::to('@app/fotos/'.$this->CLAVEUNICA.'.jpg', true);
+        return static::getFotoByUID($this->CLAVEUNICA, $this->SEXO);
+    }
+
+    /**
+     * Obtiene la ruta del archivo de la foto a mostrar
+     * Si no existe, muestra la de una en base al sexo
+     *
+     * @param UID $uid CLAVEUNICA
+     * @param Char $sexo SEXO
+     * @return String URL de la foto a mostrar
+     */
+    public static function getFotoByUID($uid, $sexo)
+    {
+        $pathFoto = Url::to('@app/fotos/'.$uid.'.jpg', true);
 
         if (!file_exists($pathFoto)) {
-            $pathFoto = Url::to('@web/img/avatar/'.$this->SEXO.'.jpg', true);
+            $pathFoto = Url::to('@app/web/img/avatar/'.$sexo.'.jpg', true);
+
+            if (!file_exists($pathFoto)) {
+                $pathFoto = Url::to('@app/web/img/avatar/U.jpg', true);
+            }
         }
 
+        // Obtener nuevas dimensiones
+        list($ancho, $alto) = getimagesize($pathFoto);
+
+        if ($ancho > 200 || $alto > 250) {
+             // Redimensionar
+            //$imagen_p = imagecreatetruecolor(200, 250);
+            //$imagen = imagecreatefromjpeg($pathFoto);
+            //imagecopyresampled($imagen_p, $imagen, 0, 0, 0, 0, 200, 250, $ancho, $alto);
+            ResizeImage::smart_resize_image($pathFoto, null, 200, 250, false , $pathFoto, false, false, 100);
+        }
+
+
+        /*$image = new \Imagick();
+
+        $fileImage = fopen($pathFoto, 'a+');
+        $image->readImageFile($fileImage);
+        fclose($fileImage);
+        unlink($fileImage);
+        // Redimencionamos la imagen si es mayor a 200x250
+        if ($image->getImageWidth() > 200 || $image->getImageHeight() > 250) {
+            $image->resizeImage(200,250, \Imagick::FILTER_LANCZOS, 0.9, true);
+            $image->writeImage();
+            $image->clear();
+            $image->destroy();
+        }*/
+
         $type = pathinfo($pathFoto, PATHINFO_EXTENSION);
-        $image = file_get_contents($pathFoto);
-        $base64Foto = 'data:image/' . $type . ';base64,' . base64_encode($image);
+        $imageByte = file_get_contents($pathFoto);
+        $base64Foto = 'data:image/' . $type . ';base64,' . base64_encode($imageByte);
 
         return $base64Foto;
     }

@@ -418,10 +418,6 @@
     font-size: 170%!important;
 }
 /******** FIN - Importado de AceAdmin ***********/
-.media .imgPerson {
-    height: 120px;
-    width: 110px;
-}
 #mapContainer {
     min-width: 200px;
     min-height: 200px;

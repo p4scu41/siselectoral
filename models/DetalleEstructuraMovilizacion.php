@@ -4,7 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\models\Puestos;
-//use app\models\PadronGlobal;
+use app\models\PadronGlobal;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -227,6 +227,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                             $nodo->IdPuesto.'\'')->asArray()->one();
 
             $persona['puesto'] = $puesto['Descripcion'].' - '.$nodo->Descripcion;
+            $persona['foto'] = PadronGlobal::getFotoByUID($persona['CLAVEUNICA'], $persona['SEXO']);
 
             $personasDependientes[] = $persona;
         }
@@ -244,16 +245,18 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         $count = Yii::$app->db->createCommand('SELECT COUNT(*) AS total, [IdPuesto]
             FROM [DetalleEstructuraMovilizacion]
-            WHERE [IdPuestoDepende] = '.$this->IdNodoEstructuraMov.' AND
-            [IdPersonaPuesto] != \'00000000-0000-0000-0000-000000000000\'
-            GROUP BY [IdPuesto]')->queryOne();
+            WHERE [IdPuestoDepende] = '.$this->IdNodoEstructuraMov.
+            ' GROUP BY [IdPuesto]')->queryOne();
 
         if($count != null) {
             $puesto = $this->findBySql('SELECT * FROM [Puestos] WHERE [IdPuesto] = \''.
                                 $count['IdPuesto'].'\'')->one();
             $descrip = explode(' ', ucwords(mb_strtolower($puesto->Descripcion)));
-            $descrip[0] = substr($descrip[0], 0, 1).'.';
 
+            if ( count($descrip)>1) {
+                $descrip[0] = substr($descrip[0], 0, 1).'.';
+            }
+            
             $cantidad = Array('cantidad'=>$count['total'], 'puesto'=>implode($descrip, ' '));
         }
 
@@ -277,6 +280,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $puesto = Puestos::find(['IdPuesto'=>$nodo->IdPuesto])->one();
 
             $jefe['puesto'] = $puesto->Descripcion.' - '.$nodo->Descripcion;
+            $jefe['foto'] = PadronGlobal::getFotoByUID($jefe['CLAVEUNICA'], $jefe['SEXO']);
         }
 
         return $jefe;

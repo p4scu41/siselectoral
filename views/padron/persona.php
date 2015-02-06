@@ -1,9 +1,10 @@
 <?php
 
 use yii\helpers\Url;
+use yii\widgets\Breadcrumbs;
 
 /* @var $this yii\web\View */
-$this->title = 'Datos Personales';
+$this->title = 'Detalles estructura';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['breadcrumbs'][] = 'Persona';
 $this->registerJsFile('http://maps.google.com/maps/api/js?sensor=false');
@@ -155,7 +156,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
         echo '<div class="well well-sm"><strong>Coordinado por:</strong></div>
             <div class="media">
                 <div class="media-left">
-                    <a href="#"><img class="media-object imgPerson img-rounded" src="'.Url::to('@web/img/avatar/').$jefe['SEXO'].'.png"></a>
+                    <img class="media-object imgPerson img-rounded" src="'.$jefe['foto'].'">
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">'.($jefe['APELLIDO_PATERNO'].' '.$jefe['APELLIDO_MATERNO'].' '.$jefe['NOMBRE']).'</h4>
@@ -174,7 +175,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
         foreach ($dependientes as $dependiente) {
             echo '<div class="media">
                 <div class="media-left">
-                    <a href="#"><img class="media-object imgPerson img-rounded" src="'.Url::to('@web/img/avatar/').$dependiente['SEXO'].'.png"></a>
+                    <img class="media-object imgPerson img-rounded" src="'.$dependiente['foto'].'">
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">'.($dependiente['APELLIDO_PATERNO'].' '.$dependiente['APELLIDO_MATERNO'].' '.$dependiente['NOMBRE']).'</h4>
