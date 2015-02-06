@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "PadronGlobal".
@@ -161,5 +162,26 @@ class PadronGlobal extends \yii\db\ActiveRecord
     {
         $genero = array('H'=>'Hombre', 'M'=>'Mujer');
         return $genero[$this->SEXO];
+    }
+
+    /**
+     * Obtiene la ruta del archivo de la foto a mostrar
+     * Si no existe, muestra la de "desconocido"
+     *
+     * @return String URL de la foto a mostrar
+     */
+    public function getFoto()
+    {
+        $pathFoto = Url::to('@app/fotos/'.$this->CLAVEUNICA.'.jpg', true);
+
+        if (!file_exists($pathFoto)) {
+            $pathFoto = Url::to('@web/img/avatar/'.$this->SEXO.'.jpg', true);
+        }
+
+        $type = pathinfo($pathFoto, PATHINFO_EXTENSION);
+        $image = file_get_contents($pathFoto);
+        $base64Foto = 'data:image/' . $type . ';base64,' . base64_encode($image);
+
+        return $base64Foto;
     }
 }

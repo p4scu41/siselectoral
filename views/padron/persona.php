@@ -25,8 +25,8 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                     <div class="row">
                         <div class="col-md-4 text-center">
                             <div>
-                                <img src="<?= Url::to('@web/img/avatar/').($persona->SEXO) ?>.png" class="img-rounded imgPerson" id="imgPerson">
-                                <h3 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE); ?></h3>
+                                <img src="<?= $persona->foto ?>" class="img-rounded imgPerson" id="imgPerson">
+                                <h4 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE); ?></h4>
                             </div>
                             <div>
                                 <span class="btn btn-app btn-sm btn-yellow">

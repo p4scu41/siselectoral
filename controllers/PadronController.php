@@ -39,8 +39,10 @@ class PadronController extends Controller
     public function actionGet($id)
     {
         try {
-            $persona = PadronGlobal::findOne(['CLAVEUNICA'=>$id])->attributes;
-
+            $objPersona = PadronGlobal::findOne(['CLAVEUNICA'=>$id]);
+            $persona = $objPersona->attributes;
+            $persona['foto'] = $objPersona->foto;
+            
             return json_encode($persona);
         } catch (Exception $e) {
             return null;

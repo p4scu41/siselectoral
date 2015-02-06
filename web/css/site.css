@@ -61,8 +61,8 @@
     z-index: 10000;
 }
 .imgPerson {
-    height: 180px;
-    width: 160px;
+    height: 100px;
+    width: 80px;
 }
 #containerPerson .well {
     margin-bottom: 0 !important;
@@ -469,4 +469,13 @@ body > .header .logo span {
     background-color: #dff0d8;
     border: 1px solid #d6e9c6;
     border-bottom-color: transparent;
+}
+#titulo_puesto {
+    font-weight: bold;
+}
+.nav-tabs > li > a {
+    background-color: #f3f4f5;
+}
+#nombreCompleto {
+    font-weight: bold;
 }

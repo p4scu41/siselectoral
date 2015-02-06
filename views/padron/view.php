@@ -28,8 +28,8 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                     <div class="row">
                         <div class="col-md-4">
                             <div class="text-center">
-                                <img src="<?= Url::to('@web/img/avatar/').($model->SEXO) ?>.png" class="img-rounded imgPerson" id="imgPerson">
-                                <h3 id="nombreCompleto"><?= ($model->APELLIDO_PATERNO.' '.$model->APELLIDO_MATERNO.' '.$model->NOMBRE); ?></h3>
+                                <img src="<?= $model->foto ?>" class="img-rounded imgPerson" id="imgPerson">
+                                <h4 id="nombreCompleto"><?= ($model->APELLIDO_PATERNO.' '.$model->APELLIDO_MATERNO.' '.$model->NOMBRE); ?></h4>
                             </div>
                             <form class="form-horizontal" method="POST" id="frmPersonDetails">
                                 <div class="form-group">

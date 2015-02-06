@@ -139,8 +139,8 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             <div class="modal-body" id="containerPerson">
                 <div class="row">
                     <div class="col-md-4 text-center">
-                        <img src="" data-path="<?= Url::to('@web/img/avatar/'); ?>" class="img-rounded imgPerson" id="imgPerson">
-                        <h4 id="titulo_puesto"></h4>
+                        <img src="" class="img-rounded imgPerson" id="imgPerson">
+                        <h5 id="titulo_puesto"></h5>
                     </div>
                     <div class="col-md-8">
 

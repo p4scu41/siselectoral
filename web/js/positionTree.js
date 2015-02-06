@@ -71,7 +71,7 @@ $(document).ready(function(){
                         if (sexo == '') {
                             sexo = 'U';
                         }
-                        $('#imgPerson').attr('src', $('#imgPerson').data('path')+sexo+'.png');
+                        $('#imgPerson').attr('src', response.foto);
 
                         $('#btnViewPerson').data('id', node.data.persona);
 
