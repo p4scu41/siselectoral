@@ -256,7 +256,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             if ( count($descrip)>1) {
                 $descrip[0] = substr($descrip[0], 0, 1).'.';
             }
-            
+
             $cantidad = Array('cantidad'=>$count['total'], 'puesto'=>implode($descrip, ' '));
         }
 
@@ -385,6 +385,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $totales[$i]['Vacantes'] = (int) $vacantes[$totales[$i]['IdPuesto']];
             unset($totales[$i]['IdPuesto']);
 
+            $totales[$i]['Avances %'] = round(((int)$totales[$i]['Ocupados'] / (int)$totales[$i]['Total'])*100);
 
             $sumTotales += $totales[$i]['Total'];
             $sumOcupados += $totales[$i]['Ocupados'];
@@ -394,7 +395,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         array_push($totales, array('Puesto'=>'Total',
                                    'Total'=>$sumTotales,
                                     'Ocupados'=>$sumOcupados,
-                                    'Vacantes'=>$sumVacantes));
+                                    'Vacantes'=>$sumVacantes,
+                                    'Avances %'=>round(($sumOcupados/$sumTotales)*100)));
 
         return $totales;
     }

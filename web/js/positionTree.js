@@ -216,8 +216,9 @@ $(document).ready(function(){
                 $('#alertResult').show();
             } else {
                 $('#alertResult').hide();
-                tablaResumen = ConvertJsonToTable(response, '', 'table table-condensed table-striped table-bordered table-hover', 'Download');
+                tablaResumen = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
                 $('#modalResumen .modal-body').html(tablaResumen);
+                $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text());
                 $('#modalResumen').modal('show');
             }
         })

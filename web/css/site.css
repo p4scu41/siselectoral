@@ -475,3 +475,13 @@ body > .header .logo span {
 #nombreCompleto {
     font-weight: bold;
 }
+#tablaResumen tr:last-child {
+    font-weight: bold;
+    text-align: center;
+}
+#tablaResumen thead tr th {
+    text-align: center;
+}
+#tablaResumen tr td:not(:first-child) {
+    text-align: center;
+}

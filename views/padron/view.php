@@ -21,7 +21,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
             <div class="panel panel-success" id="containerPerson">
                 <div class="panel-heading">
                     <h3 class="panel-title inline">Datos Personales</h3>
-                    <a href="<?= Yii::$app->request->referrer; ?>" class="btn btn-success pull-right btn-sm"><i class="fa fa-mail-reply"></i> Regresar</a>
+                    <a href="#" class="btn btn-success pull-right btn-sm backBtn"><i class="fa fa-mail-reply"></i> Regresar</a>
                 </div>
 
                 <div class="panel-body">

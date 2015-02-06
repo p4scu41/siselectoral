@@ -147,6 +147,13 @@ $(function() {
         $("#scroller_wrapper")
             .scrollLeft($("#container_wrapper").scrollLeft());
     });
+
+    // Back Button
+    $('.backBtn').click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        window.history.back();
+    });
 });
 function fix_sidebar() {
     //Make sure the body tag has the .fixed class
