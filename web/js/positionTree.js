@@ -10,76 +10,76 @@ $(document).ready(function(){
     }
 
     var verModalNodo = function(e){
-                $('#loadIndicator').show();
-                var node = $.ui.fancytree.getNode(e);
-                //var $button = $(e.target);
-                e.stopPropagation();  // prevent fancytree activate for this row
-                e.preventDefault();
-                if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
-                    $('#loadIndicator').hide();
-                    $('#modalNoPerson').modal('show');
-                } else {
-                    $.ajax({
-                        url: urlPerson,
-                        dataType: "json",
-                        data: {id: node.data.persona},
-                        type: "GET",
-                    }).done(function(response) {
-                        $nombreCompleto = response.APELLIDO_PATERNO+' '+
-                                          response.APELLIDO_MATERNO+' '+
-                                          response.NOMBRE;
-                        var sexo = 'U';
+        $('#loadIndicator').show();
+        var node = $.ui.fancytree.getNode(e);
+        //var $button = $(e.target);
+        e.stopPropagation();  // prevent fancytree activate for this row
+        e.preventDefault();
+        if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
+            $('#loadIndicator').hide();
+            $('#modalNoPerson').modal('show');
+        } else {
+            $.ajax({
+                url: urlPerson,
+                dataType: "json",
+                data: {id: node.data.persona},
+                type: "GET",
+            }).done(function(response) {
+                $nombreCompleto = response.APELLIDO_PATERNO+' '+
+                                  response.APELLIDO_MATERNO+' '+
+                                  response.NOMBRE;
+                var sexo = 'U';
 
-                        $datos = [
-                            {'colum': 'CALLE', 'label': 'Domicilio'},
-                            {'colum': 'CORREOELECTRONICO', 'label': 'E-mail'},
-                            {'colum': 'TELMOVIL', 'label': 'Tel. Móvil'},
-                            {'colum': 'SECCION', 'label': 'Sección'},
-                            {'colum': 'DISTRITO', 'label': 'Distrito'},
-                        ];
+                $datos = [
+                    {'colum': 'CALLE', 'label': 'Domicilio'},
+                    {'colum': 'CORREOELECTRONICO', 'label': 'E-mail'},
+                    {'colum': 'TELMOVIL', 'label': 'Tel. Móvil'},
+                    {'colum': 'SECCION', 'label': 'Sección'},
+                    {'colum': 'DISTRITO', 'label': 'Distrito'},
+                ];
 
-                        $tplFila = '<div class="form-group">'+
-                            '<label class="col-sm-3 control-label">Persona</label>'+
-                            '<div class="col-sm-9">'+
-                                '<div class="well well-sm">'+$nombreCompleto+'</div>'+
-                            '</div>'+
-                        '</div>';
+                $tplFila = '<div class="form-group">'+
+                    '<label class="col-sm-3 control-label">Persona</label>'+
+                    '<div class="col-sm-9">'+
+                        '<div class="well well-sm">'+$nombreCompleto+'</div>'+
+                    '</div>'+
+                '</div>';
 
-                        $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
-                        $('#frmPersonDetails').html('');
-                        $('#frmPersonDetails').append($tplFila);
+                $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
+                $('#frmPersonDetails').html('');
+                $('#frmPersonDetails').append($tplFila);
 
-                        for($fila in $datos) {
-                            var valor = response[$datos[$fila].colum];
-                            valor = (valor == null ? '' : valor);
-                            valor = (valor == '' ? '&nbsp;' : valor);
+                for($fila in $datos) {
+                    var valor = response[$datos[$fila].colum];
+                    valor = (valor == null ? '' : valor);
+                    valor = (valor == '' ? '&nbsp;' : valor);
 
-                            if($datos[$fila].colum == 'SEXO') {
-                                sexo = valor;
-                            }
+                    if($datos[$fila].colum == 'SEXO') {
+                        sexo = valor;
+                    }
 
-                            $tplFila = '<div class="form-group">'+
-                                '<label class="col-sm-3 control-label">'+$datos[$fila].label+'</label>'+
-                                '<div class="col-sm-9">'+
-                                    '<div class="well well-sm">'+valor+'</div>'+
-                                '</div>'+
-                            '</div>';
+                    $tplFila = '<div class="form-group">'+
+                        '<label class="col-sm-3 control-label">'+$datos[$fila].label+'</label>'+
+                        '<div class="col-sm-9">'+
+                            '<div class="well well-sm">'+valor+'</div>'+
+                        '</div>'+
+                    '</div>';
 
-                            $('#frmPersonDetails').append($tplFila);
-                        }
-
-                        if (sexo == '') {
-                            sexo = 'U';
-                        }
-                        $('#imgPerson').attr('src', response.foto);
-
-                        $('#btnViewPerson').data('id', node.data.persona);
-
-                        $('#loadIndicator').hide();
-                        $('#modalPerson').modal('show');
-                    });
+                    $('#frmPersonDetails').append($tplFila);
                 }
-            };
+
+                if (sexo == '') {
+                    sexo = 'U';
+                }
+                $('#imgPerson').attr('src', response.foto);
+
+                $('#btnViewPerson').data('id', node.data.persona);
+
+                $('#loadIndicator').hide();
+                $('#modalPerson').modal('show');
+            });
+        }
+    };
 
     $("#treeContainer").fancytree({
         extensions: ["table", "persist"],
@@ -131,31 +131,18 @@ $(document).ready(function(){
 
     var tree = $("#treeContainer").fancytree("getTree");
 
-    $('#btnAddFilter').click(function(){
-        $('#filtros').parent().removeClass('has-error');
-        $('#alertFilter').hide();
-
-        $selected = $('#filtros').val();
-
-        if ($selected == '')  {
-            $('#filtros').parent().addClass('has-error');
-            $('#alertFilter').show();
-        } else {
-            $text = $('#filtros option:selected').text();
-            $input = '<div class="form-group">'+
-                        '<label for="'+$selected+'">'+$text+'</label> '+
-                        '<select class="form-control" name="'+$selected+'">'+
-                            '<option>Elija una opción</option>'+
-                        '</select>'+
-                    '</div>';
-            $('#bodyForm').append($input);
-            $('#filtros option:selected').remove();
-            $('#modalAddFilter').modal('toggle');
-        }
-    });
-
     $('#btnBuscar').click(function(){
-        $parametros = $('#formBuscar').serialize();
+        $parametros = '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
+                    '&IdPuesto='+$('#puesto').val()+'&IdPuestoDepende=';
+
+        var IdPuestoDepende = 0;
+
+        $('[name=IdPuestoDepende]').each(function(index, element){
+            IdPuestoDepende = $(this).val() != 0 ? $(this).val() : IdPuestoDepende;
+        });
+
+        $parametros += $parametros+IdPuestoDepende;
+
         // Se guardan los parámetros en una cookie para precargar la última búsqueda al entrar en esta sección
         $.cookie('parametros', $parametros);
         CookieParams = $.deparam($.cookie('parametros'));
@@ -215,12 +202,98 @@ $(document).ready(function(){
                 $('#alertResult').html('No se encontraron resultados en la b&uacute;squeda');
                 $('#alertResult').show();
             } else {
+                var fecha = new Date();
                 $('#alertResult').hide();
                 tablaResumen = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
-                $('#modalResumen .modal-body').html(tablaResumen);
-                $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text());
+                $('#modalResumen .table-responsive').html(tablaResumen);
+
+                $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text()+'.<br>'+
+                    'Fecha de corte: '+padLeft(fecha.getDate(),2)+'-'+padLeft((fecha.getMonth()+1),2)+'-'+fecha.getFullYear());
                 $('#modalResumen').modal('show');
             }
-        })
+        });
     });
+
+    function buildSelect(id, result) {
+        filtro = '<div class="form-group filtroEstructura">'+
+                '<label for="'+id+'">'+result[0].DescripcionPuesto+'</label>'+
+                '<select id="'+id+'" class="form-control" name="IdPuestoDepende">'+
+                '<option value="0">Todos</option>';
+
+            for (var i=0; i<result.length; i++) {
+                filtro += '<option value="'+result[i].IdNodoEstructuraMov+'" data-nivel="'+
+                    result[i].Nivel+'">'+result[i].DescripcionEstructura+'</option>';
+            }
+
+            filtro += '</select></div>';
+
+            $objFiltro = $(filtro);
+
+            return $objFiltro.clone(true);
+    }
+
+    function agregaPuesto(result, id) {
+        if (result.length>0) {
+            $objFiltro = buildSelect(id, result);
+            $objFiltro.find('select').change(agregaPuestoDepende);
+
+            if($('#'+id).length) {
+                $('#'+id).parent().replaceWith($objFiltro);
+                $('#'+id).parent().nextAll().remove();
+            } else {
+                $('#bodyForm').append($objFiltro);
+            }
+        }
+    }
+
+    function agregaPuestoDepende() {
+        if( $(this).val()!='' && $(this).val()!=0 ) {
+            $('#loadIndicator').show();
+
+            $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
+                    '&Nivel='+$(this).find('option:selected').data('nivel')+'&IdPuestoDepende='+$(this).val(),
+                    function(result){
+                        if (result.length>0) {
+                            id = doId(result[0].DescripcionPuesto);
+                            agregaPuesto(result, id);
+                        }
+                    },
+                "json").done(function(){ $('#loadIndicator').hide(); });
+        } else {
+            $(this).parent().nextAll().remove();
+        }
+    }
+
+    $('#municipio').change(function(){
+        $('#loadIndicator').show();
+        $("#puesto option:first").text('Cargando datos...');
+        $('.filtroEstructura').remove();
+
+        var options = '<option value="0">Todos</option>';
+        var idMuni = $(this).val();
+        $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
+            for (var i=0; i<result.length; i++) {
+                options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
+            }
+            $("#puesto").html(options);
+        }).done(function(result) {
+            if (result.length>0) {
+                id = doId(result[0].Descripcion);
+                $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
+                    function(result){ agregaPuesto(result, id); }, "json")
+                    .done(function(){ $('#loadIndicator').hide(); });
+            } else {
+                $('#loadIndicator').hide();
+            }
+        });
+    });
+
+    $('#printResumen').click(function(){
+        $imprimible = $('#modalResumen').clone();
+        $imprimible.find('.modal-footer').remove();
+        $imprimible.find('.close').remove();
+        $imprimible.find('.panel').remove();
+        $($imprimible).printArea({"mode":"popup","popClose":true});
+    });
+
 });

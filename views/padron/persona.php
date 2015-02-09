@@ -123,13 +123,13 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
     </div><!--/.col (left) -->
 </div>   <!-- /.row -->
 
-<div class="text-center">
+<!--<div class="text-center">
     <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#modalMap">
         <span class="glyphicon glyphicon-globe"></span>
         <span class="fa fa-map-marker"></span> Ver Mapa
     </button>
 </div>
-<br>
+<br>-->
 
 <!-- Modal -->
 <div class="modal fade" id="modalMap" tabindex="-1" role="dialog" aria-labelledby="modalMapLabel" aria-hidden="true">

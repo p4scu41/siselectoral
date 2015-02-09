@@ -12,6 +12,8 @@ $this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";', \yii\web\
 $this->registerJs('urlBranch="'.Url::toRoute('site/getbranch', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlPerson="'.Url::toRoute('padron/get', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlResumen="'.Url::toRoute('site/getresumen', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {
@@ -26,6 +28,7 @@ $this->registerJsFile(Url::to('@web/js/positionTree.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery-scrollto.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.ba-bbq.min.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
 $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
 ?>
 <div class="row">
@@ -54,19 +57,17 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                 <label for="Municipio">Municipio</label>
                                 <?= Html::dropDownList('Municipio', Yii::$app->request->post('Municipio'), $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio']); ?>
                             </div>
-                            <div class="form-group">
+                            <!--<div class="form-group">
                                 <label for="IdPuesto">Puesto</label>
                                 <?= Html::dropDownList('IdPuesto', Yii::$app->request->post('IdPuesto'), $puestos, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'puesto']); ?>
-                            </div>
+                            </div>-->
+                            <input type="hidden" name="IdPuesto" id="puesto" value="0">
                         </div>
-                        <p><a class="btn btn-default" href="#modalAddFilter" data-toggle="modal">
-                            <span class="glyphicon glyphicon-check"></span>Agregar Filtro</a>
-                        </p>
                         <p><button type="button" class="btn btn-success" id="btnBuscar">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Buscar
                             </button> &nbsp;
                             <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal" style="display: none;">
-                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Resumen
+                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Status
                             </button> &nbsp;
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
@@ -105,29 +106,6 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
         </tbody>
     </table>
 </div>
-
-<div class="modal fade" id="modalAddFilter" tabindex='-1'>
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Agregar Nuevo Filtro</h4>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <?= Html::dropDownList('filtros', null, $filtros, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id'=>'filtros']); ?>
-                </div>
-                <div class="alert alert-danger" id="alertFilter" style="display: none">
-                    Debe seleccionar una opci&oacute;n.
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-success" id="btnAddFilter">Aceptar</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 <div class="modal fade" id="modalPerson" tabindex='-1'>
     <div class="modal-dialog">
@@ -205,12 +183,18 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Resumen de la Estructura <span id="tituloResumen"></span></h4>
+                <h4 class="modal-title">Status de la Estructura <span id="tituloResumen"></span></h4>
             </div>
             <div class="modal-body">
-
+                <div class="panel hidden-lg hidden-md hidden-sm">
+                    <div class="hidden-lg hidden-md hidden-sm col-xm-12">
+                        Si no logra ver toda la tabla deslice hacia la derecha <i class="fa fa-arrow-circle-right"></i>
+                    </div>
+                </div>
+                <div class="table-responsive"></div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="printResumen"><i class="fa fa-print"></i> Imprimir</button>
                 <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
             </div>
         </div><!-- /.modal-content -->

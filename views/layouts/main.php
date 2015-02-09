@@ -15,13 +15,14 @@ AppAsset::register($this);
 <html lang="<?= Yii::$app->language ?>">
     <head>
         <meta charset="<?= Yii::$app->charset ?>"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="<?= Url::to("@web/img/icon.ico"); ?>">
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
 
         <?php $this->head() ?>
-        
+
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -31,7 +32,7 @@ AppAsset::register($this);
     </head>
     <body class="skin-blue">
         <div id="div_loading"> &nbsp; </div>
-        
+
         <?php $this->beginBody() ?>
 
         <?php $this->beginContent('@app/views/layouts/header.php'); ?>

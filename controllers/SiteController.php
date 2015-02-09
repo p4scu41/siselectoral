@@ -112,34 +112,22 @@ class SiteController extends Controller
                 ->orderBy('Descripcion')
                 ->all(), 'IdPuesto', 'Descripcion'
         );
-        $filtros = [
-            'localidad' => 'Localidad',
-            'distrito' => 'Distrito',
-            'seccion' => 'Sección',
-            'organizacion' => 'Organización'
-
-        ];
 
         DetalleEstructuraMovilizacion::getResumen(102);
 
         return $this->render('positionTree', [
             'municipios' => $municipios,
-            'puestos' => $puestos,
-            'filtros' => $filtros,
+            'puestos' => $puestos
         ]);
     }
 
     public function actionGettree()
     {
-        $post = Yii::$app->request->post();
+        $post = array_filter(Yii::$app->request->post());
 
         $estructura = new DetalleEstructuraMovilizacion();
 
         unset($post['_csrf']);
-        unset($post['localidad']);
-        unset($post['distrito']);
-        unset($post['seccion']);
-        unset($post['organizacion']);
 
         $tree = $estructura->getTree($post);
 
@@ -158,5 +146,27 @@ class SiteController extends Controller
         $resumen = DetalleEstructuraMovilizacion::getResumen($idMuni);
 
         return json_encode($resumen);
+    }
+
+    public function actionGetpuestosonmuni($idMuni)
+    {
+        $puestos = DetalleEstructuraMovilizacion::getPuestosOnMuni($idMuni);
+
+        return json_encode($puestos);
+    }
+
+    public function actionGetpuestosdepend()
+    {
+        $result = array();
+        $params = array_filter(Yii::$app->request->post());
+        unset($params['IdPuesto']);
+        unset($params['_csrf']);
+        //unset($params['IdPuestoDepende']);
+
+        if( !empty($params) ) {
+            $result = DetalleEstructuraMovilizacion::getNodosDependientes($params);
+        }
+        
+        return json_encode($result);
     }
 }

@@ -125,6 +125,14 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button type="button" class="btn btn-app btn-success btn-sm">
+                                <span class="fa fa-pencil-square-o"></span> Editar
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -134,24 +142,47 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
 </div>   <!-- /.row -->
 
 <div class="text-center">
-    <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#modalMap">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalMapDomicilio">
         <span class="glyphicon glyphicon-globe"></span>
-        <span class="fa fa-map-marker"></span> Ubicaci&oacute;n
+        <span class="fa fa-map-marker"></span> Ubicar domicilio
+    </button>
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalMapCasilla">
+        <span class="glyphicon glyphicon-globe"></span>
+        <span class="fa fa-map-marker"></span> Ubicar casilla
     </button>
 </div>
 <br>
 
 <!-- Modal -->
-<div class="modal fade" id="modalMap" tabindex="-1" role="dialog" aria-labelledby="modalMapLabel" aria-hidden="true">
+<div class="modal fade" id="modalMapDomicilio" tabindex="-1" role="dialog" aria-labelledby="modalMapLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Mapa</h4>
+                <h4 class="modal-title" id="myModalLabel">Domicilio</h4>
             </div>
             <div class="modal-body">
-                <div id="mapContainer"></div>
+                <div id="mapContainerDomicilio" class="mapContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalMapCasilla" tabindex="-1" role="dialog" aria-labelledby="modalMapLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Casilla</h4>
+            </div>
+            <div class="modal-body">
+                <div id="mapContainerCasilla" class="mapContainer"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

@@ -75,17 +75,20 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @return JSON Personalizado para fancytree
      */
     public function getTree($filtros) {
-        if(empty(array_filter($filtros))) {
+        $filtros = array_filter($filtros);
+
+        if(empty($filtros)) {
             return '[]';
         }
 
         $tree = '[';
 
-        if(empty($filtros['IdPuesto'])) {
+        if(empty($filtros['IdPuesto']) && empty($filtros['IdPuestoDepende'])) {
             $filtros['IdPuesto'] = $this->getMaxPuestoOnMuni($filtros['Municipio']);
         }
 
-        $child = $this->find()->where($filtros)->all();;
+        $child = $this->find()->where($filtros)->all();
+        //print_r($filtros);
 
         foreach ($child as $row) {
             $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
@@ -209,7 +212,28 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     }
 
     /**
-     * Obtiene los nodos dependientes
+     * Obtiene el Nivel con mayor jerarquía dentro de un municipio,
+     *
+     * @param INT $idMuni ID del Municipio
+     * @return INT Nivel
+     */
+    public static function getMaxNivelOnMuni($idMuni) {
+        $sql = 'SELECT TOP (1) [Nivel]
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN
+                [Puestos] ON [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto]
+            WHERE
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
+            ORDER BY [Nivel] ASC';
+
+        $Puesto = Yii::$app->db->createCommand($sql)->queryAll();
+
+        return $Puesto[0]['Nivel'];
+    }
+
+    /**
+     * Obtiene los puestos dependientes que esten asignados a una persona
      *
      * @return Array Persona
      */
@@ -287,10 +311,9 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     }
 
     /**
-     * Obtiene los nodos dependientes
+     * Obtiene las secciones que coordina un jefe de sección
      *
-     * @param Int $idNodoEstruc IdPuestoDepende
-     * @return Array Persona
+     * @return String Secciones
      */
     public function getSecciones() {
         $nodosDependientes = Yii::$app->db->createCommand('SELECT SUBSTRING([Descripcion], 4, LEN([Descripcion])) AS seccion
@@ -326,6 +349,12 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         return $secciones;
     }
 
+    /**
+     * Obtiene las cantidades para cada puesto en un determinado Municipio
+     *
+     * @param Int $idMuni
+     * @return Array Tabla de puestos con su respectivas cantidads
+     */
     public static function getResumen($idMuni) {
         $sqlTotales = 'SELECT
                 [DetalleEstructuraMovilizacion].[IdPuesto],
@@ -399,5 +428,67 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                                     'Avances %'=>round(($sumOcupados/$sumTotales)*100)));
 
         return $totales;
+    }
+
+    /**
+     * Obtiene los puestos asociados a un Municipio
+     *
+     * @param type $idMuni
+     * @return Array Lista de puestos disponibles en el municipio
+     */
+    public static function getPuestosOnMuni($idMuni) {
+        $sqlPuestos = 'SELECT
+                [DetalleEstructuraMovilizacion].[IdPuesto],
+                [Puestos].[Descripcion],
+                [Puestos].[Nivel]
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos]
+                ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+            WHERE
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
+            GROUP BY
+                [DetalleEstructuraMovilizacion].[IdPuesto],[Puestos].[Descripcion], [Puestos].[Nivel]
+            ORDER BY
+                [Puestos].[Nivel]';
+
+        $puestos = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
+
+        return $puestos;
+    }
+
+     /**
+     * Obtiene los nodos dependientes de un determinado padre
+     *
+     * @return Array Nodos
+     */
+    public static function getNodosDependientes($parametros)
+    {
+        $filtros = http_build_query($parametros, '', ' AND ');
+
+        // Parche para obtener los nodos de nivel superior
+        if(!isset($parametros['Nivel'])) {
+            $filtros .= ' AND Nivel='.static::getMaxNivelOnMuni($parametros['Municipio']);
+        } else {
+            $filtros = str_replace('AND Nivel=', 'AND Nivel>=', $filtros);
+        }
+
+        $sqlPuestos = 'SELECT
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov],
+                [DetalleEstructuraMovilizacion].[IdPuestoDepende],
+                [DetalleEstructuraMovilizacion].[IdPuesto],
+                [Puestos].[Descripcion] AS DescripcionPuesto,
+                [Puestos].[Nivel],
+                [DetalleEstructuraMovilizacion].[Descripcion] as DescripcionEstructura
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos]
+                ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+            WHERE '.$filtros.'
+            ORDER BY [Puestos].[Nivel]';
+
+        $result = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
+
+        return $result;
     }
 }

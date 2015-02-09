@@ -418,7 +418,7 @@
     font-size: 170%!important;
 }
 /******** FIN - Importado de AceAdmin ***********/
-#mapContainer {
+.mapContainer {
     min-width: 200px;
     min-height: 200px;
 }

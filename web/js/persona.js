@@ -1,4 +1,5 @@
-var map;
+var mapDomicilio;
+var mapCasilla;
 myLatlng = new google.maps.LatLng(16.7528099, -93.1154969);
 
 function initialize() {
@@ -12,10 +13,11 @@ function initialize() {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
-    map = new google.maps.Map(document.getElementById("mapContainer"), mapOptions);
+    mapDomicilio = new google.maps.Map(document.getElementById("mapContainerDomicilio"), mapOptions);
+    mapCasilla = new google.maps.Map(document.getElementById("mapContainerCasilla"), mapOptions);
 
-    var contentString = '<div id="mapInfo">' +
-            '<p><strong>Casilla Electoral</strong><br>' +
+    var contentString = '<div>' +
+            '<p><strong>DATOS</strong><br>' +
             'Dirección<br>Referencias<br>' +
             'Responsable<br>' +
             'Otros datos</p>' +
@@ -25,25 +27,43 @@ function initialize() {
         content: contentString
     });
 
-    var marker = new google.maps.Marker({
+    var markerDomicilio = new google.maps.Marker({
         position: myLatlng,
-        map: map,
+        map: mapDomicilio,
+        title: "Domicilio",
+        maxWidth: 200,
+        maxHeight: 200,
+        icon: 'http://www.google.com/intl/en_us/mapfiles/ms/icons/red-dot.png'
+    });
+
+    var markerCasilla = new google.maps.Marker({
+        position: myLatlng,
+        map: mapCasilla,
         title: "Casilla Electoral",
         maxWidth: 200,
         maxHeight: 200,
         icon: 'http://www.google.com/intl/en_us/mapfiles/ms/icons/red-dot.png'
     });
 
-    google.maps.event.addListener(marker, 'click', function () {
-        infowindow.open(map, marker);
+    google.maps.event.addListener(markerDomicilio, 'click', function () {
+        infowindow.open(mapDomicilio, markerDomicilio);
+    });
+
+    google.maps.event.addListener(markerCasilla, 'click', function () {
+        infowindow.open(mapCasilla, markerCasilla);
     });
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
-$('#modalMap').on('shown.bs.modal', function () {
-    google.maps.event.trigger(map, "resize");
-    map.setCenter(myLatlng);
+$('#modalMapDomicilio').on('shown.bs.modal', function () {
+    google.maps.event.trigger(mapDomicilio, "resize");
+    mapDomicilio.setCenter(myLatlng);
+});
+
+$('#modalMapCasilla').on('shown.bs.modal', function () {
+    google.maps.event.trigger(mapCasilla, "resize");
+    mapCasilla.setCenter(myLatlng);
 });
 
 /*$(document).ready(function(){

@@ -8,6 +8,7 @@ use app\assets\AppAsset;
 /* @var $content string */
 
 AppAsset::register($this);
+$this->registerJsFile(\yii\helpers\Url::to('@web/js/AdminLTE/dashboard.js'), ['position' => \yii\web\View::POS_END]);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -39,7 +40,6 @@ AppAsset::register($this);
         <script src="//code.jquery.com/ui/1.11.1/jquery-ui.min.js" type="text/javascript"></script>
         <!-- Morris.js charts -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-        <script src="<?php echo Yii::getAlias('@web'); ?>/js/AdminLTE/dashboard.js" type="text/javascript"></script>
         <?php $this->endBody() ?>
     </body>
 </html>

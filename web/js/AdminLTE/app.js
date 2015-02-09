@@ -1047,3 +1047,24 @@ function showLoading()
 window.onload = hiddeLoading;
 
 window.onbeforeunload = showLoading;
+
+function doId(param){
+    if (typeof param != "undefined") {
+        return param.toLowerCase().replace(/\s+/g, '-');
+    } else {
+        return '';
+    }
+}
+
+function padLeft(nr, n, str){
+    return Array(n-String(nr).length+1).join(str||'0')+nr;
+}
+
+function imprSelec(muestra) {
+    var ficha = document.getElementById(muestra);
+    var ventimp = window.open(' ','popimpr');
+    ventimp.document.write(ficha.innerHTML);
+    ventimp.document.close();
+    ventimp.print();
+    ventimp.close();
+}

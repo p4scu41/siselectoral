@@ -3,7 +3,7 @@
 $this->title = 'SIRECI';
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->registerJsFile(\yii\helpers\Url::to('@web//js/AdminLTE/dashboard.js'), ['position' => \yii\web\View::POS_END]);
+$this->registerJsFile(\yii\helpers\Url::to('@web/js/AdminLTE/dashboard.js'), ['position' => \yii\web\View::POS_END]);
 ?>
 <!-- Small boxes (Stat box) -->
 <div class="row">
