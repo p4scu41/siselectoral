@@ -485,3 +485,6 @@ body > .header .logo span {
 #tablaResumen tr td:not(:first-child) {
     text-align: center;
 }
+#fechaResumen {
+    font-size: small;
+}

@@ -192,6 +192,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                     </div>
                 </div>
                 <div class="table-responsive"></div>
+                <div id="fechaResumen" class="pull-right"></div><br>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" id="printResumen"><i class="fa fa-print"></i> Imprimir</button>

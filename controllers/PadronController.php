@@ -12,6 +12,9 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use app\helpers\ResizeImage;
+use yii\helpers\Url;
+use yii\web\UploadedFile;
 
 /**
  * PadronController implements the CRUD actions for PadronGlobal model.
@@ -41,8 +44,8 @@ class PadronController extends Controller
         try {
             $objPersona = PadronGlobal::findOne(['CLAVEUNICA'=>$id]);
             $persona = $objPersona->attributes;
-            $persona['foto'] = $objPersona->foto;
-            
+            $persona['foto'] = $objPersona->getFoto();
+
             return json_encode($persona);
         } catch (Exception $e) {
             return null;
@@ -147,12 +150,33 @@ class PadronController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $municipios = ArrayHelper::map(
+            CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio')
+                ->all(), 'IdMunicipio', 'DescMunicipio'
+        );
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $pathFoto = Url::to('@app/fotos', true).'/'.$model->CLAVEUNICA.'.jpg';
+            $model->foto = UploadedFile::getInstance($model, 'foto');
+
+            if ($model->foto && $model->validate()) {
+                $model->foto->saveAs($pathFoto);
+            }
+
+            list($ancho, $alto) = getimagesize($pathFoto);
+
+            if ($ancho > 200 || $alto > 250) {
+                 // Redimensionar
+                ResizeImage::smart_resize_image($pathFoto, null, 200, 250, false , $pathFoto, false, false, 100);
+            }
+
             return $this->redirect(['view', 'id' => $model->CLAVEUNICA]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'municipios' => $municipios,
             ]);
         }
     }

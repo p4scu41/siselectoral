@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\helpers\Url;
 use app\helpers\ResizeImage;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "PadronGlobal".
@@ -47,6 +48,8 @@ use app\helpers\ResizeImage;
  */
 class PadronGlobal extends \yii\db\ActiveRecord
 {
+    public $foto;
+
     /**
      * @inheritdoc
      */
@@ -62,8 +65,10 @@ class PadronGlobal extends \yii\db\ActiveRecord
     {
         return [
             [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRES', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'string'],
-            [['CONS_ALF_POR_SECCION', 'FECHA_NACI_CLAVE_ELECTORAL', 'LUGAR_NACIMIENTO', 'DIGITO_VERIFICADOR', 'CLAVE_HOMONIMIA', 'CODIGO_POSTAL', 'FOLIO_NACIONAL', 'EN_LISTA_NOMINAL', 'ENTIDAD', 'DISTRITO', 'MUNICIPIO', 'SECCION', 'LOCALIDAD', 'MANZANA', 'NUM_EMISION_CREDENCIAL'], 'number'],
-            [['DISTRITOLOCAL', 'IDPADRON'], 'integer']
+            [['CONS_ALF_POR_SECCION', 'LUGAR_NACIMIENTO', 'DIGITO_VERIFICADOR', 'CLAVE_HOMONIMIA', 'CODIGO_POSTAL', 'FOLIO_NACIONAL', 'EN_LISTA_NOMINAL', 'ENTIDAD', 'DISTRITO', 'MUNICIPIO', 'SECCION', 'LOCALIDAD', 'MANZANA', 'NUM_EMISION_CREDENCIAL'], 'number'],
+            [['DISTRITOLOCAL', 'IDPADRON'], 'integer'],
+            [['FECHA_NACI_CLAVE_ELECTORAL'], 'date', 'format' => 'yyyy-MM-dd'],
+            [['foto'], 'file', 'extensions' => 'jpg, png, gif', 'mimeTypes' => 'image/jpeg, image/png, image/gif']
         ];
     }
 
@@ -76,8 +81,8 @@ class PadronGlobal extends \yii\db\ActiveRecord
             'CLAVEUNICA' => 'Claveunica',
             'CONS_ALF_POR_SECCION' => 'Cons Alf Por Seccion',
             'ALFA_CLAVE_ELECTORAL' => 'Alfa Clave Electoral',
-            'FECHA_NACI_CLAVE_ELECTORAL' => 'Fecha Naci Clave Electoral',
-            'LUGAR_NACIMIENTO' => 'Lugar Nacimiento',
+            'FECHA_NACI_CLAVE_ELECTORAL' => 'Fecha de nacimiento',
+            'LUGAR_NACIMIENTO' => 'Lugar de nacimiento',
             'SEXO' => 'Sexo',
             'DIGITO_VERIFICADOR' => 'Digito Verificador',
             'CLAVE_HOMONIMIA' => 'Clave Homonimia',
@@ -86,28 +91,29 @@ class PadronGlobal extends \yii\db\ActiveRecord
             'APELLIDO_PATERNO' => 'Apellido Paterno',
             'APELLIDO_MATERNO' => 'Apellido Materno',
             'CALLE' => 'Calle',
-            'NUM_INTERIOR' => 'Num Interior',
-            'NUM_EXTERIOR' => 'Num Exterior',
+            'NUM_INTERIOR' => 'Núm Interior',
+            'NUM_EXTERIOR' => 'Núm Exterior',
             'COLONIA' => 'Colonia',
-            'CODIGO_POSTAL' => 'Codigo Postal',
+            'CODIGO_POSTAL' => 'Código Postal',
             'FOLIO_NACIONAL' => 'Folio Nacional',
             'EN_LISTA_NOMINAL' => 'En Lista Nominal',
             'ENTIDAD' => 'Entidad',
             'DISTRITO' => 'Distrito',
             'MUNICIPIO' => 'Municipio',
-            'SECCION' => 'Seccion',
+            'SECCION' => 'Sección',
             'LOCALIDAD' => 'Localidad',
             'MANZANA' => 'Manzana',
             'NUM_EMISION_CREDENCIAL' => 'Num Emision Credencial',
-            'DISTRITOLOCAL' => 'Distritolocal',
-            'CORREOELECTRONICO' => 'Correoelectronico',
-            'TELMOVIL' => 'Telmovil',
-            'TELCASA' => 'Telcasa',
+            'DISTRITOLOCAL' => 'Distrito local',
+            'CORREOELECTRONICO' => 'Correo electrónico',
+            'TELMOVIL' => 'Tel. Móvil',
+            'TELCASA' => 'Tel. Casa',
             'CASILLA' => 'Casilla',
             'IDPADRON' => 'Idpadron',
             'DOMICILIO' => 'Domicilio',
             'DES_LOC' => 'Des Loc',
             'NOM_LOC' => 'Nom Loc',
+            'foto' => 'Foto'
         ];
     }
 
@@ -173,7 +179,10 @@ class PadronGlobal extends \yii\db\ActiveRecord
      */
     public function getFoto()
     {
+        $this->foto = static::getFotoByUID($this->CLAVEUNICA, $this->SEXO);
+
         return static::getFotoByUID($this->CLAVEUNICA, $this->SEXO);
+        //return $this->foto;
     }
 
     /**
@@ -201,26 +210,8 @@ class PadronGlobal extends \yii\db\ActiveRecord
 
         if ($ancho > 200 || $alto > 250) {
              // Redimensionar
-            //$imagen_p = imagecreatetruecolor(200, 250);
-            //$imagen = imagecreatefromjpeg($pathFoto);
-            //imagecopyresampled($imagen_p, $imagen, 0, 0, 0, 0, 200, 250, $ancho, $alto);
             ResizeImage::smart_resize_image($pathFoto, null, 200, 250, false , $pathFoto, false, false, 100);
         }
-
-
-        /*$image = new \Imagick();
-
-        $fileImage = fopen($pathFoto, 'a+');
-        $image->readImageFile($fileImage);
-        fclose($fileImage);
-        unlink($fileImage);
-        // Redimencionamos la imagen si es mayor a 200x250
-        if ($image->getImageWidth() > 200 || $image->getImageHeight() > 250) {
-            $image->resizeImage(200,250, \Imagick::FILTER_LANCZOS, 0.9, true);
-            $image->writeImage();
-            $image->clear();
-            $image->destroy();
-        }*/
 
         $type = pathinfo($pathFoto, PATHINFO_EXTENSION);
         $imageByte = file_get_contents($pathFoto);

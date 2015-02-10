@@ -207,8 +207,8 @@ $(document).ready(function(){
                 tablaResumen = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
                 $('#modalResumen .table-responsive').html(tablaResumen);
 
-                $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text()+'.<br>'+
-                    'Fecha de corte: '+padLeft(fecha.getDate(),2)+'-'+padLeft((fecha.getMonth()+1),2)+'-'+fecha.getFullYear());
+                $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text());
+                $('#fechaResumen').html('Fecha de corte: '+padLeft(fecha.getDate(),2)+'-'+padLeft((fecha.getMonth()+1),2)+'-'+fecha.getFullYear());
                 $('#modalResumen').modal('show');
             }
         });

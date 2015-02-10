@@ -8,7 +8,7 @@ use yii\helpers\Url;
 <header class="header">
     <a href="<?= Url::home(); ?>" class="logo">
         <!-- Add the class icon to your logo image or logo icon to add the margining -->
-        SIRECI <br><span>Promoción Politica</span>
+        SIRECI <br><span>Sistema de Red Ciudadana</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top" role="navigation">

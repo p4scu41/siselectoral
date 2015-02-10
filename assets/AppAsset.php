@@ -23,6 +23,7 @@ class AppAsset extends AssetBundle
         'css/font-awesome.min.css',
         'css/ionicons.min.css',
         'css/AdminLTE.css',
+        'css/fileinput.min.css',
     ];
     public $js = [
         'js/plugins/bootstrap.min.js',
@@ -34,6 +35,7 @@ class AppAsset extends AssetBundle
         'js/plugins/jquery.cookie.js',
         'js/plugins/jquery.fancytree-all.min.js',
         'js/plugins/jquery.dotdotdot.js',
+        'js/plugins/fileinput.min.js',
         'js/AdminLTE/app.js',
     ];
     public $depends = [

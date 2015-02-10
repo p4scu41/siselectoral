@@ -28,7 +28,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                     <div class="row">
                         <div class="col-md-4">
                             <div class="text-center">
-                                <img src="<?= $model->foto ?>" class="img-rounded imgPerson" id="imgPerson">
+                                <img src="<?= $model->getFoto() ?>" class="img-rounded imgPerson" id="imgPerson">
                                 <h4 id="nombreCompleto"><?= ($model->APELLIDO_PATERNO.' '.$model->APELLIDO_MATERNO.' '.$model->NOMBRE); ?></h4>
                             </div>
                             <form class="form-horizontal" method="POST" id="frmPersonDetails">
@@ -70,7 +70,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Domicilio</label>
                                     <div class="col-sm-10">
-                                        <div class="well well-sm"><?= ($model->CALLE) ? $model->CALLE : '&nbsp;'; ?></div>
+                                        <div class="well well-sm"><?= $model->DOMICILIO.', C.P. '.$model->DES_LOC.', '.$model->NOM_LOC; ?></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -127,9 +127,9 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
 
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <button type="button" class="btn btn-app btn-success btn-sm">
+                            <a href="<?= Url::toRoute(['padron/update', 'id'=>$model->CLAVEUNICA], true); ?>" class="btn btn-app btn-success btn-sm">
                                 <span class="fa fa-pencil-square-o"></span> Editar
-                            </button>
+                            </a>
                         </div>
                     </div>
 

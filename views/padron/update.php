@@ -5,17 +5,15 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\PadronGlobal */
 
-$this->title = 'Update Padron Global: ' . ' ' . $model->CLAVEUNICA;
-$this->params['breadcrumbs'][] = ['label' => 'Padron Globals', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->CLAVEUNICA, 'url' => ['view', 'id' => $model->CLAVEUNICA]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Actualización de datos personales';
+$this->params['breadcrumbs'][] = ['label' => 'Buscar', 'url' => ['padron/buscar']];
+$this->params['breadcrumbs'][] = 'Actualización';
 ?>
 <div class="padron-global-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?= $this->render('_form', [
         'model' => $model,
+        'municipios' => $municipios,
     ]) ?>
 
 </div>
