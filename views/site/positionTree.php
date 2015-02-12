@@ -14,6 +14,7 @@ $this->registerJs('urlPerson="'.Url::toRoute('padron/get', true).'";', \yii\web\
 $this->registerJs('urlResumen="'.Url::toRoute('site/getresumen', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlResumenNodo="'.Url::toRoute('site/getresumennodo', true).'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {
@@ -116,30 +117,48 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             </div>
             <div class="modal-body" id="containerPerson">
                 <div class="row">
-                    <div class="col-md-4 text-center">
+                    <div class="col-md-3 text-center">
                         <img src="" class="img-rounded imgPerson" id="imgPerson">
                         <h5 id="titulo_puesto"></h5>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-9">
 
                         <div class="row" id="panelControl">
                             <div class="col-sm-12 col-md-12">
                                 <div role="tabpanel">
                                     <!-- Nav tabs -->
                                     <ul class="nav nav-tabs" role="tablist">
-                                        <li role="presentation"><a href="#tabPuesto" aria-controls="tabPuesto" role="tab" data-toggle="tab">Puesto</a></li>
-                                        <li role="presentation" class="active"><a href="#tabPersona" aria-controls="tabPersona" role="tab" data-toggle="tab">Persona</a></li>
+                                        <li role="presentation" class="active"><a href="#tabPuesto" aria-controls="tabPuesto" role="tab" data-toggle="tab">Puesto</a></li>
+                                        <li role="presentation"><a href="#tabPersona" aria-controls="tabPersona" role="tab" data-toggle="tab">Persona</a></li>
                                     </ul>
                                     <!-- Tab panes -->
                                     <div class="tab-content">
-                                        <div role="tabpanel" class="tab-pane" id="tabPuesto">
+                                        <div role="tabpanel" class="tab-pane active" id="tabPuesto">
                                             <div class="panel panel-success">
                                                 <div class="panel-body">
-                                                    En construcción
+                                                    <div id="seccion_coordinados">
+                                                        Coordina a <span id="no_coordinados"></span> <span id="nombre_coordinados"></span> :
+                                                        <ul id="list_coordinados"></ul>
+                                                    </div>
+
+                                                    <div id="seccion_vacantes">
+                                                        Puestos inmediatos vacantes (<span id="no_vacantes"></span>):
+                                                        <ul id="list_vacantes"></ul>
+                                                    </div>
+
+                                                    Status de la Estructura dependiente del puesto seleccionado:
+                                                    <div class="panel hidden-lg hidden-md hidden-sm">
+                                                        <div class="hidden-lg hidden-md hidden-sm col-xm-12">
+                                                            Si no logra ver toda la tabla deslice hacia la derecha <i class="fa fa-arrow-circle-right"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="table-responsive" id="resumenNodo">
+                                                        <i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div role="tabpanel" class="tab-pane active" id="tabPersona">
+                                        <div role="tabpanel" class="tab-pane" id="tabPersona">
                                             <div class="panel panel-success">
                                                 <div class="panel-body">
                                                     <form class="form-horizontal" method="POST" id="frmPersonDetails"></form>
@@ -156,23 +175,6 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                 <a href="" data-url="<?= Url::toRoute('padron/persona', true); ?>" class="btn btn-success" id="btnViewPerson">Ver mas detalles</a>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="modalNoPerson" tabindex='-1'>
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Detalles del puesto</h4>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

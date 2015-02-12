@@ -26,7 +26,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                     <div class="row">
                         <div class="col-md-4 text-center">
                             <div>
-                                <img src="<?= $persona->foto ?>" class="img-rounded imgPerson" id="imgPerson">
+                                <img src="<?= $persona->getFoto() ?>" class="img-rounded imgPerson" id="imgPerson">
                                 <h4 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE); ?></h4>
                             </div>
                             <div>

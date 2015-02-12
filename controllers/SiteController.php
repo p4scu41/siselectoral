@@ -148,6 +148,20 @@ class SiteController extends Controller
         return json_encode($resumen);
     }
 
+    public function actionGetresumennodo($idNodo)
+    {
+        $resumen = DetalleEstructuraMovilizacion::getResumenNodo($idNodo);
+        $tabla = null;
+
+        if(count($resumen) > 0 ) {
+            foreach ($resumen as $fila) {
+                $tabla[] = $fila;
+            }
+        }
+
+        return json_encode($tabla);
+    }
+
     public function actionGetpuestosonmuni($idMuni)
     {
         $puestos = DetalleEstructuraMovilizacion::getPuestosOnMuni($idMuni);
@@ -166,7 +180,7 @@ class SiteController extends Controller
         if( !empty($params) ) {
             $result = DetalleEstructuraMovilizacion::getNodosDependientes($params);
         }
-        
+
         return json_encode($result);
     }
 }

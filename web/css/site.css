@@ -488,3 +488,7 @@ body > .header .logo span {
 #fechaResumen {
     font-size: small;
 }
+#list_coordinados, #list_vacantes {
+    max-height: 150px;
+    overflow: auto;
+}

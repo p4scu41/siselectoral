@@ -457,7 +457,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         return $puestos;
     }
 
-     /**
+    /**
      * Obtiene los nodos dependientes de un determinado padre
      *
      * @return Array Nodos
@@ -467,7 +467,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $filtros = http_build_query($parametros, '', ' AND ');
 
         // Parche para obtener los nodos de nivel superior
-        if(!isset($parametros['Nivel'])) {
+        if(!isset($parametros['Nivel']) && !isset($parametros['IdPuestoDepende'])) {
             $filtros .= ' AND Nivel='.static::getMaxNivelOnMuni($parametros['Municipio']);
         } else {
             $filtros = str_replace('AND Nivel=', 'AND Nivel>=', $filtros);
@@ -477,6 +477,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov],
                 [DetalleEstructuraMovilizacion].[IdPuestoDepende],
                 [DetalleEstructuraMovilizacion].[IdPuesto],
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto],
                 [Puestos].[Descripcion] AS DescripcionPuesto,
                 [Puestos].[Nivel],
                 [DetalleEstructuraMovilizacion].[Descripcion] as DescripcionEstructura
@@ -490,5 +491,94 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $result = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
 
         return $result;
+    }
+
+    /**
+     * Obtiene el resumen de las cantidades de todos los
+     * nodos dependientes del idNodo proporcionado
+     *
+     * @param type $idNodo
+     * @return JSON Tabla con el resumen de los datos
+     */
+    public static function getResumenNodo($idNodo) {
+        $tablaResumen = null;
+
+        $totales = [
+            'Puesto' => 'Total',
+            'Total' => 0,
+            'Ocupados' => 0,
+            'Vacantes' => 0,
+            'Avances %' => 0,
+        ];
+
+        self::buildResumenNodo($idNodo, $tablaResumen);
+
+        if (count($tablaResumen) > 0) {
+            foreach ($tablaResumen as $fila) {
+                $totales['Total']     += $fila['Total'];
+                $totales['Ocupados']  += $fila['Ocupados'];
+                $totales['Vacantes']  += $fila['Vacantes'];
+            }
+
+            $totales['Avances %'] = round($totales['Ocupados'] / $totales['Total'] * 100);
+
+            array_push($tablaResumen, $totales);
+        }
+
+        return $tablaResumen;
+    }
+
+    /**
+     * Función recursiva que recorre todos los nodos dependientes y los acumula en una tabla
+     *
+     * @param Int $idNodo ID del nodo a obtener
+     * @param Array $tablaResumen Parametro refenciado a la tabla que agrupa el resumen de las cantidades de todos los puestos
+     */
+    public static function buildResumenNodo($idNodo, &$tablaResumen) {
+        $sqlNodosDependientes = 'SELECT [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                ,[DetalleEstructuraMovilizacion].[IdPuesto]
+                ,[DetalleEstructuraMovilizacion].[IdPuestoDepende]
+                ,[DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                ,[Puestos].[Nivel]
+                ,[Puestos].[Descripcion] AS DescripcionPuesto
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos]
+                ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+            WHERE
+                [DetalleEstructuraMovilizacion].[IdPuestoDepende] = ';
+
+        $nodosDependientes = Yii::$app->db->createCommand($sqlNodosDependientes.$idNodo)->queryAll();
+
+        if (count($nodosDependientes) > 0) {
+            foreach ($nodosDependientes as $nodo) {
+                $ocupado = 0;
+                $vacante = 0;
+
+                if($nodo['IdPersonaPuesto'] == '00000000-0000-0000-0000-000000000000') {
+                    $vacante = 1;
+                } else {
+                    $ocupado = 1;
+                }
+
+                $cantidadesNodo = array();
+                $cantidadesNodo['Puesto']    = $nodo['DescripcionPuesto'];
+                $cantidadesNodo['Total']     = (int)$tablaResumen[$nodo['Nivel']]['Total']    + 1;
+                $cantidadesNodo['Ocupados']  = (int)$tablaResumen[$nodo['Nivel']]['Ocupados'] + $ocupado;
+                $cantidadesNodo['Vacantes']  = (int)$tablaResumen[$nodo['Nivel']]['Vacantes'] + $vacante;
+
+                if ($tablaResumen[$nodo['Nivel']]['Total'] != 0) {
+                    $cantidadesNodo['Avances %'] = $tablaResumen[$nodo['Nivel']]['Ocupados'] / $tablaResumen[$nodo['Nivel']]['Total'] * 100;
+                } else {
+                    $cantidadesNodo['Avances %'] = 0;
+                }
+
+                $cantidadesNodo['Avances %'] = round($cantidadesNodo['Avances %']);
+
+                $tablaResumen[$nodo['Nivel']] = $cantidadesNodo;
+
+                self::buildResumenNodo($nodo['IdNodoEstructuraMov'], $tablaResumen);
+            }
+        }
     }
 }

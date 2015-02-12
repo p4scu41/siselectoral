@@ -17,7 +17,9 @@ $(document).ready(function(){
         e.preventDefault();
         if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
             $('#loadIndicator').hide();
-            $('#modalNoPerson').modal('show');
+            $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
+            $('#frmPersonDetails').html('<div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>');
+            $('#modalPerson').modal('show');
         } else {
             $.ajax({
                 url: urlPerson,
@@ -77,8 +79,49 @@ $(document).ready(function(){
 
                 $('#loadIndicator').hide();
                 $('#modalPerson').modal('show');
+                $('#resumenNodo').html('<i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>');
             });
         }
+
+        $.ajax({
+            url: urlResumenNodo,
+            dataType: "json",
+            data: {idNodo: node.key},
+            type: "GET",
+        }).done(function(response) {
+            tablaResumenNodo = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
+            $('#resumenNodo').html(tablaResumenNodo);
+        });
+
+        $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+'&IdPuestoDepende='+node.key,
+            function(result){
+                $('#list_coordinados').html('');
+                $('#list_vacantes').html('');
+
+                if (result.length>0) {
+                    no_vacantes = 0;
+                    no_coordinados = 0;
+                    for(nodo in result) {
+                        no_coordinados++;
+                        nombre_coordinados = result[nodo].DescripcionPuesto;
+                        $('#list_coordinados').append('<li>'+result[nodo].DescripcionPuesto+' - '+result[nodo].DescripcionEstructura+'</li>');
+
+                        if (result[nodo].IdPersonaPuesto == '00000000-0000-0000-0000-000000000000') {
+                            no_vacantes++;
+                            $('#list_vacantes').append('<li>'+result[nodo].DescripcionPuesto+' - '+result[nodo].DescripcionEstructura+'</li>');
+                        }
+                    }
+                    //$('#nombre_coordinados').text(nombre_coordinados);
+                    $('#no_coordinados').text(parseInt(no_coordinados));
+                    $('#no_vacantes').text(parseInt(no_vacantes));
+                } else {
+                    $('#list_coordinados').append('<div class="alert alert-danger">Sin dependencias</div>');
+                    $('#no_coordinados').text(0);
+                    $('#no_vacantes').text(0);
+                    //$('#nombre_coordinados').text('');
+                }
+            },
+        "json");
     };
 
     $("#treeContainer").fancytree({
