@@ -45,8 +45,7 @@ use kartik\datecontrol\DateControl;
 
                     <?= $form->field($model, 'NOMBRE')->textInput() ?>
 
-                    <?= //$form->field($model, 'FECHA_NACI_CLAVE_ELECTORAL')->input('date')
-                        $form->field($model, 'FECHA_NACI_CLAVE_ELECTORAL')->widget(DateControl::classname(), [
+                    <?= $form->field($model, 'FECHANACIMIENTO')->widget(DateControl::classname(), [
                             'displayFormat' => 'dd/MM/yyyy',
                             'saveFormat' => 'yyyy-MM-dd',
                             'autoWidget' => false,
@@ -60,9 +59,13 @@ use kartik\datecontrol\DateControl;
 
                     <?= $form->field($model, 'SEXO')->dropDownList(['M'=>'Mujer', 'H'=>'Hombre'], ['prompt' => 'Elija una opción']) ?>
 
-                    <?= $form->field($model, 'MUNICIPIO')->dropDownList($municipios, ['prompt' => 'Elija una opción']) ?>
+                    <?= $form->field($model, 'ESTADO_CIVIL')->dropDownList($estado_civil, ['prompt' => 'Elija una opción']) ?>
 
-                    <?= $form->field($model, 'LOCALIDAD')->textInput() ?>
+                    <?= $form->field($model, 'OCUPACION')->dropDownList($ocupacion, ['prompt' => 'Elija una opción']) ?>
+
+                    <?= $form->field($model, 'ESCOLARIDAD')->dropDownList($escolaridad, ['prompt' => 'Elija una opción']) ?>
+
+                    <?= $form->field($model, 'MUNICIPIO')->dropDownList($municipios, ['prompt' => 'Elija una opción']) ?>
 
                     <?= $form->field($model, 'DOMICILIO')->textInput() ?>
 
@@ -79,8 +82,6 @@ use kartik\datecontrol\DateControl;
                     <?= $form->field($model, 'DES_LOC')->textInput() ?>
 
                     <?= $form->field($model, 'NOM_LOC')->textInput() ?>
-
-                    <?= $form->field($model, 'LUGAR_NACIMIENTO')->textInput() ?>
 
                     <?= $form->field($model, 'CORREOELECTRONICO')->textInput() ?>
 

@@ -8,6 +8,9 @@ use app\models\PadronGlobalSearch;
 use app\models\DetalleEstructuraMovilizacion;
 use app\models\Puestos;
 use app\models\CMunicipio;
+use app\models\Escolaridad;
+use app\models\EstadoCivil;
+use app\models\Ocupacion;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -156,6 +159,24 @@ class PadronController extends Controller
                 ->orderBy('DescMunicipio')
                 ->all(), 'IdMunicipio', 'DescMunicipio'
         );
+        $escolaridad = ArrayHelper::map(
+                Escolaridad::find()
+                ->select(['Id', 'Descripcion'])
+                ->orderBy('Descripcion')
+                ->all(), 'Id', 'Descripcion'
+        );
+        $ocupacion = ArrayHelper::map(
+                Ocupacion::find()
+                ->select(['Id', 'Descripcion'])
+                ->orderBy('Descripcion')
+                ->all(), 'Id', 'Descripcion'
+        );
+        $estado_civil = ArrayHelper::map(
+                EstadoCivil::find()
+                ->select(['Id', 'Descripcion'])
+                ->orderBy('Descripcion')
+                ->all(), 'Id', 'Descripcion'
+        );
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $pathFoto = Url::to('@app/fotos', true).'/'.$model->CLAVEUNICA.'.jpg';
@@ -163,13 +184,13 @@ class PadronController extends Controller
 
             if ($model->foto && $model->validate()) {
                 $model->foto->saveAs($pathFoto);
-            }
 
-            list($ancho, $alto) = getimagesize($pathFoto);
+                list($ancho, $alto) = getimagesize($pathFoto);
 
-            if ($ancho > 200 || $alto > 250) {
-                 // Redimensionar
-                ResizeImage::smart_resize_image($pathFoto, null, 200, 250, false , $pathFoto, false, false, 100);
+                if ($ancho > 200 || $alto > 250) {
+                     // Redimensionar
+                    ResizeImage::smart_resize_image($pathFoto, null, 200, 250, false , $pathFoto, false, false, 100);
+                }
             }
 
             return $this->redirect(['view', 'id' => $model->CLAVEUNICA]);
@@ -177,6 +198,9 @@ class PadronController extends Controller
             return $this->render('update', [
                 'model' => $model,
                 'municipios' => $municipios,
+                'escolaridad' => $escolaridad,
+                'ocupacion' => $ocupacion,
+                'estado_civil' => $estado_civil
             ]);
         }
     }

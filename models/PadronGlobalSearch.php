@@ -18,7 +18,7 @@ class PadronGlobalSearch extends PadronGlobal
     public function rules()
     {
         return [
-            [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRES', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'safe'],
+            [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'safe'],
             [['CONS_ALF_POR_SECCION', 'FECHA_NACI_CLAVE_ELECTORAL', 'LUGAR_NACIMIENTO', 'DIGITO_VERIFICADOR', 'CLAVE_HOMONIMIA', 'CODIGO_POSTAL', 'FOLIO_NACIONAL', 'EN_LISTA_NOMINAL', 'ENTIDAD', 'DISTRITO', 'MUNICIPIO', 'SECCION', 'LOCALIDAD', 'MANZANA', 'NUM_EMISION_CREDENCIAL'], 'number'],
             [['DISTRITOLOCAL', 'IDPADRON'], 'integer'],
         ];
@@ -58,7 +58,6 @@ class PadronGlobalSearch extends PadronGlobal
 
         $query->andFilterWhere([
             'CONS_ALF_POR_SECCION' => $this->CONS_ALF_POR_SECCION,
-            'FECHA_NACI_CLAVE_ELECTORAL' => $this->FECHA_NACI_CLAVE_ELECTORAL,
             'LUGAR_NACIMIENTO' => $this->LUGAR_NACIMIENTO,
             'DIGITO_VERIFICADOR' => $this->DIGITO_VERIFICADOR,
             'CLAVE_HOMONIMIA' => $this->CLAVE_HOMONIMIA,
@@ -79,7 +78,6 @@ class PadronGlobalSearch extends PadronGlobal
         $query->andFilterWhere(['like', 'CLAVEUNICA', $this->CLAVEUNICA])
             ->andFilterWhere(['like', 'ALFA_CLAVE_ELECTORAL', $this->ALFA_CLAVE_ELECTORAL])
             ->andFilterWhere(['like', 'SEXO', $this->SEXO])
-            ->andFilterWhere(['like', 'NOMBRES', $this->NOMBRES])
             ->andFilterWhere(['like', 'NOMBRE', $this->NOMBRE])
             ->andFilterWhere(['like', 'APELLIDO_PATERNO', $this->APELLIDO_PATERNO])
             ->andFilterWhere(['like', 'APELLIDO_MATERNO', $this->APELLIDO_MATERNO])
@@ -94,7 +92,7 @@ class PadronGlobalSearch extends PadronGlobal
             ->andFilterWhere(['like', 'DOMICILIO', $this->DOMICILIO])
             ->andFilterWhere(['like', 'DES_LOC', $this->DES_LOC])
             ->andFilterWhere(['like', 'NOM_LOC', $this->NOM_LOC]);
-        
+
         $query->orderBy('APELLIDO_PATERNO, APELLIDO_MATERNO, NOMBRE');
 
         return $dataProvider;

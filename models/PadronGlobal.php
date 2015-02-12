@@ -18,7 +18,6 @@ use yii\web\UploadedFile;
  * @property string $SEXO
  * @property double $DIGITO_VERIFICADOR
  * @property double $CLAVE_HOMONIMIA
- * @property string $NOMBRES
  * @property string $NOMBRE
  * @property string $APELLIDO_PATERNO
  * @property string $APELLIDO_MATERNO
@@ -45,6 +44,10 @@ use yii\web\UploadedFile;
  * @property string $DOMICILIO
  * @property string $DES_LOC
  * @property string $NOM_LOC
+ * @property date $FECHANACIMIENTO
+ * @property integer $ESTADO_CIVIL
+ * @property integer $OCUPACION
+ * @property integer $ESCOLARIDAD
  */
 class PadronGlobal extends \yii\db\ActiveRecord
 {
@@ -64,10 +67,10 @@ class PadronGlobal extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRES', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'string'],
+            [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'string'],
             [['CONS_ALF_POR_SECCION', 'LUGAR_NACIMIENTO', 'DIGITO_VERIFICADOR', 'CLAVE_HOMONIMIA', 'CODIGO_POSTAL', 'FOLIO_NACIONAL', 'EN_LISTA_NOMINAL', 'ENTIDAD', 'DISTRITO', 'MUNICIPIO', 'SECCION', 'LOCALIDAD', 'MANZANA', 'NUM_EMISION_CREDENCIAL'], 'number'],
-            [['DISTRITOLOCAL', 'IDPADRON'], 'integer'],
-            [['FECHA_NACI_CLAVE_ELECTORAL'], 'date', 'format' => 'yyyy-MM-dd'],
+            [['DISTRITOLOCAL', 'IDPADRON', 'FECHA_NACI_CLAVE_ELECTORAL', 'ESTADO_CIVIL', 'OCUPACION', 'ESCOLARIDAD'], 'integer'],
+            [['FECHANACIMIENTO'], 'date', 'format' => 'yyyy-MM-dd'],
             [['foto'], 'file', 'extensions' => 'jpg, png, gif', 'mimeTypes' => 'image/jpeg, image/png, image/gif']
         ];
     }
@@ -82,11 +85,11 @@ class PadronGlobal extends \yii\db\ActiveRecord
             'CONS_ALF_POR_SECCION' => 'Cons Alf Por Seccion',
             'ALFA_CLAVE_ELECTORAL' => 'Alfa Clave Electoral',
             'FECHA_NACI_CLAVE_ELECTORAL' => 'Fecha de nacimiento',
+            'FECHANACIMIENTO' => 'Fecha de nacimiento',
             'LUGAR_NACIMIENTO' => 'Lugar de nacimiento',
             'SEXO' => 'Sexo',
             'DIGITO_VERIFICADOR' => 'Digito Verificador',
             'CLAVE_HOMONIMIA' => 'Clave Homonimia',
-            'NOMBRES' => 'Nombres',
             'NOMBRE' => 'Nombre',
             'APELLIDO_PATERNO' => 'Apellido Paterno',
             'APELLIDO_MATERNO' => 'Apellido Materno',
@@ -113,7 +116,10 @@ class PadronGlobal extends \yii\db\ActiveRecord
             'DOMICILIO' => 'Domicilio',
             'DES_LOC' => 'Des Loc',
             'NOM_LOC' => 'Nom Loc',
-            'foto' => 'Foto'
+            'foto' => 'Foto',
+            'ESTADO_CIVIL' => 'Estado Civil',
+            'OCUPACION' => 'Ocupación',
+            'ESCOLARIDAD' => 'Escolaridad'
         ];
     }
 
@@ -123,6 +129,30 @@ class PadronGlobal extends \yii\db\ActiveRecord
     public function getMunicipio()
     {
         return $this->hasOne(CMunicipio::className(), ['IdMunicipio' => 'MUNICIPIO']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEstado_civil()
+    {
+        return $this->hasOne(EstadoCivil::className(), ['Id' => 'ESTADO_CIVIL']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOcupacion()
+    {
+        return $this->hasOne(OCUPACION::className(), ['Id' => 'OCUPACION']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEscolaridad()
+    {
+        return $this->hasOne(ESCOLARIDAD::className(), ['Id' => 'ESCOLARIDAD']);
     }
 
     /**
@@ -146,7 +176,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
      */
     public function getFechaNac($format = 'd-m-Y')
     {
-        $fechaNac = $this->FECHA_NACI_CLAVE_ELECTORAL;
+        $fechaNac = $this->FECHANACIMIENTO;
 
         if(empty($fechaNac)) {
             $y = '19'.substr($this->ALFA_CLAVE_ELECTORAL, 6, 2);

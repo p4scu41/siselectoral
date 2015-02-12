@@ -70,13 +70,15 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Domicilio</label>
                                     <div class="col-sm-10">
-                                        <div class="well well-sm"><?= $model->DOMICILIO.', C.P. '.$model->DES_LOC.', '.$model->NOM_LOC; ?></div>
+                                        <div class="well well-sm"><?= $model->DOMICILIO.
+                                                ($model->CODIGO_POSTAL ? ', C.P. '.$model->CODIGO_POSTAL: '')
+                                                .', '.$model->DES_LOC.'. '.$model->NOM_LOC; ?></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Estado Civil</label>
                                     <div class="col-sm-10">
-                                        <div class="well well-sm">&nbsp;</div>
+                                        <div class="well well-sm"><?= ($model->estado_civil) ? $model->estado_civil->Descripcion: '&nbsp;'; ?></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -106,13 +108,13 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Ocupación</label>
                                     <div class="col-sm-10">
-                                        <div class="well well-sm">&nbsp;</div>
+                                        <div class="well well-sm"><?= ($model->ocupacion) ? $model->ocupacion->Descripcion: '&nbsp;'; ?></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Escolaridad</label>
                                     <div class="col-sm-10">
-                                        <div class="well well-sm">&nbsp;</div>
+                                        <div class="well well-sm"><?= ($model->escolaridad) ? $model->escolaridad->Descripcion: '&nbsp;'; ?></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
