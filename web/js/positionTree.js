@@ -18,8 +18,10 @@ $(document).ready(function(){
         if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
             $('#loadIndicator').hide();
             $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
+            $('#imgPerson').attr('src', imgNoPerson);
             $('#frmPersonDetails').html('<div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>');
             $('#modalPerson').modal('show');
+            $('#btnViewPerson').data('id', '#');
         } else {
             $.ajax({
                 url: urlPerson,
@@ -79,7 +81,6 @@ $(document).ready(function(){
 
                 $('#loadIndicator').hide();
                 $('#modalPerson').modal('show');
-                $('#resumenNodo').html('<i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>');
             });
         }
 
@@ -89,8 +90,14 @@ $(document).ready(function(){
             data: {idNodo: node.key},
             type: "GET",
         }).done(function(response) {
-            tablaResumenNodo = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
-            $('#resumenNodo').html(tablaResumenNodo);
+            if(response) {
+                meta = response[ response.length-1 ];
+                tablaResumenNodo = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
+                $('#no_meta').html(meta['Avances %']+'%');
+                $('#resumenNodo').html(tablaResumenNodo);
+            } else {
+                $('#resumenNodo').html('');
+            }
         });
 
         $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+'&IdPuestoDepende='+node.key,
@@ -111,18 +118,41 @@ $(document).ready(function(){
                             $('#list_vacantes').append('<li>'+result[nodo].DescripcionPuesto+' - '+result[nodo].DescripcionEstructura+'</li>');
                         }
                     }
-                    //$('#nombre_coordinados').text(nombre_coordinados);
-                    $('#no_coordinados').text(parseInt(no_coordinados));
+                    nombre_coordinados = nombre_coordinados.replace('DE', '').replace('COORDINADOR', 'C.').toLowerCase() ;
+                    $('#descripcion_dependencias').text(nombre_coordinados);
+                    $('#no_dependencias').text(parseInt(no_coordinados));
                     $('#no_vacantes').text(parseInt(no_vacantes));
                 } else {
                     $('#list_coordinados').append('<div class="alert alert-danger">Sin dependencias</div>');
-                    $('#no_coordinados').text(0);
+                    $('#no_dependencias').text(0);
                     $('#no_vacantes').text(0);
-                    //$('#nombre_coordinados').text('');
+
+                    $('#seccion_resumenNodo').hide();
+                    $('#seccion_vacantes').hide();
+                    $('#seccion_coordinados').hide();
+                    $('#descripcion_dependencias').text('Sin Dependencias');
                 }
             },
         "json");
     };
+
+    $('#dependencias').click(function(){
+        $('#seccion_resumenNodo').hide();
+        $('#seccion_vacantes').hide();
+        $('#seccion_coordinados').toggle('slow');
+    });
+
+    $('#meta').click(function(){
+        $('#seccion_coordinados').hide();
+        $('#seccion_vacantes').hide();
+        $('#seccion_resumenNodo').toggle('slow');
+    });
+
+    $('#vacantes').click(function(){
+        $('#seccion_coordinados').hide();
+        $('#seccion_resumenNodo').hide();
+        $('#seccion_vacantes').toggle('slow');
+    });
 
     $("#treeContainer").fancytree({
         extensions: ["table", "persist"],
@@ -228,8 +258,13 @@ $(document).ready(function(){
         $("#treeContainer").delegate("a", "click", verModalNodo);
     });
 
-    $('#btnViewPerson').click(function(){
-        $(this).attr('href', $(this).data('url')+'?id='+$(this).data('id'));
+    $('#btnViewPerson').click(function(e){
+        if ($(this).data('id') != '#') {
+            $(this).attr('href', $(this).data('url')+'?id='+$(this).data('id'));
+        } else {
+            e.stopPropagation();
+            e.preventDefault();
+        }
     });
 
     $('#btnResumen').click(function(){

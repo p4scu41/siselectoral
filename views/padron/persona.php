@@ -36,17 +36,17 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                     <span class="puesto"><?= ($numDepend['puesto'] != '' ? $numDepend['puesto'] : 'Sin Dependencias') ?></span>
                                 </span>
                                 <span class="btn btn-app btn-sm btn-pink">
-                                    <span class="line-height-1 bigger-170"> 4 </span>
+                                    <span class="line-height-1 bigger-170"> 0 </span>
                                     <br>
                                     <span class=""> Programas </span>
                                 </span>
                                 <span class="btn btn-app btn-sm btn-grey">
-                                    <span class="line-height-1 bigger-170"> 1 </span>
+                                    <span class="line-height-1 bigger-170"> 0 </span>
                                     <br>
                                     <span class=""> Organización </span>
                                 </span>
                                 <span class="btn btn-app btn-sm btn-success">
-                                    <span class="line-height-1 bigger-170"> 98% </span>
+                                    <span class="line-height-1 bigger-170"> - </span>
                                     <br>
                                     <span class=""> Meta </span>
                                 </span>

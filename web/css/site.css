@@ -478,12 +478,15 @@ body > .header .logo span {
 #tablaResumen tr:last-child {
     font-weight: bold;
     text-align: center;
+    vertical-align: middle;
 }
 #tablaResumen thead tr th {
     text-align: center;
+    vertical-align: middle;
 }
 #tablaResumen tr td:not(:first-child) {
     text-align: center;
+    vertical-align: middle;
 }
 #fechaResumen {
     font-size: small;
@@ -491,4 +494,7 @@ body > .header .logo span {
 #list_coordinados, #list_vacantes {
     max-height: 150px;
     overflow: auto;
+}
+#descripcion_dependencias {
+    text-transform: capitalize;
 }

@@ -15,6 +15,7 @@ $this->registerJs('urlResumen="'.Url::toRoute('site/getresumen', true).'";', \yi
 $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlResumenNodo="'.Url::toRoute('site/getresumennodo', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('imgNoPerson="'.Url::to('@web/img/avatar/U.jpg', true).'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {
@@ -136,24 +137,52 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                         <div role="tabpanel" class="tab-pane active" id="tabPuesto">
                                             <div class="panel panel-success">
                                                 <div class="panel-body">
-                                                    <div id="seccion_coordinados">
-                                                        Coordina a <span id="no_coordinados"></span> <span id="nombre_coordinados"></span> :
+                                                    <div id="indicadoresPuesto" class="text-center">
+                                                        <span class="btn btn-app btn-sm btn-yellow" id="dependencias">
+                                                            <span class="line-height-1 bigger-170" id="no_dependencias"></span>
+                                                            <br><span id="descripcion_dependencias"></span>
+                                                        </span>
+                                                        <span class="btn btn-app btn-sm btn-success" id="meta">
+                                                            <span class="line-height-1 bigger-170" id="no_meta"></span>
+                                                            <br><span>Meta</span>
+                                                        </span>
+                                                        <span class="btn btn-app btn-sm btn-primary" id="vacantes">
+                                                            <span class="line-height-1 bigger-170" id="no_vacantes"> 4 </span>
+                                                            <br>
+                                                            <span class=""> Vacantes </span>
+                                                        </span>
+                                                        <span class="btn btn-app btn-sm btn-pink">
+                                                            <span class="line-height-1 bigger-170"> 0 </span>
+                                                            <br>
+                                                            <span class=""> Programas </span>
+                                                        </span>
+                                                        <span class="btn btn-app btn-sm btn-grey">
+                                                            <span class="line-height-1 bigger-170"> 0 </span>
+                                                            <br>
+                                                            <span class=""> Organización </span>
+                                                        </span>
+                                                    </div><br>
+
+                                                    <div id="seccion_coordinados" style="display: none;">
+                                                        <strong>Coordina a:</strong>
                                                         <ul id="list_coordinados"></ul>
                                                     </div>
 
-                                                    <div id="seccion_vacantes">
-                                                        Puestos inmediatos vacantes (<span id="no_vacantes"></span>):
+                                                    <div id="seccion_vacantes" style="display: none;">
+                                                        Puestos inmediatos vacantes:
                                                         <ul id="list_vacantes"></ul>
                                                     </div>
 
-                                                    Status de la Estructura dependiente del puesto seleccionado:
-                                                    <div class="panel hidden-lg hidden-md hidden-sm">
-                                                        <div class="hidden-lg hidden-md hidden-sm col-xm-12">
-                                                            Si no logra ver toda la tabla deslice hacia la derecha <i class="fa fa-arrow-circle-right"></i>
+                                                    <div id="seccion_resumenNodo" style="display: none;">
+                                                        Status de la Estructura dependiente del puesto seleccionado:
+                                                        <div class="panel hidden-lg hidden-md hidden-sm">
+                                                            <div class="hidden-lg hidden-md hidden-sm col-xm-12">
+                                                                Si no logra ver toda la tabla deslice hacia la derecha <i class="fa fa-arrow-circle-right"></i>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="table-responsive" id="resumenNodo">
-                                                        <i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>
+                                                        <div class="table-responsive" id="resumenNodo">
+                                                            <i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

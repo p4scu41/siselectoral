@@ -242,18 +242,20 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 'IdPuestoDepende = '.$this->IdNodoEstructuraMov)->all();
         $personasDependientes = array();
 
-        foreach ($nodosDependientes as $nodo) {
-            //$persona = PadronGlobal::find(['CLAVEUNICA'=>$nodo->IdPersonaPuesto])->asArray()->one();
-            $persona = $this->findBySql('SELECT * FROM [PadronGlobal] WHERE [CLAVEUNICA] = \''.
-                            $nodo->IdPersonaPuesto.'\'')->asArray()->one();
-            //$puesto = Puestos::find(['IdPuesto'=>$nodo->IdPuesto])->asArray()->one();
-            $puesto = $this->findBySql('SELECT * FROM [Puestos] WHERE [IdPuesto] = \''.
-                            $nodo->IdPuesto.'\'')->asArray()->one();
+        if( count($nodosDependientes) > 0) {
+            foreach ($nodosDependientes as $nodo) {
+                //$persona = PadronGlobal::find(['CLAVEUNICA'=>$nodo->IdPersonaPuesto])->asArray()->one();
+                $persona = $this->findBySql('SELECT * FROM [PadronGlobal] WHERE [CLAVEUNICA] = \''.
+                                $nodo->IdPersonaPuesto.'\'')->asArray()->one();
+                //$puesto = Puestos::find(['IdPuesto'=>$nodo->IdPuesto])->asArray()->one();
+                $puesto = $this->findBySql('SELECT * FROM [Puestos] WHERE [IdPuesto] = \''.
+                                $nodo->IdPuesto.'\'')->asArray()->one();
 
-            $persona['puesto'] = $puesto['Descripcion'].' - '.$nodo->Descripcion;
-            $persona['foto'] = PadronGlobal::getFotoByUID($persona['CLAVEUNICA'], $persona['SEXO']);
+                $persona['puesto'] = $puesto['Descripcion'].' - '.$nodo->Descripcion;
+                $persona['foto'] = PadronGlobal::getFotoByUID($persona['CLAVEUNICA'], $persona['SEXO']);
 
-            $personasDependientes[] = $persona;
+                $personasDependientes[] = $persona;
+            }
         }
 
         return $personasDependientes;
@@ -267,21 +269,19 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     public function getCountDepen() {
         $cantidad = null;
 
-        $count = Yii::$app->db->createCommand('SELECT COUNT(*) AS total, [IdPuesto]
-            FROM [DetalleEstructuraMovilizacion]
-            WHERE [IdPuestoDepende] = '.$this->IdNodoEstructuraMov.
-            ' GROUP BY [IdPuesto]')->queryOne();
+        $nodosDependientes = $this->find()->where('IdPuestoDepende = '.$this->IdNodoEstructuraMov)->all();
 
-        if($count != null) {
+        if( count($nodosDependientes) > 0) {
+            $count = $nodosDependientes[0];
             $puesto = $this->findBySql('SELECT * FROM [Puestos] WHERE [IdPuesto] = \''.
-                                $count['IdPuesto'].'\'')->one();
+                                $count->IdPuesto.'\'')->one();
             $descrip = explode(' ', ucwords(mb_strtolower($puesto->Descripcion)));
 
             if ( count($descrip)>1) {
                 $descrip[0] = substr($descrip[0], 0, 1).'.';
             }
 
-            $cantidad = Array('cantidad'=>$count['total'], 'puesto'=>implode($descrip, ' '));
+            $cantidad = Array('cantidad'=>count($nodosDependientes), 'puesto'=>implode($descrip, ' '));
         }
 
         return $cantidad;
@@ -501,23 +501,44 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @return JSON Tabla con el resumen de los datos
      */
     public static function getResumenNodo($idNodo) {
-        $tablaResumen = null;
+        $sqlResumenNodo = 'SELECT [Puestos].[Nivel],
+                [Puestos].[Descripcion] AS Puesto
+                ,COUNT([DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]) AS Total
+                ,COUNT(CASE WHEN
+                    [DetalleEstructuraMovilizacion].[IdPersonaPuesto]!=\'00000000-0000-0000-0000-000000000000\'
+                    THEN 1 ELSE NULL END) AS Ocupados
+                ,COUNT(CASE WHEN
+                    [DetalleEstructuraMovilizacion].[IdPersonaPuesto]=\'00000000-0000-0000-0000-000000000000\'
+                    THEN 1 ELSE NULL END) AS Vacantes
+                ,CAST(ROUND(SUM(CASE WHEN
+                    [DetalleEstructuraMovilizacion].[IdPersonaPuesto]!=\'00000000-0000-0000-0000-000000000000\'
+                    THEN CAST(1 AS FLOAT) ELSE 0 END) /
+                    CAST(COUNT([DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]) AS FLOAT) * 100, 0) AS INTEGER) AS \'Avances %\'
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos]
+                ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+            WHERE
+                [DetalleEstructuraMovilizacion].[Dependencias] like \'%|'.$idNodo.'|%\'
+            GROUP BY [Puestos].[Descripcion], [Puestos].[Nivel]
+            ORDER BY [Puestos].[Nivel]';
 
-        $totales = [
-            'Puesto' => 'Total',
-            'Total' => 0,
-            'Ocupados' => 0,
-            'Vacantes' => 0,
-            'Avances %' => 0,
-        ];
-
-        self::buildResumenNodo($idNodo, $tablaResumen);
+        $tablaResumen = Yii::$app->db->createCommand($sqlResumenNodo)->queryAll();
 
         if (count($tablaResumen) > 0) {
-            foreach ($tablaResumen as $fila) {
-                $totales['Total']     += $fila['Total'];
-                $totales['Ocupados']  += $fila['Ocupados'];
-                $totales['Vacantes']  += $fila['Vacantes'];
+            $totales = [
+                'Puesto' => 'Total',
+                'Total' => 0,
+                'Ocupados' => 0,
+                'Vacantes' => 0,
+                'Avances %' => 0,
+            ];
+
+            for ($i = 0; $i < count($tablaResumen); $i++) {
+                unset($tablaResumen[$i]['Nivel']);
+                $totales['Total']     += $tablaResumen[$i]['Total'];
+                $totales['Ocupados']  += $tablaResumen[$i]['Ocupados'];
+                $totales['Vacantes']  += $tablaResumen[$i]['Vacantes'];
             }
 
             $totales['Avances %'] = round($totales['Ocupados'] / $totales['Total'] * 100);
@@ -533,6 +554,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      *
      * @param Int $idNodo ID del nodo a obtener
      * @param Array $tablaResumen Parametro refenciado a la tabla que agrupa el resumen de las cantidades de todos los puestos
+     * @deprecated since version 1
      */
     public static function buildResumenNodo($idNodo, &$tablaResumen) {
         $sqlNodosDependientes = 'SELECT [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
