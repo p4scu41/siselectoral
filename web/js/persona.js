@@ -1,4 +1,4 @@
-var mapDomicilio;
+/*var mapDomicilio;
 var mapCasilla;
 myLatlng = new google.maps.LatLng(16.7528099, -93.1154969);
 
@@ -64,7 +64,7 @@ $('#modalMapDomicilio').on('shown.bs.modal', function () {
 $('#modalMapCasilla').on('shown.bs.modal', function () {
     google.maps.event.trigger(mapCasilla, "resize");
     mapCasilla.setCenter(myLatlng);
-});
+});*/
 
 /*$(document).ready(function(){
     $('.puesto').dotdotdot();

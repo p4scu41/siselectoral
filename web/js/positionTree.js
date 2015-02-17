@@ -9,12 +9,22 @@ $(document).ready(function(){
         $('#puesto option[value='+parseInt(CookieParams.IdPuesto)+']').attr('selected', true);
     }
 
-    var verModalNodo = function(e){
+    var verModalNodo = function(e, nodoKey){
         $('#loadIndicator').show();
-        var node = $.ui.fancytree.getNode(e);
+        var node = null;
+        if (typeof nodoKey == 'undefined') {
+            node = $.ui.fancytree.getNode(e);
+            e.stopPropagation();  // prevent fancytree activate for this row
+            e.preventDefault();
+        } else {
+            node = $("#treeContainer").fancytree("getActiveNode", nodoKey)//$("#treeContainer").fancytree("getNodeByKey", nodoKey);//tree.getNodeByKey(nodoKey);
+        }
         //var $button = $(e.target);
-        e.stopPropagation();  // prevent fancytree activate for this row
-        e.preventDefault();
+
+        if($('#alertDescDependiente').length != 0) {
+            $('#alertDescDependiente').remove();
+        }
+
         if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
             $('#loadIndicator').hide();
             $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
@@ -111,7 +121,11 @@ $(document).ready(function(){
                     for(nodo in result) {
                         no_coordinados++;
                         nombre_coordinados = result[nodo].DescripcionPuesto;
-                        $('#list_coordinados').append('<li>'+result[nodo].DescripcionPuesto+' - '+result[nodo].DescripcionEstructura+'</li>');
+                        $li = $('<li data-id="'+result[nodo].IdNodoEstructuraMov+'" data-persona="'+result[nodo].IdPersonaPuesto+'"><a href="#">'+result[nodo].DescripcionPuesto+
+                                ' - '+result[nodo].DescripcionEstructura+'</a></li>');
+                        $li.click(muestraDependiente);
+
+                        $('#list_coordinados').append($li);
 
                         if (result[nodo].IdPersonaPuesto == '00000000-0000-0000-0000-000000000000') {
                             no_vacantes++;
@@ -136,22 +150,84 @@ $(document).ready(function(){
         "json");
     };
 
+    function muestraDependiente(event) {
+        if($('#alertDescDependiente').length == 0) {
+            $('#tabPuesto .panel-body').append('<div class="alert alert-success" role="alert" id="alertDescDependiente">'+
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+                '<div id="descDependiente" class="text-center"><i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i></div>'+
+            '</div>');
+        } else {
+            $('#descDependiente').html('<i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>');
+        }
+        /*$self = this;
+
+        $('#modalPerson').modal('hide');
+        $('#modalPerson').on('hidden.bs.modal', function (e) {
+            verModalNodo(null, $($self).data('id'));
+            console.log('Oculto');
+        });*/
+
+        if ($(this).data('persona') != '00000000-0000-0000-0000-000000000000') {
+            $.ajax({
+                url: urlPerson,
+                dataType: "json",
+                data: {id: $(this).data('persona')},
+                type: "GET",
+            }).done(function(response) {
+                console.log(response.TELMOVIL);
+                $descPersona = '<img src="'+response['foto']+'" class="img-rounded imgPerson"><br>'+
+                    response.APELLIDO_PATERNO+' '+
+                    response.APELLIDO_MATERNO+' '+
+                    response.NOMBRE+'<br>'+
+                    'Cel: '+(response.TELMOVIL == null ? '' : response.TELMOVIL)+'<br>'+
+                    'e-mail: '+response.CORREOELECTRONICO+' ';
+                $('#descDependiente').html($descPersona);
+            });
+        } else {
+            $('#descDependiente').html('Puesto no Asignado');
+        }
+    }
+
     $('#dependencias').click(function(){
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
-        $('#seccion_coordinados').toggle('slow');
+        $('#seccion_coordinados').toggle('slow', function() {
+            if ($('#seccion_coordinados').is(':hidden')) {
+                if ( $('#alertDescDependiente').length > 0 ) {
+                    $('#alertDescDependiente').alert('close');
+                }
+            } else {
+                $('#seccion_coordinados').ScrollTo();
+            }
+        });
     });
 
     $('#meta').click(function(){
         $('#seccion_coordinados').hide();
         $('#seccion_vacantes').hide();
-        $('#seccion_resumenNodo').toggle('slow');
+        $('#seccion_resumenNodo').toggle('slow', function() {
+            if (!$('#seccion_resumenNodo').is(':hidden')) {
+                $('#seccion_resumenNodo').ScrollTo();
+            }
+        });
+
+        if ( $('#alertDescDependiente').length > 0 ) {
+            $('#alertDescDependiente').alert('close');
+        }
     });
 
     $('#vacantes').click(function(){
         $('#seccion_coordinados').hide();
         $('#seccion_resumenNodo').hide();
-        $('#seccion_vacantes').toggle('slow');
+        $('#seccion_vacantes').toggle('slow', function() {
+            if (!$('#seccion_vacantes').is(':hidden')) {
+                $('#seccion_vacantes').ScrollTo();
+            }
+        });
+
+        if ( $('#alertDescDependiente').length > 0 ) {
+            $('#alertDescDependiente').alert('close');
+        }
     });
 
     $("#treeContainer").fancytree({

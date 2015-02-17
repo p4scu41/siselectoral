@@ -498,3 +498,7 @@ body > .header .logo span {
 #descripcion_dependencias {
     text-transform: capitalize;
 }
+#tabPuesto .alert{
+    padding-left: inherit;
+    margin-left: auto;
+}
