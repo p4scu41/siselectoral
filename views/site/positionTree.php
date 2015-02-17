@@ -31,6 +31,8 @@ $this->registerJsFile(Url::to('@web/js/plugins/jquery-scrollto.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.ba-bbq.min.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
+//$this->registerJsFile(Url::to('@web/js/plugins/html2canvas.min.js'));
+//$this->registerJsFile(Url::to('@web/js/plugins/rasterizeHTML.allinone.js'));
 $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
 ?>
 <div class="row">
@@ -144,12 +146,17 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         </span>
                                                         <span class="btn btn-app btn-sm btn-success" id="meta">
                                                             <span class="line-height-1 bigger-170" id="no_meta"></span>
-                                                            <br><span>Meta</span>
+                                                            <br><span>Meta Estruc.</span>
                                                         </span>
-                                                        <span class="btn btn-app btn-sm btn-primary" id="vacantes">
+                                                        <!--<span class="btn btn-app btn-sm btn-primary" id="vacantes">
                                                             <span class="line-height-1 bigger-170" id="no_vacantes"> 4 </span>
                                                             <br>
                                                             <span class=""> Vacantes </span>
+                                                        </span>-->
+                                                        <span class="btn btn-app btn-sm btn-primary" id="promocion">
+                                                            <span class="line-height-1 bigger-170" id="no_promocion">0%</span>
+                                                            <br>
+                                                            <span class="">Meta Promo.</span>
                                                         </span>
                                                         <span class="btn btn-app btn-sm btn-pink">
                                                             <span class="line-height-1 bigger-170"> 0 </span>
@@ -175,7 +182,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
 
                                                     <div id="seccion_resumenNodo" style="display: none;">
                                                         Status de la Estructura dependiente del puesto seleccionado:
-                                                        <div class="panel hidden-lg hidden-md hidden-sm">
+                                                        <div class="panel hidden-lg hidden-md hidden-sm" id="verMasResumenNodo">
                                                             <div class="hidden-lg hidden-md hidden-sm col-xm-12">
                                                                 Si no logra ver toda la tabla deslice hacia la derecha <i class="fa fa-arrow-circle-right"></i>
                                                             </div>
@@ -196,6 +203,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                         </div>
                                     </div>
                                 </div>
+                                <div id="fechaResumenNodo" class="pull-right"></div>
                             </div>
                         </div>
                     </div>
@@ -204,6 +212,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                 <a href="" data-url="<?= Url::toRoute('padron/persona', true); ?>" class="btn btn-success" id="btnViewPerson">Ver mas detalles</a>
+                <button type="button" class="btn btn-primary" id="printResumenNodo"><i class="fa fa-print"></i> Imprimir</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -232,3 +241,5 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<canvas id="canvas"></canvas>

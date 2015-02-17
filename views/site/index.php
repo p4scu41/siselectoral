@@ -133,16 +133,6 @@ $this->registerJsFile(\yii\helpers\Url::to('@web/js/AdminLTE/dashboard.js'), ['p
             </div><!-- /.box-body -->
         </div><!-- /.box -->
 
-        <!-- DONUT CHART -->
-        <div class="box box-danger">
-            <div class="box-header">
-                <h3 class="box-title">Donut Chart</h3>
-            </div>
-            <div class="box-body chart-responsive">
-                <div class="chart" id="sales-chart" style="height: 300px; position: relative;"></div>
-            </div><!-- /.box-body -->
-        </div><!-- /.box -->
-
     </div><!-- /.col (LEFT) -->
     <div class="col-md-6">
         <!-- LINE CHART -->
@@ -152,16 +142,6 @@ $this->registerJsFile(\yii\helpers\Url::to('@web/js/AdminLTE/dashboard.js'), ['p
             </div>
             <div class="box-body chart-responsive">
                 <div class="chart" id="line-chart2" style="height: 300px;"></div>
-            </div><!-- /.box-body -->
-        </div><!-- /.box -->
-
-        <!-- BAR CHART -->
-        <div class="box box-success">
-            <div class="box-header">
-                <h3 class="box-title">Bar Chart</h3>
-            </div>
-            <div class="box-body chart-responsive">
-                <div class="chart" id="bar-chart" style="height: 300px;"></div>
             </div><!-- /.box-body -->
         </div><!-- /.box -->
 

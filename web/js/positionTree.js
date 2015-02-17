@@ -33,6 +33,9 @@ $(document).ready(function(){
             $('#modalPerson').modal('show');
             $('#btnViewPerson').data('id', '#');
         } else {
+            var fecha = new Date();
+            $('#fechaResumenNodo').html('Fecha de corte: '+padLeft(fecha.getDate(),2)+'-'+padLeft((fecha.getMonth()+1),2)+'-'+fecha.getFullYear());
+
             $.ajax({
                 url: urlPerson,
                 dataType: "json",
@@ -447,6 +450,22 @@ $(document).ready(function(){
         $imprimible.find('.modal-footer').remove();
         $imprimible.find('.close').remove();
         $imprimible.find('.panel').remove();
+        $($imprimible).printArea({"mode":"popup","popClose":true});
+    });
+
+    $('#printResumenNodo').click(function(){
+        $imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson">'+
+                '<div class="panel-body"></div></div></div>');
+        $imprimible.find('.panel-body').append( '<div class="text-center">'+$('#titulo_puesto').html()+'</div>');
+        $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone() );
+        $imprimible.find('.panel-body').append( $('#indicadoresPuesto').clone() );
+        $imprimible.find('.panel-body').append( $('#seccion_coordinados').clone().show() );
+        $imprimible.find('.panel-body').append( $('#seccion_resumenNodo').clone().show() );
+        $imprimible.find('.panel-body').append( $('#fechaResumenNodo').clone() );
+        $imprimible.find('.panel-body').append( '<style type="text/css"> .btn.btn-app {border-radius: 0px; border: solid 1px grey; } </style>' );
+        $imprimible.find(' .btn.btn-app').blur();
+        $imprimible.find('#verMasResumenNodo').remove();
+
         $($imprimible).printArea({"mode":"popup","popClose":true});
     });
 
