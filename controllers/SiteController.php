@@ -56,7 +56,16 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        $municipios = ArrayHelper::map(
+            CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio')
+                ->all(), 'IdMunicipio', 'DescMunicipio'
+        );
+
+        return $this->render('index', [
+            'municipios' => $municipios
+        ]);
     }
 
     public function actionLogin()

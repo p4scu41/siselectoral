@@ -462,7 +462,8 @@ $(document).ready(function(){
         $imprimible.find('.panel-body').append( $('#seccion_coordinados').clone().show() );
         $imprimible.find('.panel-body').append( $('#seccion_resumenNodo').clone().show() );
         $imprimible.find('.panel-body').append( $('#fechaResumenNodo').clone() );
-        $imprimible.find('.panel-body').append( '<style type="text/css"> .btn.btn-app {border-radius: 0px; border: solid 1px grey; } </style>' );
+        $imprimible.find('.panel-body').append( '<style type="text/css"> .btn.btn-app {border-radius: 0px; border: solid 1px grey; } '+
+                '#list_coordinados { max-height: initial; }</style>' );
         $imprimible.find(' .btn.btn-app').blur();
         $imprimible.find('#verMasResumenNodo').remove();
 
