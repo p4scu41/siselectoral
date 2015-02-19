@@ -8,9 +8,7 @@ use app\models\PadronGlobalSearch;
 use app\models\DetalleEstructuraMovilizacion;
 use app\models\Puestos;
 use app\models\CMunicipio;
-use app\models\Escolaridad;
-use app\models\EstadoCivil;
-use app\models\Ocupacion;
+use app\models\ElementoCatalogo;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -52,7 +50,7 @@ class PadronController extends Controller
                 $persona = $objPersona->attributes;
                 $persona['foto'] = $objPersona->getFoto();
             }
-            
+
             return json_encode($persona);
         } catch (Exception $e) {
             return null;
@@ -164,22 +162,22 @@ class PadronController extends Controller
                 ->all(), 'IdMunicipio', 'DescMunicipio'
         );
         $escolaridad = ArrayHelper::map(
-                Escolaridad::find()
-                ->select(['Id', 'Descripcion'])
+                ElementoCatalogo::find()->where(['IdTipoCatalogo'=>1])
+                ->select(['IdElementoCatalogo', 'Descripcion'])
                 ->orderBy('Descripcion')
-                ->all(), 'Id', 'Descripcion'
+                ->all(), 'IdElementoCatalogo', 'Descripcion'
         );
         $ocupacion = ArrayHelper::map(
-                Ocupacion::find()
-                ->select(['Id', 'Descripcion'])
+                ElementoCatalogo::find()->where(['IdTipoCatalogo'=>2])
+                ->select(['IdElementoCatalogo', 'Descripcion'])
                 ->orderBy('Descripcion')
-                ->all(), 'Id', 'Descripcion'
+                ->all(), 'IdElementoCatalogo', 'Descripcion'
         );
         $estado_civil = ArrayHelper::map(
-                EstadoCivil::find()
-                ->select(['Id', 'Descripcion'])
+                ElementoCatalogo::find()->where(['IdTipoCatalogo'=>3])
+                ->select(['IdElementoCatalogo', 'Descripcion'])
                 ->orderBy('Descripcion')
-                ->all(), 'Id', 'Descripcion'
+                ->all(), 'IdElementoCatalogo', 'Descripcion'
         );
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

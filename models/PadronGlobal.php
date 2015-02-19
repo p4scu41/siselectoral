@@ -136,7 +136,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
      */
     public function getEstado_civil()
     {
-        return $this->hasOne(EstadoCivil::className(), ['Id' => 'ESTADO_CIVIL']);
+        return $this->hasOne(ElementoCatalogo::className(), ['IdElementoCatalogo' => 'ESTADO_CIVIL']);
     }
 
     /**
@@ -144,7 +144,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
      */
     public function getOcupacion()
     {
-        return $this->hasOne(OCUPACION::className(), ['Id' => 'OCUPACION']);
+        return $this->hasOne(ElementoCatalogo::className(), ['IdElementoCatalogo' => 'OCUPACION']);
     }
 
     /**
@@ -152,7 +152,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
      */
     public function getEscolaridad()
     {
-        return $this->hasOne(ESCOLARIDAD::className(), ['Id' => 'ESCOLARIDAD']);
+        return $this->hasOne(ElementoCatalogo::className(), ['IdElementoCatalogo' => 'ESCOLARIDAD']);
     }
 
     /**
