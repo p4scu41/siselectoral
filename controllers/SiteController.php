@@ -137,11 +137,26 @@ class SiteController extends Controller
         $estructura = new DetalleEstructuraMovilizacion();
 
         unset($post['_csrf']);
+        $alterna = false;
 
-        $tree = $estructura->getTree($post);
+        if (isset($post['alterna'])) {
+            $alterna = true;
+            unset($post['alterna']);
+        }
+
+        $tree = $estructura->getTree($post, $alterna);
 
         return $tree;
     }
+
+    public function actionGettreealtern($idNodo)
+    {
+        $estructura = new DetalleEstructuraMovilizacion();
+        $tree = $estructura->buildTree($idNodo);
+
+        return $tree;
+    }
+
 
     public function actionGetbranch($idNodo)
     {
@@ -191,5 +206,25 @@ class SiteController extends Controller
         }
 
         return json_encode($result);
+    }
+
+    public function actionSetpuestopersona($claveunica, $nodo)
+    {
+        $error = false;
+
+        try {
+            $nodoEstructura = DetalleEstructuraMovilizacion::findOne($nodo);
+
+            if ($nodoEstructura) {
+                $nodoEstructura->IdPersonaPuesto = $claveunica;
+                $nodoEstructura->save();
+            } else {
+                $error = true;
+            }
+        } catch (Exception $e) {
+            $error = true;
+        }
+
+        return json_encode(['error'=>$error]);
     }
 }

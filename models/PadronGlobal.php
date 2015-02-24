@@ -40,7 +40,6 @@ use yii\web\UploadedFile;
  * @property string $TELMOVIL
  * @property string $TELCASA
  * @property string $CASILLA
- * @property integer $IDPADRON
  * @property string $DOMICILIO
  * @property string $DES_LOC
  * @property string $NOM_LOC
@@ -69,7 +68,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
         return [
             [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'string'],
             [['CONS_ALF_POR_SECCION', 'LUGAR_NACIMIENTO', 'DIGITO_VERIFICADOR', 'CLAVE_HOMONIMIA', 'CODIGO_POSTAL', 'FOLIO_NACIONAL', 'EN_LISTA_NOMINAL', 'ENTIDAD', 'DISTRITO', 'MUNICIPIO', 'SECCION', 'LOCALIDAD', 'MANZANA', 'NUM_EMISION_CREDENCIAL'], 'number'],
-            [['DISTRITOLOCAL', 'IDPADRON', 'FECHA_NACI_CLAVE_ELECTORAL', 'ESTADO_CIVIL', 'OCUPACION', 'ESCOLARIDAD'], 'integer'],
+            [['DISTRITOLOCAL', 'FECHA_NACI_CLAVE_ELECTORAL', 'ESTADO_CIVIL', 'OCUPACION', 'ESCOLARIDAD'], 'integer'],
             [['FECHANACIMIENTO'], 'date', 'format' => 'yyyy-MM-dd'],
             [['foto'], 'file', 'extensions' => 'jpg, png, gif', 'mimeTypes' => 'image/jpeg, image/png, image/gif']
         ];
@@ -112,7 +111,6 @@ class PadronGlobal extends \yii\db\ActiveRecord
             'TELMOVIL' => 'Tel. Móvil',
             'TELCASA' => 'Tel. Casa',
             'CASILLA' => 'Casilla',
-            'IDPADRON' => 'Idpadron',
             'DOMICILIO' => 'Domicilio',
             'DES_LOC' => 'Des Loc',
             'NOM_LOC' => 'Nom Loc',

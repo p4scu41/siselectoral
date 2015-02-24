@@ -1050,7 +1050,7 @@ window.onbeforeunload = showLoading;
 
 function doId(param){
     if (typeof param != "undefined") {
-        return param.toLowerCase().replace(/\s+/g, '-');
+        return param.replace(/\./g, '').toLowerCase().replace(/\s+/g, '-');
     } else {
         return '';
     }

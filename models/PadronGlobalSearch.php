@@ -20,7 +20,7 @@ class PadronGlobalSearch extends PadronGlobal
         return [
             [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'safe'],
             [['CONS_ALF_POR_SECCION', 'FECHA_NACI_CLAVE_ELECTORAL', 'LUGAR_NACIMIENTO', 'DIGITO_VERIFICADOR', 'CLAVE_HOMONIMIA', 'CODIGO_POSTAL', 'FOLIO_NACIONAL', 'EN_LISTA_NOMINAL', 'ENTIDAD', 'DISTRITO', 'MUNICIPIO', 'SECCION', 'LOCALIDAD', 'MANZANA', 'NUM_EMISION_CREDENCIAL'], 'number'],
-            [['DISTRITOLOCAL', 'IDPADRON'], 'integer'],
+            [['DISTRITOLOCAL'], 'integer'],
         ];
     }
 
@@ -72,7 +72,6 @@ class PadronGlobalSearch extends PadronGlobal
             'MANZANA' => $this->MANZANA,
             'NUM_EMISION_CREDENCIAL' => $this->NUM_EMISION_CREDENCIAL,
             'DISTRITOLOCAL' => $this->DISTRITOLOCAL,
-            'IDPADRON' => $this->IDPADRON,
         ]);
 
         $query->andFilterWhere(['like', 'CLAVEUNICA', $this->CLAVEUNICA])

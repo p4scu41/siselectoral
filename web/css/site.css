@@ -502,3 +502,6 @@ body > .header .logo span {
     padding-left: inherit;
     margin-left: auto;
 }
+#resultBuscarPersona {
+    max-height: 200px;
+}

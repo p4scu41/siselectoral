@@ -9,6 +9,7 @@ $this->title = 'Estrategia Municipal';
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlTreeAltern="'.Url::toRoute('site/gettreealtern', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlBranch="'.Url::toRoute('site/getbranch', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlPerson="'.Url::toRoute('padron/get', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlResumen="'.Url::toRoute('site/getresumen', true).'";', \yii\web\View::POS_HEAD);
@@ -16,6 +17,8 @@ $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";
 $this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlResumenNodo="'.Url::toRoute('site/getresumennodo', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('imgNoPerson="'.Url::to('@web/img/avatar/U.jpg', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlBuscarPersona="'.Url::toRoute('padron/buscarajax', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlAsignarPersona="'.Url::toRoute('site/setpuestopersona', true).'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {
@@ -168,6 +171,11 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                             <br>
                                                             <span class=""> Organización </span>
                                                         </span>
+                                                        <span class="btn btn-app btn-sm btn-purple" id="infoEstrucAlterna" style="display: none;">
+                                                            <span class="line-height-1 bigger-170"> 1 </span>
+                                                            <br>
+                                                            <span> Estruc. Alter. </span>
+                                                        </span>
                                                     </div><br>
 
                                                     <div id="seccion_coordinados" style="display: none;">
@@ -191,6 +199,24 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                             <i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>
                                                         </div>
                                                     </div>
+
+                                                    <div class="table-responsive">
+                                                        <table id="treeEstrucAlterna" class="table table-condensed table-striped table-bordered table-hover" style="display: none">
+                                                            <colgroup>
+                                                                <col width="*"></col>
+                                                                <col width="80px"></col>
+                                                            </colgroup>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-center">Puesto</th>
+                                                                    <th class="text-center">Asignaci&oacute;n</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -236,6 +262,47 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" id="printResumen"><i class="fa fa-print"></i> Imprimir</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="modalAsignaPersona" tabindex='-1'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Asignar persona al puesto</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline" method="POST" id="frmBuscarPersona">
+                    <div class="form-group">
+                        <label for="MUNICIPIO">Municipio</label>
+                        <?= Html::dropDownList('MUNICIPIO', NULL, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'MUNICIPIO_persona']); ?>
+                    </div>
+                    <div class="form-group">
+                        <label for="APELLIDO_PATERNO">Apellido Paterno</label>
+                        <?= Html::textInput('APELLIDO_PATERNO', NULL, ['class' => 'form-control', 'id' => 'APELLIDO_PATERNO']); ?>
+                    </div>
+                    <div class="form-group">
+                        <label for="APELLIDO_MATERNO">Apellido Materno</label>
+                        <?= Html::textInput('APELLIDO_MATERNO', NULL, ['class' => 'form-control', 'id' => 'APELLIDO_MATERNO']); ?>
+                    </div>
+                    <div class="form-group">
+                        <label for="NOMBRE">Nombre(s)</label>
+                        <?= Html::textInput('NOMBRE', NULL, ['class' => 'form-control', 'id' => 'NOMBRE']); ?>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" id="btnBuscarPersona"><i class="fa fa-search"></i> Buscar</button>
+                    </div>
+                </form>
+                <div id="resultBuscarPersona" class="table-responsive">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="btnSaveAsignaPersona"><i class="fa fa-save"></i> Asignar</button>
                 <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
             </div>
         </div><!-- /.modal-content -->

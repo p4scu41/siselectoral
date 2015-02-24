@@ -30,7 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div id="container_wrapper">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
+        //'layout' => "{summary}\n{items}\n{pager}",
+        //'showHeader' => false,
         'options' => [
             'class' => 'grid-view responsive_table'
         ],
@@ -44,14 +46,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model, $key, $index, $column){
                     return $model->municipio->DescMunicipio;
                 },
-                'filter' => $municipios,
+                //'filter' => $municipios,
             ],
             [
                 'attribute' => 'SEXO',
                 'value' => function ($model, $key, $index, $column){
                     return $model->genero;
                 },
-                'filter' => ['M'=>'Mujer', 'H'=>'Hombre'],
+                //'filter' => ['M'=>'Mujer', 'H'=>'Hombre'],
+            ],
+            [
+                'attribute' => 'FECHANACIMIENTO',
+                'value' => function ($model, $key, $index, $column){
+                    if ($model->FECHANACIMIENTO) {
+                        $fecha = new DateTime($model->FECHANACIMIENTO);
+                        return $fecha->format('d-m-Y');
+                    }
+                    return '';
+                },
+                //'filter' => ['M'=>'Mujer', 'H'=>'Hombre'],
             ],
             ['class' => 'yii\grid\ActionColumn',
               'template'=>'{ver}',

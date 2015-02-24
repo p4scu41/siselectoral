@@ -117,6 +117,26 @@ class PadronController extends Controller
     }
 
     /**
+     * Lists all PadronGlobal models.
+     * @return mixed
+     */
+    public function actionBuscarajax()
+    {
+        $searchModel = new PadronGlobalSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $models = $dataProvider->getModels();
+        $datos = [];
+
+        foreach ($models as $model) {
+            array_push($datos, $model->attributes);
+        }
+
+        print_r(json_encode($datos));
+
+        //return ;
+    }
+
+    /**
      * Displays a single PadronGlobal model.
      * @param string $id
      * @return mixed

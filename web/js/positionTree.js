@@ -1,5 +1,75 @@
 $(document).ready(function(){
     var CookieParams = null;
+    var btnAsignarPersona = $('<div class="text-center"><button type="button" class="btn btn-success" id="btnAsignarPersona"><i class="fa fa-user-plus"></i> Asignar persona</button></div>')
+
+    $('#btnSaveAsignaPersona').click(function(event){
+        console.log($('[name=personaSeleccionada]:checked').val());
+        console.log(btnAsignarPersona.find('button').data('idNodo'));
+        //Asignar persona al puesto
+        $.ajax({
+            url: urlAsignarPersona,
+            dataType: "json",
+            data: {claveunica: $('[name=personaSeleccionada]:checked').val(), nodo: btnAsignarPersona.find('button').data('idNodo')},
+            type: "GET",
+        }).done(function(response){
+            if (response.error) {
+                alert('Ocurrió un error al realizar la asignación del puesto.');
+            } else {
+                alert('Persona asignada al puesto exitosamente.');
+                tree.reload();
+            }
+        });
+
+        $('#modalAsignaPersona').modal('hide');
+    });
+
+    $('#btnBuscarPersona').click(function(event){
+        $filtrosBuscar = {
+            "PadronGlobalSearch":{
+                "MUNICIPIO": $('#MUNICIPIO_persona').val(),
+                "APELLIDO_PATERNO": $('#APELLIDO_PATERNO').val(),
+                "APELLIDO_MATERNO": $('#APELLIDO_MATERNO').val(),
+                "NOMBRE": $('#NOMBRE').val()
+            }
+        };
+
+        $('#resultBuscarPersona').html('<div class="text-center"><i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i></div>');
+
+        $.ajax({
+            url: urlBuscarPersona,
+            dataType: "json",
+            data: $filtrosBuscar,
+            type: "GET",
+        }).done(function(response){
+            $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
+            '<thead>'+
+                '<tr>'+
+                    '<th></th>'+
+                    '<th>Apellido Paterno</th>'+
+                    '<th>Apellido Materno</th>'+
+                    '<th>Nombre(s)</th>'+
+                    '<th>Fecha Nacimiento</th>'+
+                    '<th>Sección</th>'+
+                '</tr>'+
+            '</thead>'+
+            '<tbody>';
+
+            for(persona in response) {
+                $tabla += '<tr>'+
+                    '<td class="text-center"><input type="radio" name="personaSeleccionada" value="'+response[persona].CLAVEUNICA+'"></td>'+
+                    '<td>'+response[persona].APELLIDO_PATERNO+'</td>'+
+                    '<td>'+response[persona].APELLIDO_MATERNO+'</td>'+
+                    '<td>'+response[persona].NOMBRE+'</td>'+
+                    '<td>'+response[persona].FECHANACIMIENTO+'</td>'+
+                    '<td>'+response[persona].SECCION+'</td>'+
+                '</tr>';
+            }
+
+            $tabla += '</tbody></table>';
+
+            $('#resultBuscarPersona').html($tabla);
+        });
+    });
 
     if ($.cookie('parametros')) {
         CookieParams = $.deparam($.cookie('parametros'));
@@ -30,6 +100,19 @@ $(document).ready(function(){
             $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
             $('#imgPerson').attr('src', imgNoPerson);
             $('#frmPersonDetails').html('<div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>');
+
+            if( $('#frmPersonDetails #btnAsignarPersona').length == 0) {
+                $('#frmPersonDetails').append(btnAsignarPersona);
+            }
+
+            btnAsignarPersona.find('button').data('idNodo', node.key);
+
+            btnAsignarPersona.delegate('button','click', function(event){
+                $('#modalPerson').modal('hide');
+                $('#resultBuscarPersona').html('');
+                $('#modalAsignaPersona').modal('show');
+            });
+
             $('#modalPerson').modal('show');
             $('#btnViewPerson').data('id', '#');
         } else {
@@ -52,12 +135,12 @@ $(document).ready(function(){
                     {'colum': 'CORREOELECTRONICO', 'label': 'E-mail'},
                     {'colum': 'TELMOVIL', 'label': 'Tel. Móvil'},
                     {'colum': 'SECCION', 'label': 'Sección'},
-                    {'colum': 'DISTRITO', 'label': 'Distrito'},
+                    //{'colum': 'DISTRITO', 'label': 'Distrito'},
                 ];
 
                 $tplFila = '<div class="form-group">'+
-                    '<label class="col-sm-3 control-label">Persona</label>'+
-                    '<div class="col-sm-9">'+
+                    '<label class="col-sm-3 col-xs-2 control-label">Nombre</label>'+
+                    '<div class="col-sm-9 col-xs-10">'+
                         '<div class="well well-sm">'+$nombreCompleto+'</div>'+
                     '</div>'+
                 '</div>';
@@ -76,8 +159,8 @@ $(document).ready(function(){
                     }
 
                     $tplFila = '<div class="form-group">'+
-                        '<label class="col-sm-3 control-label">'+$datos[$fila].label+'</label>'+
-                        '<div class="col-sm-9">'+
+                        '<label class="col-sm-3 col-xs-2 control-label">'+$datos[$fila].label+'</label>'+
+                        '<div class="col-sm-9 col-xs-10">'+
                             '<div class="well well-sm">'+valor+'</div>'+
                         '</div>'+
                     '</div>';
@@ -118,6 +201,8 @@ $(document).ready(function(){
                 $('#list_coordinados').html('');
                 $('#list_vacantes').html('');
 
+                console.log(result);
+
                 if (result.length>0) {
                     no_vacantes = 0;
                     no_coordinados = 0;
@@ -125,7 +210,7 @@ $(document).ready(function(){
                         no_coordinados++;
                         nombre_coordinados = result[nodo].DescripcionPuesto;
                         $li = $('<li data-id="'+result[nodo].IdNodoEstructuraMov+'" data-persona="'+result[nodo].IdPersonaPuesto+'"><a href="#">'+result[nodo].DescripcionPuesto+
-                                ' - '+result[nodo].DescripcionEstructura+'</a></li>');
+                                ' - '+result[nodo].DescripcionEstructura+' ('+result[nodo].NOMBRECOMPLETO+')</a></li>');
                         $li.click(muestraDependiente);
 
                         $('#list_coordinados').append($li);
@@ -151,6 +236,26 @@ $(document).ready(function(){
                 }
             },
         "json");
+
+        // Obtiene la estructura alterna
+        $.ajax({
+            url: urlTree,//urlTreeAltern
+            dataType: "json",
+            data: '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
+                    '&IdPuestoDepende='+node.key+'&alterna=true',
+            type: "POST",
+            /*data: '_csrf='+$('[name=_csrf]').val()+'&idNodo='+node.key,
+            type: "GET",*/
+        }).done(function(response){
+            if (response.length>0) {
+                $('#infoEstrucAlterna').show();
+                treeEstrucAlterna.reload(response);
+            } else {
+                $('#infoEstrucAlterna').hide();
+                $('#treeEstrucAlterna').hide();
+            }
+        });
+
     };
 
     function muestraDependiente(event) {
@@ -177,7 +282,6 @@ $(document).ready(function(){
                 data: {id: $(this).data('persona')},
                 type: "GET",
             }).done(function(response) {
-                console.log(response.TELMOVIL);
                 $descPersona = '<img src="'+response['foto']+'" class="img-rounded imgPerson"><br>'+
                     response.APELLIDO_PATERNO+' '+
                     response.APELLIDO_MATERNO+' '+
@@ -194,6 +298,7 @@ $(document).ready(function(){
     $('#dependencias').click(function(){
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
+        $('#treeEstrucAlterna').hide();
         $('#seccion_coordinados').toggle('slow', function() {
             if ($('#seccion_coordinados').is(':hidden')) {
                 if ( $('#alertDescDependiente').length > 0 ) {
@@ -208,6 +313,7 @@ $(document).ready(function(){
     $('#meta').click(function(){
         $('#seccion_coordinados').hide();
         $('#seccion_vacantes').hide();
+        $('#treeEstrucAlterna').hide();
         $('#seccion_resumenNodo').toggle('slow', function() {
             if (!$('#seccion_resumenNodo').is(':hidden')) {
                 $('#seccion_resumenNodo').ScrollTo();
@@ -222,6 +328,7 @@ $(document).ready(function(){
     $('#vacantes').click(function(){
         $('#seccion_coordinados').hide();
         $('#seccion_resumenNodo').hide();
+        $('#treeEstrucAlterna').hide();
         $('#seccion_vacantes').toggle('slow', function() {
             if (!$('#seccion_vacantes').is(':hidden')) {
                 $('#seccion_vacantes').ScrollTo();
@@ -231,6 +338,13 @@ $(document).ready(function(){
         if ( $('#alertDescDependiente').length > 0 ) {
             $('#alertDescDependiente').alert('close');
         }
+    });
+
+    $('#infoEstrucAlterna').click(function(){
+        $('#seccion_coordinados').hide();
+        $('#seccion_resumenNodo').hide();
+        $('#seccion_vacantes').hide();
+        $('#treeEstrucAlterna').toggle('slow');
     });
 
     $("#treeContainer").fancytree({
@@ -281,7 +395,39 @@ $(document).ready(function(){
         }
     });
 
+    $("#treeEstrucAlterna").fancytree({
+        extensions: ["table"],
+        table: {
+            indentation: 50
+        },
+        source: [],
+        checkbox: false,
+        clickFolderMode: 3,
+        lazyLoad: function(event, data) {
+            var node = data.node;
+            // Issue an ajax request to load child nodes
+            data.result = {
+                url: urlBranch,
+                data: {idNodo: node.key}
+            };
+        },
+        renderColumns: function(event, data) {
+            var node = data.node,
+            $tdList = $(node.tr).find(">td");
+            $tdList.eq(1).addClass('text-center');
+            if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
+                $tdList.eq(1).html('<a href="#" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-user"></span></a>');
+            } else {
+                $tdList.eq(1).html('<a href="#" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-user"></span></a>');
+            }
+            $tdList.eq(1).delegate("a", "click", function(e){
+                e.stopPropagation();  // prevent fancytree activate for this row
+            });
+        }
+    });
+
     var tree = $("#treeContainer").fancytree("getTree");
+    var treeEstrucAlterna = $("#treeEstrucAlterna").fancytree("getTree");
 
     $('#btnBuscar').click(function(){
         $parametros = '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
@@ -456,7 +602,7 @@ $(document).ready(function(){
     $('#printResumenNodo').click(function(){
         $imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson">'+
                 '<div class="panel-body"></div></div></div>');
-        $imprimible.find('.panel-body').append( '<div class="text-center">'+$('#titulo_puesto').html()+'</div>');
+        $imprimible.find('.panel-body').append( '<div class="text-center">'+$('#imgPerson').parent().html()+'</div>');
         $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone() );
         $imprimible.find('.panel-body').append( $('#indicadoresPuesto').clone() );
         $imprimible.find('.panel-body').append( $('#seccion_coordinados').clone().show() );
@@ -466,6 +612,7 @@ $(document).ready(function(){
                 '#list_coordinados { max-height: initial; }</style>' );
         $imprimible.find(' .btn.btn-app').blur();
         $imprimible.find('#verMasResumenNodo').remove();
+        $imprimible.find('#btnAsignarPersona').remove();
 
         $($imprimible).printArea({"mode":"popup","popClose":true});
     });

@@ -47,6 +47,15 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     }
 
     /**
+     *
+     * @inheritdoc
+     */
+    public static function primaryKey()
+    {
+        return ['IdNodoEstructuraMov'];
+    }
+
+    /**
      * @inheritdoc
      */
     public function attributeLabels()
@@ -74,7 +83,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param Array $filtros
      * @return JSON Personalizado para fancytree
      */
-    public function getTree($filtros) {
+    public function getTree($filtros, $alterna=false) {
+        //echo var_dump($alterna);
         $filtros = array_filter($filtros);
 
         if(empty($filtros)) {
@@ -87,15 +97,24 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $filtros['IdPuesto'] = $this->getMaxPuestoOnMuni($filtros['Municipio']);
         }
 
-        $child = $this->find()->where($filtros)->all();
-        //print_r($filtros);
+        if ($alterna == false) {
+            $child = $this->find()->where($filtros)->andWhere('IdOrganizacion = -1')->all();
+        } else {
+            $child = $this->find()->where($filtros)->andWhere('IdOrganizacion != -1')->all();
+        }
 
         foreach ($child as $row) {
             $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
 
-            $count = $this->find()
-                ->where(['IdPuestoDepende' => $row->IdNodoEstructuraMov])
-                ->count();
+            $where = 'IdPuestoDepende = '.$row->IdNodoEstructuraMov;
+
+            if ($alterna == false) {
+                $where .= ' AND IdOrganizacion = -1';
+            } else {
+                $where .= ' AND IdOrganizacion != -1';
+            }
+
+            $count = $this->find()->where($where)->count();
 
             $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.
                         ($count > 0 ? '['.$count.']' : '').'", '.
@@ -121,22 +140,28 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param Int $idNodo
      * @return JSON Personalizado para fancytree
      */
-    public function getBranch($idNodo) {
+    public function getBranch($idNodo, $alterna=false) {
         $tree = '[';
+        $where = 'IdPuestoDepende = '.$idNodo;
 
-        $count = $this->find()
-                ->where(['IdPuestoDepende' => $idNodo])
-                ->count();
+        if ($alterna == false) {
+            $where .= ' AND IdOrganizacion = -1';
+        }
+
+        $count = $this->find()->where($where)->count();
 
         if ($count > 0) {
-            $child = $this->find()->where(['IdPuestoDepende' => $idNodo])->all();;
+            $child = $this->find()->where($where)->all();
 
             foreach ($child as $row) {
                 $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
+                $where = 'IdPuestoDepende = '.$row->IdNodoEstructuraMov;
 
-                $count = $this->find()
-                    ->where(['IdPuestoDepende' => $row->IdNodoEstructuraMov])
-                    ->count();
+                if ($alterna == false) {
+                    $where .= ' AND IdOrganizacion = -1';
+                }
+
+                $count = $this->find()->where($where)->count();
 
                 $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.
                             ($count > 0 ? '['.$count.']' : '').'", '.
@@ -158,7 +183,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     }
 
     /**
-     * Construye todo el arbol a partir de un nodo raíz
+     * Construye todo el árbol a partir de un nodo raíz
      *
      * @param Int $idNodo
      * @return JSON personalizado para fancytree
@@ -409,6 +434,10 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $sumOcupados = 0;
         $sumVacantes = 0;
 
+        if(count($totales) == 0) {
+            return [];
+        }
+
         for($i=0; $i<count($totales); $i++) {
             $totales[$i]['Ocupados'] = (int) $ocupados[$totales[$i]['IdPuesto']];
             $totales[$i]['Vacantes'] = (int) $vacantes[$totales[$i]['IdPuesto']];
@@ -435,6 +464,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      *
      * @param type $idMuni
      * @return Array Lista de puestos disponibles en el municipio
+     * @deprecated since version 1
      */
     public static function getPuestosOnMuni($idMuni) {
         $sqlPuestos = 'SELECT
@@ -488,7 +518,21 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             WHERE '.$filtros.'
             ORDER BY [Puestos].[Nivel]';
 
-        $result = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
+        $resultPuestos = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
+
+        $result = null;
+
+        if ($resultPuestos) {
+            foreach ($resultPuestos as $nodo) {
+                if($nodo['IdPersonaPuesto'] != '00000000-0000-0000-0000-000000000000') {
+                    $persona = Yii::$app->db->createCommand("SELECT ([APELLIDO_PATERNO]+ ' ' +[APELLIDO_MATERNO]+ ' ' +[NOMBRE]) AS NOMBRECOMPLETO "
+                                                ."FROM [PadronGlobal] WHERE [CLAVEUNICA] = '".$nodo['IdPersonaPuesto']."'")->queryOne();
+                    $result[] = array_merge($nodo, $persona);
+                } else {
+                    $result[] = array_merge($nodo, ['NOMBRECOMPLETO' => 'No asignado']);
+                }
+            }
+        }
 
         return $result;
     }

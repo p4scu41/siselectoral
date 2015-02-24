@@ -129,8 +129,8 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
 
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <a href="<?= Url::toRoute(['padron/update', 'id'=>$model->CLAVEUNICA], true); ?>" class="btn btn-app btn-success btn-sm">
-                                <span class="fa fa-pencil-square-o"></span> Editar
+                            <a href="<?= Url::toRoute(['padron/update', 'id'=>$model->CLAVEUNICA], true); ?>" class="btn btn-info">
+                                <span class="fa fa-pencil-square-o"></span> Completar Datos
                             </a>
                         </div>
                     </div>
