@@ -436,13 +436,24 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             ORDER BY
                 [Puestos].[Nivel]';
 
+        $sqlCountPromovidos = 'SELECT COUNT([IdpersonaPromovida]) AS promovidos FROM [Promocion] WHERE [IdPuesto] IN (
+            SELECT [IdNodoEstructuraMov] FROM [DetalleEstructuraMovilizacion]
+            WHERE [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.')';
+
+        $sqlMetaPromovidos = 'SELECT SUM([Meta]) AS MetaByPromotor
+            FROM [DetalleEstructuraMovilizacion]
+            WHERE [IdPuesto] = 7 AND [Municipio] = '.$idMuni;
+
         $totales = Yii::$app->db->createCommand($sqlTotales)->queryAll();
         $ocupados = ArrayHelper::map(Yii::$app->db->createCommand($sqlOcupados)->queryAll(), 'IdPuesto', 'ocupado');
         $vacantes = ArrayHelper::map(Yii::$app->db->createCommand($sqlVacantes)->queryAll(), 'IdPuesto', 'vacante');
+        $cantidadPromovidosPromotor = Yii::$app->db->createCommand($sqlCountPromovidos)->queryOne();
+        $metaPromovidosPromotor = Yii::$app->db->createCommand($sqlMetaPromovidos)->queryOne();
 
         $sumTotales = 0;
         $sumOcupados = 0;
         $sumVacantes = 0;
+        $avancePromovidos = 0;
 
         if(count($totales) == 0) {
             return [];
@@ -459,6 +470,20 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $sumOcupados += $totales[$i]['Ocupados'];
             $sumVacantes += $totales[$i]['Vacantes'];
         }
+
+        if ($metaPromovidosPromotor['MetaByPromotor'] != 0) {
+            $avancePromovidos = round($cantidadPromovidosPromotor['promovidos']/$metaPromovidosPromotor['MetaByPromotor']*100);
+        }
+
+        $promovidos = [
+            'Puesto' => 'PROMOVIDOS',
+            'Total' => $metaPromovidosPromotor['MetaByPromotor'],
+            'Ocupados' => $cantidadPromovidosPromotor['promovidos'],
+            'Vacantes' => $metaPromovidosPromotor['MetaByPromotor']-$cantidadPromovidosPromotor['promovidos'],
+            'Avances %' => $avancePromovidos,
+        ];
+
+        array_push($totales, $promovidos);
 
         array_push($totales, array('Puesto'=>'Total',
                                    'Total'=>$sumTotales,
@@ -582,6 +607,23 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $tablaResumen = Yii::$app->db->createCommand($sqlResumenNodo)->queryAll();
 
         if (count($tablaResumen) > 0) {
+
+            $metaPromovidosPromotor = static::getMetaByPromotor($idNodo);
+            $cantidadPromovidosPromotor = static::getCountPromovidos($idNodo);
+            $avancePromovidos = 0;
+
+            if ($metaPromovidosPromotor != 0) {
+                $avancePromovidos = round($cantidadPromovidosPromotor/$metaPromovidosPromotor*100);
+            }
+
+            $promovidos = [
+                'Puesto' => 'PROMOVIDOS',
+                'Total' => $metaPromovidosPromotor,
+                'Ocupados' => $cantidadPromovidosPromotor,
+                'Vacantes' => $metaPromovidosPromotor-$cantidadPromovidosPromotor,
+                'Avances %' => $avancePromovidos,
+            ];
+
             $totales = [
                 'Puesto' => 'Total',
                 'Total' => 0,
@@ -599,6 +641,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
             $totales['Avances %'] = round($totales['Ocupados'] / $totales['Total'] * 100);
 
+            array_push($tablaResumen, $promovidos);
             array_push($tablaResumen, $totales);
         }
 
@@ -709,7 +752,24 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     public static function getAvanceMeta($idNodoPadre)
     {
         $metaPromotor = static::getMetaByPromotor($idNodoPadre);
+        $countPromocion = static::getCountPromovidos($idNodoPadre);
+        $metaAvance = 0;
 
+        if ($metaPromotor != 0) {
+            $metaAvance = round($countPromocion / $metaPromotor * 100);
+        }
+
+        return $metaAvance;
+    }
+
+    /**
+     * Obtiene el número de promovidos a un determinado nodo de la estructura
+     *
+     * @param INT $idNodoPadre
+     * @return INT Número de promovidos
+     */
+    public static function getCountPromovidos($idNodoPadre)
+    {
         $sql = "SELECT COUNT([IdpersonaPromovida]) AS promovidos FROM [Promocion] WHERE [IdPuesto] IN (
             SELECT [IdNodoEstructuraMov] FROM [DetalleEstructuraMovilizacion]
             WHERE [DetalleEstructuraMovilizacion].[Dependencias] LIKE '%|".$idNodoPadre."|%' OR
@@ -717,12 +777,10 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         $countPromocion = Yii::$app->db->createCommand($sql)->queryOne();
 
-        $metaAvance = 0;
-
-        if ($metaPromotor != 0) {
-            $metaAvance = round($countPromocion['promovidos'] / $metaPromotor * 100);
+        if (!$countPromocion) {
+            return 0;
+        } else {
+            return $countPromocion['promovidos'];
         }
-
-        return $metaAvance;
     }
 }
