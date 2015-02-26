@@ -19,6 +19,9 @@ $this->registerJs('urlResumenNodo="'.Url::toRoute('site/getresumennodo', true).'
 $this->registerJs('imgNoPerson="'.Url::to('@web/img/avatar/U.jpg', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlBuscarPersona="'.Url::toRoute('padron/buscarajax', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlAsignarPersona="'.Url::toRoute('site/setpuestopersona', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetMetaBySeccion="'.Url::toRoute('site/getmetabyseccion', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetMetaByPromotor="'.Url::toRoute('site/getmetabypromotor', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetAvanceMeta="'.Url::toRoute('site/getavancemeta', true).'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {
@@ -156,10 +159,15 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                             <br>
                                                             <span class=""> Vacantes </span>
                                                         </span>-->
-                                                        <span class="btn btn-app btn-sm btn-primary" id="promocion">
-                                                            <span class="line-height-1 bigger-170" id="no_promocion">0%</span>
+                                                        <span class="btn btn-app btn-sm btn-primary" id="meta_proyec">
+                                                            <span class="line-height-1 bigger-170" id="no_meta_proyec"> 0 </span>
                                                             <br>
-                                                            <span class="">Meta Promo.</span>
+                                                            <span class=""> Meta Proyec </span>
+                                                        </span>
+                                                        <span class="btn btn-app btn-sm btn-primary" id="meta_promocion">
+                                                            <span class="line-height-1 bigger-170" id="no_meta_promocion">0%</span>
+                                                            <br>
+                                                            <span class="">Promoción</span>
                                                         </span>
                                                         <span class="btn btn-app btn-sm btn-pink">
                                                             <span class="line-height-1 bigger-170"> 0 </span>
@@ -237,7 +245,14 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <a href="" data-url="<?= Url::toRoute('padron/persona', true); ?>" class="btn btn-success" id="btnViewPerson">Ver mas detalles</a>
+                <?php $form = ActiveForm::begin([
+                            'options' => ['class' => 'form-inline'],
+                            'method' => 'POST',
+                            'action' => Url::toRoute('padron/persona', true)
+                        ]); ?>
+                <input type="hidden" name="id" id="id" value="">
+                <button type="submit" href="" data-url="<?= Url::toRoute('padron/persona', true); ?>" class="btn btn-success" id="btnViewPerson">Ver mas detalles</button>
+                 <?php ActiveForm::end(); ?>
                 <button type="button" class="btn btn-primary" id="printResumenNodo"><i class="fa fa-print"></i> Imprimir</button>
             </div>
         </div><!-- /.modal-content -->

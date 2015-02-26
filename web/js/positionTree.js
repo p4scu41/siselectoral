@@ -3,8 +3,6 @@ $(document).ready(function(){
     var btnAsignarPersona = $('<div class="text-center"><button type="button" class="btn btn-success" id="btnAsignarPersona"><i class="fa fa-user-plus"></i> Asignar persona</button></div>')
 
     $('#btnSaveAsignaPersona').click(function(event){
-        console.log($('[name=personaSeleccionada]:checked').val());
-        console.log(btnAsignarPersona.find('button').data('idNodo'));
         //Asignar persona al puesto
         $.ajax({
             url: urlAsignarPersona,
@@ -192,6 +190,7 @@ $(document).ready(function(){
                 $('#no_meta').html(meta['Avances %']+'%');
                 $('#resumenNodo').html(tablaResumenNodo);
             } else {
+                $('#no_meta').html('0%');
                 $('#resumenNodo').html('');
             }
         });
@@ -201,7 +200,9 @@ $(document).ready(function(){
                 $('#list_coordinados').html('');
                 $('#list_vacantes').html('');
 
-                console.log(result);
+                if (result == null) {
+                    result = {};
+                }
 
                 if (result.length>0) {
                     no_vacantes = 0;
@@ -256,6 +257,26 @@ $(document).ready(function(){
             }
         });
 
+        // Obtiene la meta seccional
+        $.ajax({
+            url: urlGetMetaBySeccion,
+            dataType: "json",
+            data: '_csrf='+$('[name=_csrf]').val()+'&id='+node.key+'&puesto='+node.data.IdPuesto,
+            type: "GET",
+        }).done(function(response){
+            $('#no_meta_proyec').html(response);
+        });
+
+        // Obtiene la meta proyectada para los promotores
+        $.ajax({
+            url: urlGetAvanceMeta,
+            //url: urlGetMetaByPromotor,
+            dataType: "json",
+            data: '_csrf='+$('[name=_csrf]').val()+'&id='+node.key,
+            type: "GET",
+        }).done(function(response){
+            $('#no_meta_promocion').html(response+'%');
+        });
     };
 
     function muestraDependiente(event) {
@@ -484,11 +505,18 @@ $(document).ready(function(){
     });
 
     $('#btnViewPerson').click(function(e){
-        if ($(this).data('id') != '#') {
+        /*if ($(this).data('id') != '#') {
             $(this).attr('href', $(this).data('url')+'?id='+$(this).data('id'));
         } else {
             e.stopPropagation();
             e.preventDefault();
+        }*/
+        if ($(this).data('id') == '#') {
+            alert('El puesto no ha sido asignado a una persona');
+            e.stopPropagation();
+            e.preventDefault();
+        } else {
+            $('#id').val($(this).data('id'));
         }
     });
 

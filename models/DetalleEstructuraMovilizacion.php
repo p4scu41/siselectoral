@@ -83,7 +83,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param Array $filtros
      * @return JSON Personalizado para fancytree
      */
-    public function getTree($filtros, $alterna=false) {
+    public function getTree($filtros, $alterna=false)
+    {
         //echo var_dump($alterna);
         $filtros = array_filter($filtros);
 
@@ -118,7 +119,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
             $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.
                         ($count > 0 ? '['.$count.']' : '').'", '.
-                        '"data": { "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
+                        '"data": { "IdPuesto": "'.$puesto->IdPuesto.'", "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
 
             if ($count > 0) {
                 $tree .= '"glyphicon glyphicon-user"}, "folder": true, "lazy": true';
@@ -140,7 +141,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param Int $idNodo
      * @return JSON Personalizado para fancytree
      */
-    public function getBranch($idNodo, $alterna=false) {
+    public function getBranch($idNodo, $alterna=false)
+    {
         $tree = '[';
         $where = 'IdPuestoDepende = '.$idNodo;
 
@@ -165,7 +167,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
                 $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.
                             ($count > 0 ? '['.$count.']' : '').'", '.
-                            '"data": { "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
+                            '"data": { "IdPuesto": "'.$puesto->IdPuesto.'", "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
 
                 if ($count > 0) {
                    $tree .= '"glyphicon glyphicon-user"} , "folder": true, "lazy": true';
@@ -189,7 +191,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @return JSON personalizado para fancytree
      * @deprecated since version 1
      */
-    public function buildTree($idNodo) {
+    public function buildTree($idNodo)
+    {
         $nodo = $this->find()->where(['IdNodoEstructuraMov' => $idNodo])->one();
         $tree = '';
 
@@ -220,7 +223,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param INT $idMuni ID del Municipio
      * @return INT Id del puesto
      */
-    public function getMaxPuestoOnMuni($idMuni) {
+    public function getMaxPuestoOnMuni($idMuni)
+    {
         $sql = 'SELECT TOP (1)
                 [DetalleEstructuraMovilizacion].[IdPuesto]
             FROM
@@ -242,7 +246,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param INT $idMuni ID del Municipio
      * @return INT Nivel
      */
-    public static function getMaxNivelOnMuni($idMuni) {
+    public static function getMaxNivelOnMuni($idMuni)
+    {
         $sql = 'SELECT TOP (1) [Nivel]
             FROM
                 [DetalleEstructuraMovilizacion]
@@ -262,7 +267,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      *
      * @return Array Persona
      */
-    public function getDependientes() {
+    public function getDependientes()
+    {
         $nodosDependientes = $this->find()->where('IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\' AND '.
                 'IdPuestoDepende = '.$this->IdNodoEstructuraMov)->all();
         $personasDependientes = array();
@@ -291,7 +297,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      *
      * @return Array Persona
      */
-    public function getCountDepen() {
+    public function getCountDepen()
+    {
         $cantidad = null;
 
         $nodosDependientes = $this->find()->where('IdPuestoDepende = '.$this->IdNodoEstructuraMov)->all();
@@ -317,7 +324,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      *
      * @return Array Persona
      */
-    public function getJefe() {
+    public function getJefe()
+    {
         $jefe = null;
         $nodo = $this->find()->where('IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\' AND '.
                     'IdNodoEstructuraMov = '.$this->IdPuestoDepende)->one();
@@ -340,7 +348,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      *
      * @return String Secciones
      */
-    public function getSecciones() {
+    public function getSecciones()
+    {
         $nodosDependientes = Yii::$app->db->createCommand('SELECT SUBSTRING([Descripcion], 4, LEN([Descripcion])) AS seccion
             FROM [DetalleEstructuraMovilizacion]
             WHERE IdPuestoDepende = '.$this->IdNodoEstructuraMov.'
@@ -380,7 +389,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param Int $idMuni
      * @return Array Tabla de puestos con su respectivas cantidads
      */
-    public static function getResumen($idMuni) {
+    public static function getResumen($idMuni)
+    {
         $sqlTotales = 'SELECT
                 [DetalleEstructuraMovilizacion].[IdPuesto],
                 [Puestos].[Descripcion] as Puesto,
@@ -466,7 +476,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @return Array Lista de puestos disponibles en el municipio
      * @deprecated since version 1
      */
-    public static function getPuestosOnMuni($idMuni) {
+    public static function getPuestosOnMuni($idMuni)
+    {
         $sqlPuestos = 'SELECT
                 [DetalleEstructuraMovilizacion].[IdPuesto],
                 [Puestos].[Descripcion],
@@ -544,7 +555,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param type $idNodo
      * @return JSON Tabla con el resumen de los datos
      */
-    public static function getResumenNodo($idNodo) {
+    public static function getResumenNodo($idNodo)
+    {
         $sqlResumenNodo = 'SELECT [Puestos].[Nivel],
                 [Puestos].[Descripcion] AS Puesto
                 ,COUNT([DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]) AS Total
@@ -600,7 +612,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param Array $tablaResumen Parametro refenciado a la tabla que agrupa el resumen de las cantidades de todos los puestos
      * @deprecated since version 1
      */
-    public static function buildResumenNodo($idNodo, &$tablaResumen) {
+    public static function buildResumenNodo($idNodo, &$tablaResumen)
+    {
         $sqlNodosDependientes = 'SELECT [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
                 ,[DetalleEstructuraMovilizacion].[IdPuesto]
                 ,[DetalleEstructuraMovilizacion].[IdPuestoDepende]
@@ -646,5 +659,70 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 self::buildResumenNodo($nodo['IdNodoEstructuraMov'], $tablaResumen);
             }
         }
+    }
+
+    /**
+     * Obtiene la meta proyectada para cada promotor
+     *
+     * @param INT $idNodoPadre
+     * @return INT Meta para la estructura dependiente del nodoPadre
+     */
+    public static function getMetaByPromotor($idNodoPadre)
+    {
+        $sql = "SELECT SUM([Meta]) AS MetaByPromotor
+            FROM [DetalleEstructuraMovilizacion]
+            WHERE ([IdPuesto] = 7 AND [Dependencias] LIKE '%|".$idNodoPadre."|%') OR
+                [IdNodoEstructuraMov] = ".$idNodoPadre;
+
+        $meta = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return (int) $meta['MetaByPromotor'];
+    }
+
+    /**
+     * Obtiene la meta proyectada para cada jefe de seccion
+     *
+     * @param INT $idNodoPadre
+     * @return INT Meta para la estructura dependiente del nodoPadre
+     */
+    public static function getMetaBySeccion($idNodoPadre)
+    {
+        $sql = "SELECT SUM([MetaAlcanzar]) AS MetaPorSeccion
+            FROM [DetalleEstructuraMovilizacion]
+            INNER JOIN [CSeccion]
+            ON [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
+            WHERE ([DetalleEstructuraMovilizacion].[IdPuesto] = 5 AND
+            [DetalleEstructuraMovilizacion].[Dependencias] LIKE '%|".$idNodoPadre."|%') OR
+            [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = ".$idNodoPadre;
+
+        $meta = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return (int) $meta['MetaPorSeccion'];
+    }
+
+     /**
+     * Obtiene la meta proyectada para cada jefe de seccion
+     *
+     * @param INT $idNodoPadre
+     * @return INT Meta para la estructura dependiente del nodoPadre
+     */
+    public static function getAvanceMeta($idNodoPadre)
+    {
+        $metaPromotor = static::getMetaByPromotor($idNodoPadre);
+
+        $sql = "SELECT COUNT([IdpersonaPromovida]) AS promovidos FROM [Promocion] WHERE [IdPuesto] IN (
+            SELECT [IdNodoEstructuraMov] FROM [DetalleEstructuraMovilizacion]
+            WHERE [DetalleEstructuraMovilizacion].[Dependencias] LIKE '%|".$idNodoPadre."|%' OR
+            [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = ".$idNodoPadre.")";
+
+        $countPromocion = Yii::$app->db->createCommand($sql)->queryOne();
+
+        $metaAvance = 0;
+
+        if ($metaPromotor != 0) {
+            $metaAvance = round($countPromocion['promovidos'] / $metaPromotor * 100);
+        }
+
+        return $metaAvance;
     }
 }

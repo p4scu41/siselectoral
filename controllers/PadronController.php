@@ -63,8 +63,9 @@ class PadronController extends Controller
      * @param UID $id Identificador de la persona
      * @return View Vista con detalles de la persona
      */
-    public function actionPersona($id)
+    public function actionPersona()
     {
+        $id = Yii::$app->request->post('id');
         $persona = PadronGlobal::findOne(['CLAVEUNICA'=>$id]);
         $estructura = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => $id]);
 

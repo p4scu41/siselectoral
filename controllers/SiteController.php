@@ -227,4 +227,30 @@ class SiteController extends Controller
 
         return json_encode(['error'=>$error]);
     }
+
+    public function actionGetmetabypromotor($id)
+    {
+        $meta = DetalleEstructuraMovilizacion::getMetaByPromotor($id);
+
+        return $meta;
+    }
+
+    public function actionGetmetabyseccion($id, $puesto)
+    {
+        $meta = 0;
+        if ($puesto <= 5) {
+            $meta = DetalleEstructuraMovilizacion::getMetaBySeccion($id);
+        } else {
+            $meta = DetalleEstructuraMovilizacion::getMetaByPromotor($id);
+        }
+
+        return $meta;
+    }
+
+    public function actionGetavancemeta($id)
+    {
+        $meta = DetalleEstructuraMovilizacion::getAvanceMeta($id);
+
+        return $meta;
+    }
 }

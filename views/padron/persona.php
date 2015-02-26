@@ -2,6 +2,7 @@
 
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 $this->title = 'Detalles estructura';
@@ -26,7 +27,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                     <div class="row">
                         <div class="col-md-4 text-center">
                             <div>
-                                <img src="<?= $persona->getFoto() ?>" class="img-rounded imgPerson" id="imgPerson">
+                                <img src="<?= $persona ? $persona->getFoto() : ''; ?>" class="img-rounded imgPerson" id="imgPerson">
                                 <h4 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE); ?></h4>
                             </div>
                             <div>
@@ -161,9 +162,17 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                 <div class="media-body">
                     <h4 class="media-heading">'.($jefe['APELLIDO_PATERNO'].' '.$jefe['APELLIDO_MATERNO'].' '.$jefe['NOMBRE']).'</h4>
                     <p><strong>Puesto:</strong> '.$jefe['puesto'].'. <strong>Domicilio:</strong> '.$jefe['CALLE'].
-                    '. <strong>E-Mail:</strong> '.$dependiente['CORREOELECTRONICO'].'. <strong>Tel. Móvil:</strong> '.$dependiente['TELMOVIL'].'</p>
-                    <a href="'.Url::toRoute(['padron/persona', 'id' => $jefe['CLAVEUNICA']], true).'" class="btn btn-default">Ver</a>
-                </div>
+                    '. <strong>E-Mail:</strong> '.$dependiente['CORREOELECTRONICO'].'. <strong>Tel. Móvil:</strong> '.$dependiente['TELMOVIL'].'</p>';
+                    $form = ActiveForm::begin([
+                            'options' => ['class' => 'form-inline'],
+                            'method' => 'POST',
+                            'action' => Url::toRoute('padron/persona', true)
+                        ]);
+                    echo '<input type="hidden" name="id" id="id" value="'.$jefe['CLAVEUNICA'].'">
+                    <button type="submit" class="btn btn-success">Ver</button>';
+                    ActiveForm::end();
+                    //<a href="'.Url::toRoute(['padron/persona', 'id' => $jefe['CLAVEUNICA']], true).'" class="btn btn-default">Ver</a>
+                echo '</div>
             </div>
             <hr>';
     }
@@ -180,9 +189,17 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                 <div class="media-body">
                     <h4 class="media-heading">'.($dependiente['APELLIDO_PATERNO'].' '.$dependiente['APELLIDO_MATERNO'].' '.$dependiente['NOMBRE']).'</h4>
                     <p><strong>Puesto:</strong> '.$dependiente['puesto'].'. <strong>Domicilio:</strong> '.$dependiente['CALLE'].
-                    '. <strong>E-Mail:</strong> '.$dependiente['CORREOELECTRONICO'].'. <strong>Tel. Móvil:</strong> '.$dependiente['TELMOVIL'].'</p>
-                    <a href="'.Url::toRoute(['padron/persona', 'id' => $dependiente['CLAVEUNICA']], true).'" class="btn btn-default">Ver</a>
-                </div>
+                    '. <strong>E-Mail:</strong> '.$dependiente['CORREOELECTRONICO'].'. <strong>Tel. Móvil:</strong> '.$dependiente['TELMOVIL'].'</p>';
+                    $form = ActiveForm::begin([
+                            'options' => ['class' => 'form-inline'],
+                            'method' => 'POST',
+                            'action' => Url::toRoute('padron/persona', true)
+                        ]);
+                    echo '<input type="hidden" name="id" id="id" value="'.$dependiente['CLAVEUNICA'].'">
+                    <button type="submit" class="btn btn-success">Ver</button>';
+                    ActiveForm::end();
+                    //<a href="'.Url::toRoute(['padron/persona', 'id' => $dependiente['CLAVEUNICA']], true).'" class="btn btn-default">Ver</a>
+                echo '</div>
             </div>
             <hr>';
         }
