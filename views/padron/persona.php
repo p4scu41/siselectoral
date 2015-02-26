@@ -36,6 +36,20 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                     <br>
                                     <span class="puesto"><?= ($numDepend['puesto'] != '' ? $numDepend['puesto'] : 'Sin Dependencias') ?></span>
                                 </span>
+                                <span class="btn btn-app btn-sm btn-success" id="meta">
+                                    <span class="line-height-1 bigger-170" id="no_meta"><?= $no_meta_estruc ?>%</span>
+                                    <br><span>Meta Estruc.</span>
+                                </span>
+                                <span class="btn btn-app btn-sm btn-primary" id="meta_proyec">
+                                    <span class="line-height-1 bigger-170" id="no_meta_proyec"><?= $no_meta_proyec ?></span>
+                                    <br>
+                                    <span class=""> Meta Proyec </span>
+                                </span>
+                                <span class="btn btn-app btn-sm btn-purple" id="meta_promocion">
+                                    <span class="line-height-1 bigger-170" id="no_meta_promocion"><?= $no_meta_promocion ?>%</span>
+                                    <br>
+                                    <span class="">Promoción</span>
+                                </span>
                                 <span class="btn btn-app btn-sm btn-pink">
                                     <span class="line-height-1 bigger-170"> 0 </span>
                                     <br>
@@ -45,11 +59,6 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                     <span class="line-height-1 bigger-170"> 0 </span>
                                     <br>
                                     <span class=""> Organización </span>
-                                </span>
-                                <span class="btn btn-app btn-sm btn-success">
-                                    <span class="line-height-1 bigger-170"> - </span>
-                                    <br>
-                                    <span class=""> Meta </span>
                                 </span>
                             </div>
                             <br>
@@ -169,7 +178,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                             'action' => Url::toRoute('padron/persona', true)
                         ]);
                     echo '<input type="hidden" name="id" id="id" value="'.$jefe['CLAVEUNICA'].'">
-                    <button type="submit" class="btn btn-success">Ver</button>';
+                    <button type="submit" class="btn btn-default">Ver</button>';
                     ActiveForm::end();
                     //<a href="'.Url::toRoute(['padron/persona', 'id' => $jefe['CLAVEUNICA']], true).'" class="btn btn-default">Ver</a>
                 echo '</div>
@@ -196,7 +205,7 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                             'action' => Url::toRoute('padron/persona', true)
                         ]);
                     echo '<input type="hidden" name="id" id="id" value="'.$dependiente['CLAVEUNICA'].'">
-                    <button type="submit" class="btn btn-success">Ver</button>';
+                    <button type="submit" class="btn btn-default">Ver</button>';
                     ActiveForm::end();
                     //<a href="'.Url::toRoute(['padron/persona', 'id' => $dependiente['CLAVEUNICA']], true).'" class="btn btn-default">Ver</a>
                 echo '</div>

@@ -68,6 +68,9 @@ class PadronController extends Controller
         $id = Yii::$app->request->post('id');
         $persona = PadronGlobal::findOne(['CLAVEUNICA'=>$id]);
         $estructura = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => $id]);
+        $no_meta_estruc = 0;
+        $no_meta_proyec = 0;
+        $no_meta_promocion = 0;
 
         if($estructura != null) {
             $puesto = Puestos::findOne(['IdPuesto' => $estructura->IdPuesto]);
@@ -76,11 +79,24 @@ class PadronController extends Controller
 
             $dependientes = $estructura->getDependientes();
 
-            if($estructura->IdPuesto == 12) {
+            if($estructura->IdPuesto == 4) {
                 $secciones = $estructura->getSecciones();
             }
             $jefe = $estructura->getJefe();
             $numDepend = $estructura->getCountDepen();
+            $no_meta_estruc = DetalleEstructuraMovilizacion::getResumenNodo($estructura->IdNodoEstructuraMov);
+
+            if (count($no_meta_estruc)) {
+                $no_meta_estruc = $no_meta_estruc[count($no_meta_estruc)-1]['Avances %'];
+            }
+
+            if ($estructura->IdPuesto <= 5) {
+                $no_meta_proyec = DetalleEstructuraMovilizacion::getMetaBySeccion($estructura->IdNodoEstructuraMov);
+            } else {
+                $no_meta_proyec = DetalleEstructuraMovilizacion::getMetaByPromotor($estructura->IdNodoEstructuraMov);
+            }
+
+            $no_meta_promocion = DetalleEstructuraMovilizacion::getAvanceMeta($estructura->IdNodoEstructuraMov);
         }
 
         return $this->render('persona', [
@@ -90,6 +106,9 @@ class PadronController extends Controller
             'jefe' => $jefe,
             'numDepend' => $numDepend,
             'secciones' => $secciones,
+            'no_meta_estruc' => $no_meta_estruc,
+            'no_meta_proyec' => $no_meta_proyec,
+            'no_meta_promocion' => $no_meta_promocion,
         ]);
     }
 

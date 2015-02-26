@@ -164,7 +164,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                             <br>
                                                             <span class=""> Meta Proyec </span>
                                                         </span>
-                                                        <span class="btn btn-app btn-sm btn-primary" id="meta_promocion">
+                                                        <span class="btn btn-app btn-sm btn-purple" id="meta_promocion">
                                                             <span class="line-height-1 bigger-170" id="no_meta_promocion">0%</span>
                                                             <br>
                                                             <span class="">Promoción</span>
@@ -244,16 +244,16 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                 <?php $form = ActiveForm::begin([
                             'options' => ['class' => 'form-inline'],
                             'method' => 'POST',
                             'action' => Url::toRoute('padron/persona', true)
                         ]); ?>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> &nbsp;
                 <input type="hidden" name="id" id="id" value="">
                 <button type="submit" href="" data-url="<?= Url::toRoute('padron/persona', true); ?>" class="btn btn-success" id="btnViewPerson">Ver mas detalles</button>
-                 <?php ActiveForm::end(); ?>
                 <button type="button" class="btn btn-primary" id="printResumenNodo"><i class="fa fa-print"></i> Imprimir</button>
+                <?php ActiveForm::end(); ?>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
