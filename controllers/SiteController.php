@@ -23,10 +23,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

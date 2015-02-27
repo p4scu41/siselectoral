@@ -67,14 +67,14 @@ use yii\helpers\Url;
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="glyphicon glyphicon-user"></i>
-                        <span>Administrador <i class="caret"></i></span>
+                        <span><?= Yii::$app->user->identity->login ?> <i class="caret"></i></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header bg-light-blue">
                             <img src="<?php echo Yii::getAlias('@web'); ?>/img/avatar5.png" class="img-circle" alt="User Image" />
                             <p>
-                                Administrador
+                                <?= Yii::$app->user->identity->login ?>
                                 <small>&Uacute;ltimo acceso: Hoy</small>
                             </p>
                         </li>
@@ -84,7 +84,7 @@ use yii\helpers\Url;
                                 <a href="#" class="btn btn-default btn-flat">Configuraciones</a>
                             </div>
                             <div class="pull-right">
-                                <a href="<?= Url::to(['site/logout']) ?>" class="btn btn-default btn-flat">Salir</a>
+                                <a href="<?= Url::to(['site/logout']) ?>" data-method="post" class="btn btn-default btn-flat">Salir</a>
                             </div>
                         </li>
                     </ul>

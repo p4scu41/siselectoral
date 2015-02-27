@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
@@ -15,7 +16,9 @@ $this->registerJsFile(\yii\helpers\Url::to('@web/js/AdminLTE/dashboard.js'), ['p
 <html lang="<?= Yii::$app->language ?>" class="lockscreen">
     <head>
         <meta charset="<?= Yii::$app->charset ?>"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/png" href="<?= Url::to("@web/img/icon.ico"); ?>">
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
 
