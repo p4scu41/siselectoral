@@ -155,6 +155,6 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
      */
     public function validatePassword($password)
     {
-        return $this->password === md5($password);
+        return strtolower($this->password) === strtolower(md5($password));
     }
 }

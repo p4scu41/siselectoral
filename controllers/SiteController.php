@@ -68,7 +68,7 @@ class SiteController extends Controller
                 ->orderBy('DescMunicipio')
                 ->all();
         }
-        
+
         $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
 
         return $this->render('index', [
@@ -98,7 +98,7 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->render('logout');
     }
 
     public function actionContact()
