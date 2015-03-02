@@ -37,8 +37,6 @@ $this->registerJsFile(Url::to('@web/js/plugins/jquery-scrollto.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.ba-bbq.min.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
-//$this->registerJsFile(Url::to('@web/js/plugins/html2canvas.min.js'));
-//$this->registerJsFile(Url::to('@web/js/plugins/rasterizeHTML.allinone.js'));
 $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
 ?>
 <div class="row">
@@ -65,7 +63,10 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                         <div id="bodyForm">
                             <div class="form-group">
                                 <label for="Municipio">Municipio</label>
-                                <?= Html::dropDownList('Municipio', Yii::$app->request->post('Municipio'), $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio']); ?>
+                                <?php
+                                    $selectMunicipio = Yii::$app->user->identity->persona->MUNICIPIO ? Yii::$app->user->identity->persona->MUNICIPIO : Yii::$app->request->post('Municipio');
+                                ?>
+                                <?= Html::dropDownList('Municipio', $selectMunicipio, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio']); ?>
                             </div>
                             <!--<div class="form-group">
                                 <label for="IdPuesto">Puesto</label>
@@ -294,7 +295,8 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                 <form class="form-inline" method="POST" id="frmBuscarPersona">
                     <div class="form-group">
                         <label for="MUNICIPIO">Municipio</label>
-                        <?= Html::dropDownList('MUNICIPIO', NULL, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'MUNICIPIO_persona']); ?>
+                        <?php $selectMunicipio = Yii::$app->user->identity->persona->MUNICIPIO ? Yii::$app->user->identity->persona->MUNICIPIO : Yii::$app->request->post('Municipio'); ?>
+                        <?= Html::dropDownList('MUNICIPIO', $selectMunicipio, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'MUNICIPIO_persona']); ?>
                     </div>
                     <div class="form-group">
                         <label for="APELLIDO_PATERNO">Apellido Paterno</label>

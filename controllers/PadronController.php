@@ -121,12 +121,21 @@ class PadronController extends Controller
     {
         $searchModel = new PadronGlobalSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $municipios = ArrayHelper::map(
-            CMunicipio::find()
+
+        if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
+            $listMunicipios = CMunicipio::find()
                 ->select(['IdMunicipio', 'DescMunicipio'])
                 ->orderBy('DescMunicipio')
-                ->all(), 'IdMunicipio', 'DescMunicipio'
-        );
+                ->all();
+        } else {
+            $listMunicipios = CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->where(['IdMunicipio'=>Yii::$app->user->identity->persona->MUNICIPIO])
+                ->orderBy('DescMunicipio')
+                ->all();
+        }
+
+        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
 
         return $this->render('buscar', [
             'searchModel' => $searchModel,

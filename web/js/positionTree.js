@@ -13,8 +13,15 @@ $(document).ready(function(){
             if (response.error) {
                 alert('Ocurrió un error al realizar la asignación del puesto.');
             } else {
-                alert('Persona asignada al puesto exitosamente.');
-                tree.reload();
+                $.alert('Persona asignada al puesto exitosamente.', {
+                    title: 'Asignación Exitosa',
+                    buttons: [
+                        {
+                            title: 'Ok',
+                            callback: function() { $('#btnBuscar').click(); $(this).dialog("close"); },
+                        }
+                    ]
+                });
             }
         });
 

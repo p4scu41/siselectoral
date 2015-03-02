@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="body bg-gray">
         <?php $form = ActiveForm::begin([
             'id' => 'login-form',
-            'options' => ['class' => 'form-horizontal'],
+            //'options' => ['class' => 'form-horizontal'],
             'fieldConfig' => [
                 'template' => "{input}{error}",
                 //'labelOptions' => ['class' => 'col-lg-1 control-label'],

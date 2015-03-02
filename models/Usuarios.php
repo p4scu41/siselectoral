@@ -70,7 +70,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
     /**
      * @return \yii\db\ActiveQuery
      */
-    public static function getPerfil()
+    public function getPerfil()
     {
         return $this->hasOne(Perfiles::className(), ['IdPerfil' => 'IdPerfil']);
     }
@@ -78,7 +78,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
     /**
      * @return \yii\db\ActiveQuery
      */
-    public static function getPersona()
+    public function getPersona()
     {
         return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersona']);
     }
@@ -155,6 +155,6 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        return $this->password === md5($password);
     }
 }

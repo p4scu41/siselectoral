@@ -53,7 +53,7 @@ class ModulosSistema extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public static function getPermisos()
+    public function getPermisos()
     {
         return $this->hasMany(Permisos::className(), ['IdModulo' => 'IdModulo']);
     }

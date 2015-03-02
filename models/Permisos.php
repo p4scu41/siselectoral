@@ -63,7 +63,7 @@ class Permisos extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public static function getPerfil()
+    public function getPerfil()
     {
         return $this->hasOne(Perfiles::className(), ['IdPerfil' => 'IdPerfilUsuario']);
     }
@@ -71,7 +71,7 @@ class Permisos extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public static function getModulo()
+    public function getModulo()
     {
         return $this->hasOne(ModulosSistema::className(), ['IdModulo' => 'IdModulo']);
     }

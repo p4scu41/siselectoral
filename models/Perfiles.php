@@ -66,7 +66,7 @@ class Perfiles extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public static function getUsuarios()
+    public function getUsuarios()
     {
         return $this->hasMany(Usuarios::className(), ['IdPerfil' => 'IdPerfil']);
     }
