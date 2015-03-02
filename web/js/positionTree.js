@@ -470,7 +470,7 @@ $(document).ready(function(){
         $parametros += $parametros+IdPuestoDepende;
 
         // Se guardan los parámetros en una cookie para precargar la última búsqueda al entrar en esta sección
-        $.cookie('parametros', $parametros);
+        $.cookie('parametros', $parametros, { path: '/' } );
         CookieParams = $.deparam($.cookie('parametros'));
 
         if ($('#municipio').val() == "") {
