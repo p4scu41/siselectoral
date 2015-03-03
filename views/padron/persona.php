@@ -20,11 +20,21 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
             <div class="panel panel-success" id="containerPerson">
                 <div class="panel-heading">
                     <h3 class="panel-title inline">Datos Personales</h3>
-                    <a href="#" class="btn btn-success pull-right btn-sm backBtn"><i class="fa fa-mail-reply"></i> Regresar</a>
                 </div>
 
                 <div class="panel-body">
                     <div class="row">
+                        <?php
+                        $form = ActiveForm::begin([
+                                'options' => ['class' => 'form-inline'],
+                                'method' => 'POST',
+                                'action' => $actionPersona
+                            ]);
+                            echo '<input type="hidden" name="back" id="back" value="1">';
+                            ?>
+                        <button type="submit" class="btn btn-success pull-right btn-sm"><i class="fa fa-mail-reply"></i> Regresar</button>
+                        <?php ActiveForm::end(); ?>
+                        <br><br>
                         <div class="col-md-4 text-center">
                             <div>
                                 <img src="<?= $persona ? $persona->getFoto() : ''; ?>" class="img-rounded imgPerson" id="imgPerson">

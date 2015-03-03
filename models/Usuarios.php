@@ -84,6 +84,16 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNodoestructura()
+    {
+        $nodo = DetalleEstructuraMovilizacion::find()
+                ->where(['IdPersonaPuesto' => $this->IdPersona]);
+        return $nodo;
+    }
+
+    /**
      * @inheritdoc
      */
     public static function findIdentity($id)

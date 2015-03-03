@@ -463,14 +463,12 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         }
 
         $promovidos = [
-            'Puesto' => 'PROMOVIDOS',
+            'Puesto' => 'AVANCE POMOCIÓN',
             'Total' => $metaPromovidosPromotor['MetaByPromotor'],
             'Ocupados' => $cantidadPromovidosPromotor['promovidos'],
             'Vacantes' => ((int)$metaPromovidosPromotor['MetaByPromotor']) - ((int)$cantidadPromovidosPromotor['promovidos']),
             'Avances %' => $avancePromovidos,
         ];
-
-        array_push($totales, $promovidos);
 
         for($i=0; $i<count($totales); $i++) {
             $totales[$i]['Ocupados'] = (int) $ocupados[$totales[$i]['IdPuesto']];
@@ -484,11 +482,13 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $sumVacantes += $totales[$i]['Vacantes'];
         }
 
-        array_push($totales, array('Puesto'=>'Total',
+        array_push($totales, array('Puesto'=>'AVANCE ESTRUCTURA',
                                    'Total'=>$sumTotales,
                                     'Ocupados'=>$sumOcupados,
                                     'Vacantes'=>$sumVacantes,
                                     'Avances %'=>round(($sumOcupados/$sumTotales)*100)));
+
+        array_push($totales, $promovidos);
 
         return $totales;
     }
@@ -615,7 +615,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             }
 
             $promovidos = [
-                'Puesto' => 'PROMOVIDOS',
+                'Puesto' => 'AVANCE POMOCIÓN',
                 'Total' => $metaPromovidosPromotor,
                 'Ocupados' => $cantidadPromovidosPromotor,
                 'Vacantes' => $metaPromovidosPromotor-$cantidadPromovidosPromotor,
@@ -623,14 +623,12 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             ];
 
             $totales = [
-                'Puesto' => 'Total',
+                'Puesto' => 'AVANCE ESTRUCTURA',
                 'Total' => 0,
                 'Ocupados' => 0,
                 'Vacantes' => 0,
                 'Avances %' => 0,
             ];
-
-            array_push($tablaResumen, $promovidos);
 
             for ($i = 0; $i < count($tablaResumen); $i++) {
                 unset($tablaResumen[$i]['Nivel']);
@@ -642,6 +640,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $totales['Avances %'] = round($totales['Ocupados'] / $totales['Total'] * 100);
 
             array_push($tablaResumen, $totales);
+            array_push($tablaResumen, $promovidos);
         }
 
         return $tablaResumen;

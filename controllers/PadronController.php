@@ -65,7 +65,36 @@ class PadronController extends Controller
      */
     public function actionPersona()
     {
-        $id = Yii::$app->request->post('id');
+        if ( stripos(Yii::$app->request->referrer, 'site/positiontree')!== false ) {
+            Yii::$app->session->set('arrayHistory', []);
+            Yii::$app->session->set('firsTime', true);
+        }
+
+        if (Yii::$app->request->post('back')) {
+            $arrayHistory = Yii::$app->session->get('arrayHistory');
+
+            // Si es la primera vez, eliminamos el ultimo elemento ya que es el actual
+            if (Yii::$app->session->get('firsTime')) {
+                array_pop($arrayHistory);
+            }
+
+            $id = array_pop($arrayHistory);
+            Yii::$app->session->set('arrayHistory', $arrayHistory);
+
+            if( !$id ) {
+                return $this->redirect(['site/positiontree']);
+            } else {
+                $actionPersona = Url::toRoute('padron/persona', true);
+            }
+            Yii::$app->session->set('firsTime', false);
+        } else {
+            $arrayHistory = Yii::$app->session->get('arrayHistory');
+            array_push($arrayHistory, Yii::$app->request->post('id'));
+            Yii::$app->session->set('arrayHistory', $arrayHistory);
+            $id = Yii::$app->request->post('id');
+        }
+        
+        //$id = Yii::$app->request->post('id');
         $persona = PadronGlobal::findOne(['CLAVEUNICA'=>$id]);
         $estructura = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => $id]);
         $no_meta_estruc = 0;
@@ -109,6 +138,7 @@ class PadronController extends Controller
             'no_meta_estruc' => $no_meta_estruc,
             'no_meta_proyec' => $no_meta_proyec,
             'no_meta_promocion' => $no_meta_promocion,
+            'actionPersona' => $actionPersona
         ]);
     }
 

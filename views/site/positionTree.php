@@ -22,6 +22,7 @@ $this->registerJs('urlAsignarPersona="'.Url::toRoute('site/setpuestopersona', tr
 $this->registerJs('urlGetMetaBySeccion="'.Url::toRoute('site/getmetabyseccion', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetMetaByPromotor="'.Url::toRoute('site/getmetabypromotor', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetAvanceMeta="'.Url::toRoute('site/getavancemeta', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('pl="'.Yii::$app->user->identity->nodoestructura->IdPuesto.'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {
@@ -146,7 +147,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                         <div role="tabpanel" class="tab-pane active" id="tabPuesto">
                                             <div class="panel panel-success">
                                                 <div class="panel-body">
-                                                    <div id="indicadoresPuesto" class="text-center">
+                                                    <div id="indicadoresPuesto" class="text-center" class="col-xs-12 col-sm-12 col-md-12">
                                                         <span class="btn btn-app btn-sm btn-yellow" id="dependencias">
                                                             <span class="line-height-1 bigger-170" id="no_dependencias"></span>
                                                             <br><span id="descripcion_dependencias"></span>
@@ -175,15 +176,15 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                             <br>
                                                             <span class=""> Programas </span>
                                                         </span>
-                                                        <span class="btn btn-app btn-sm btn-grey">
+                                                        <!--<span class="btn btn-app btn-sm btn-grey">
                                                             <span class="line-height-1 bigger-170"> 0 </span>
                                                             <br>
                                                             <span class=""> Organización </span>
-                                                        </span>
-                                                        <span class="btn btn-app btn-sm btn-purple" id="infoEstrucAlterna" style="display: none;">
-                                                            <span class="line-height-1 bigger-170"> 1 </span>
+                                                        </span>-->
+                                                        <span class="btn btn-app btn-sm btn-info" id="infoEstrucAlterna">
+                                                            <span class="line-height-1 bigger-170"> 0 </span>
                                                             <br>
-                                                            <span> Estruc. Alter. </span>
+                                                            <span> Organización </span>
                                                         </span>
                                                     </div><br>
 

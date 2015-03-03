@@ -55,6 +55,7 @@ $(document).ready(function(){
                     '<th>Nombre(s)</th>'+
                     '<th>Fecha Nacimiento</th>'+
                     '<th>Sección</th>'+
+                    '<th>Casilla</th>'+
                 '</tr>'+
             '</thead>'+
             '<tbody>';
@@ -67,6 +68,7 @@ $(document).ready(function(){
                     '<td>'+response[persona].NOMBRE+'</td>'+
                     '<td>'+response[persona].FECHANACIMIENTO+'</td>'+
                     '<td>'+response[persona].SECCION+'</td>'+
+                    '<td>'+response[persona].CASILLA+'</td>'+
                 '</tr>';
             }
 
@@ -100,23 +102,29 @@ $(document).ready(function(){
             $('#alertDescDependiente').remove();
         }
 
+        console.log(node.data.IdPuesto);
+
         if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
             $('#loadIndicator').hide();
             $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
             $('#imgPerson').attr('src', imgNoPerson);
             $('#frmPersonDetails').html('<div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>');
 
-            if( $('#frmPersonDetails #btnAsignarPersona').length == 0) {
-                $('#frmPersonDetails').append(btnAsignarPersona);
+            // pl = Puesto Login
+            if (node.data.IdPuesto > pl) {
+                // El usuario logueado solo puede asignar puestos a sus estructura inferior
+                if( $('#frmPersonDetails #btnAsignarPersona').length == 0) {
+                    $('#frmPersonDetails').append(btnAsignarPersona);
+                }
+
+                btnAsignarPersona.find('button').data('idNodo', node.key);
+
+                btnAsignarPersona.delegate('button','click', function(event){
+                    $('#modalPerson').modal('hide');
+                    $('#resultBuscarPersona').html('');
+                    $('#modalAsignaPersona').modal('show');
+                });
             }
-
-            btnAsignarPersona.find('button').data('idNodo', node.key);
-
-            btnAsignarPersona.delegate('button','click', function(event){
-                $('#modalPerson').modal('hide');
-                $('#resultBuscarPersona').html('');
-                $('#modalAsignaPersona').modal('show');
-            });
 
             $('#modalPerson').modal('show');
             $('#btnViewPerson').data('id', '#');
@@ -140,6 +148,7 @@ $(document).ready(function(){
                     {'colum': 'CORREOELECTRONICO', 'label': 'E-mail'},
                     {'colum': 'TELMOVIL', 'label': 'Tel. Móvil'},
                     {'colum': 'SECCION', 'label': 'Sección'},
+                    {'colum': 'CASILLA', 'label': 'Casilla'},
                     //{'colum': 'DISTRITO', 'label': 'Distrito'},
                 ];
 
@@ -192,7 +201,7 @@ $(document).ready(function(){
             type: "GET",
         }).done(function(response) {
             if(response) {
-                meta = response[ response.length-1 ];
+                meta = response[ response.length-2 ];
                 tablaResumenNodo = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
                 $('#no_meta').html(meta['Avances %']+'%');
                 $('#resumenNodo').html(tablaResumenNodo);
@@ -201,6 +210,8 @@ $(document).ready(function(){
                 $('#resumenNodo').html('');
             }
         });
+
+        $('#no_dependencias').html('<i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>');
 
         $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+'&IdPuestoDepende='+node.key,
             function(result){
@@ -256,10 +267,10 @@ $(document).ready(function(){
             type: "GET",*/
         }).done(function(response){
             if (response.length>0) {
-                $('#infoEstrucAlterna').show();
+                $('#infoEstrucAlterna span:first').text('1');
                 treeEstrucAlterna.reload(response);
             } else {
-                $('#infoEstrucAlterna').hide();
+                $('#infoEstrucAlterna span:first').text('0');
                 $('#treeEstrucAlterna').hide();
             }
         });
@@ -637,17 +648,17 @@ $(document).ready(function(){
     $('#printResumenNodo').click(function(){
         $imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson">'+
                 '<div class="panel-body"></div></div></div>');
-        $imprimible.find('.panel-body').append( '<div class="text-center">'+$('#imgPerson').parent().html()+'</div>');
-        $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone() );
+        $imprimible.find('.panel-body').append( '<div class="text-center col-xs-3">'+$('#imgPerson').parent().html()+'</div>');
+        $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone().addClass('col-xs-9') );
         $imprimible.find('.panel-body').append( $('#indicadoresPuesto').clone() );
         $imprimible.find('.panel-body').append( $('#seccion_coordinados').clone().show() );
         $imprimible.find('.panel-body').append( $('#seccion_resumenNodo').clone().show() );
         $imprimible.find('.panel-body').append( $('#fechaResumenNodo').clone() );
-        $imprimible.find('.panel-body').append( '<style type="text/css"> .btn.btn-app {border-radius: 0px; border: solid 1px grey; } '+
-                '#list_coordinados { max-height: initial; }</style>' );
         $imprimible.find(' .btn.btn-app').blur();
         $imprimible.find('#verMasResumenNodo').remove();
         $imprimible.find('#btnAsignarPersona').remove();
+
+        console.log($imprimible.html());
 
         $($imprimible).printArea({"mode":"popup","popClose":true});
     });

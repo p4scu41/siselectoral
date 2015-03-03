@@ -477,7 +477,7 @@ body > .header .logo span {
 }
 #tablaResumen tr:last-child {
     font-weight: bold;
-    text-align: center;
+    /*text-align: center;*/
     vertical-align: middle;
 }
 #tablaResumen thead tr th {
@@ -504,4 +504,20 @@ body > .header .logo span {
 }
 #resultBuscarPersona {
     max-height: 200px;
+}
+
+@media print {
+    #indicadoresPuesto .btn.btn-app{
+        width: 80px;
+        font-size: 12px;
+        line-height: 1.2;
+        border: solid 1px grey;
+    }
+    #list_coordinados {
+        max-height: initial;
+    }
+    .imgPerson {
+        height: 140px;
+        width: 120px;
+    }
 }
