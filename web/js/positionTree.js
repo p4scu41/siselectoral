@@ -111,7 +111,8 @@ $(document).ready(function(){
             $('#frmPersonDetails').html('<div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>');
 
             // pl = Puesto Login
-            if (node.data.IdPuesto > pl) {
+            // Solo puede asignar puesto de promotor
+            if (node.data.IdPuesto == 7) {
                 // El usuario logueado solo puede asignar puestos a sus estructura inferior
                 if( $('#frmPersonDetails #btnAsignarPersona').length == 0) {
                     $('#frmPersonDetails').append(btnAsignarPersona);
@@ -620,21 +621,26 @@ $(document).ready(function(){
 
         var options = '<option value="0">Todos</option>';
         var idMuni = $(this).val();
-        $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
-            for (var i=0; i<result.length; i++) {
-                options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
-            }
-            $("#puesto").html(options);
-        }).done(function(result) {
-            if (result.length>0) {
-                id = doId(result[0].Descripcion);
-                $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
-                    function(result){ agregaPuesto(result, id); }, "json")
-                    .done(function(){ $('#loadIndicator').hide(); });
-            } else {
-                $('#loadIndicator').hide();
-            }
-        });
+
+        if (idMuni != '') {
+            $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
+                for (var i=0; i<result.length; i++) {
+                    options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
+                }
+                $("#puesto").html(options);
+            }).done(function(result) {
+                if (result.length>0) {
+                    id = doId(result[0].Descripcion);
+                    $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
+                        function(result){ agregaPuesto(result, id); }, "json")
+                        .done(function(){ $('#loadIndicator').hide(); });
+                } else {
+                    $('#loadIndicator').hide();
+                }
+            });
+        } else {
+            $('#loadIndicator').hide();
+        }
     });
 
     $('#printResumen').click(function(){

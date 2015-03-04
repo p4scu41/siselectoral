@@ -93,7 +93,7 @@ class PadronController extends Controller
             Yii::$app->session->set('arrayHistory', $arrayHistory);
             $id = Yii::$app->request->post('id');
         }
-        
+
         //$id = Yii::$app->request->post('id');
         $persona = PadronGlobal::findOne(['CLAVEUNICA'=>$id]);
         $estructura = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => $id]);
@@ -116,7 +116,7 @@ class PadronController extends Controller
             $no_meta_estruc = DetalleEstructuraMovilizacion::getResumenNodo($estructura->IdNodoEstructuraMov);
 
             if (count($no_meta_estruc)) {
-                $no_meta_estruc = $no_meta_estruc[count($no_meta_estruc)-1]['Avances %'];
+                $no_meta_estruc = $no_meta_estruc[count($no_meta_estruc)-2]['Avances %'];
             }
 
             if ($estructura->IdPuesto <= 5) {

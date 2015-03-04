@@ -29,7 +29,7 @@ use yii\helpers\Url;
                             'options' => ['class' => 'form-inline'],
                         ]); ?>
 
-                        <?php echo $form->field($model, 'MUNICIPIO')->dropDownList($municipios, ['prompt' => 'Elija una opción']) ?>
+                        <?php echo $form->field($model, 'MUNICIPIO')->dropDownList($municipios, ['prompt' => 'Elija una opción', 'required' => 'true']) ?>
 
                         <?php echo $form->field($model, 'APELLIDO_PATERNO') ?>
 

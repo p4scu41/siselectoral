@@ -112,6 +112,12 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <label class="col-sm-2 control-label">Casilla</label>
+                                    <div class="col-sm-10">
+                                        <div class="well well-sm"><?= ($persona->CASILLA) ? $persona->CASILLA : '&nbsp;'; ?></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="col-sm-2 control-label">Género</label>
                                     <div class="col-sm-10">
                                         <div class="well well-sm"><?= ($persona->SEXO) ? $persona->genero : '&nbsp;'; ?></div>

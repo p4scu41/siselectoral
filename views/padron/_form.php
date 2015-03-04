@@ -28,23 +28,27 @@ use kartik\datecontrol\DateControl;
                     </div> <br>
 
                     <?= $form->field($model, 'foto')->fileInput(['class'=>'file',
-                        'data-browse-label'=> 'Seleccionar Foto',
-                        'data-browse-icon'=>'<i class="glyphicon glyphicon-picture"></i> &nbsp;',
-                        'data-remove-label'=> "Eliminar",
-                        'data-allowed-file-extensions'=> '["jpg", "jpeg", "png", "gif"]',
-                        'data-show-upload'=> 'false',
-                        'data-msg-invalid-file-extension'=> 'Extensión no permitida en el archivo seleccionado "{name}". Solo se permiten las extensiones "{extensions}"',
+                            'data-browse-label'=> 'Seleccionar Foto',
+                            'data-browse-icon'=>'<i class="glyphicon glyphicon-picture"></i> &nbsp;',
+                            'data-remove-label'=> "Eliminar",
+                            'data-allowed-file-extensions'=> '["jpg", "jpeg", "png", "gif"]',
+                            'data-show-upload'=> 'false',
+                            'data-msg-invalid-file-extension'=> 'Extensión no permitida en el archivo seleccionado "{name}". Solo se permiten las extensiones "{extensions}"',
                         ]) ?>
 
+                    <?php $disabled = $model->APELLIDO_PATERNO ? ['disabled'=>'true'] : [] ?>
                     <?= $form->field($model, 'APELLIDO_PATERNO', [
                             //'template' => "{label}\n<i class='fa fa-user'></i>\n{input}\n{hint}\n{error}"
                             //'inputTemplate' => '<div class="input-group"><span class="input-group-addon">@</span>{input}</div>',
-                        ])->textInput() ?>
+                        ])->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'APELLIDO_MATERNO')->textInput() ?>
+                    <?php $disabled = $model->APELLIDO_MATERNO ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'APELLIDO_MATERNO')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'NOMBRE')->textInput() ?>
+                    <?php $disabled = $model->APELLIDO_PATERNO ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'APELLIDO_PATERNO')->textInput($disabled) ?>
 
+                    <?php $disabled = $model->FECHANACIMIENTO ? ['class'=>'form-control', 'disabled'=>'true'] : ['class'=>'form-control'] ?>
                     <?= $form->field($model, 'FECHANACIMIENTO')->widget(DateControl::classname(), [
                             'displayFormat' => 'dd/MM/yyyy',
                             'saveFormat' => 'yyyy-MM-dd',
@@ -52,50 +56,70 @@ use kartik\datecontrol\DateControl;
                             'widgetClass' => 'yii\widgets\MaskedInput',
                             'options' => [
                                 'mask' => '99/99/9999',
-                                'options' => ['class'=>'form-control'],
+                                'options' => $disabled,
                             ],
                         ]);
                     ?>
 
-                    <?= $form->field($model, 'SEXO')->dropDownList(['M'=>'Mujer', 'H'=>'Hombre'], ['prompt' => 'Elija una opción']) ?>
+                    <?php $disabled = $model->SEXO ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
+                    <?= $form->field($model, 'SEXO')->dropDownList(['M'=>'Mujer', 'H'=>'Hombre'], $disabled) ?>
 
-                    <?= $form->field($model, 'ESTADO_CIVIL')->dropDownList($estado_civil, ['prompt' => 'Elija una opción']) ?>
+                    <?php $disabled = $model->ESTADO_CIVIL ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
+                    <?= $form->field($model, 'ESTADO_CIVIL')->dropDownList($estado_civil, $disabled) ?>
 
-                    <?= $form->field($model, 'OCUPACION')->dropDownList($ocupacion, ['prompt' => 'Elija una opción']) ?>
+                    <?php $disabled = $model->OCUPACION ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
+                    <?= $form->field($model, 'OCUPACION')->dropDownList($ocupacion, $disabled) ?>
 
-                    <?= $form->field($model, 'ESCOLARIDAD')->dropDownList($escolaridad, ['prompt' => 'Elija una opción']) ?>
+                    <?php $disabled = $model->ESCOLARIDAD ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
+                    <?= $form->field($model, 'ESCOLARIDAD')->dropDownList($escolaridad, $disabled) ?>
 
-                    <?= $form->field($model, 'MUNICIPIO')->dropDownList($municipios, ['prompt' => 'Elija una opción']) ?>
+                    <?php $disabled = $model->MUNICIPIO ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
+                    <?= $form->field($model, 'MUNICIPIO')->dropDownList($municipios, $disabled) ?>
 
-                    <?= $form->field($model, 'DOMICILIO')->textInput() ?>
+                    <?php $disabled = $model->DOMICILIO ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'DOMICILIO')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'NUM_INTERIOR')->textInput() ?>
+                    <?php $disabled = $model->NUM_INTERIOR ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'NUM_INTERIOR')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'NUM_EXTERIOR')->textInput() ?>
+                    <?php $disabled = $model->NUM_EXTERIOR ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'NUM_EXTERIOR')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'MANZANA')->textInput() ?>
+                    <?php $disabled = $model->MANZANA ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'MANZANA')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'CODIGO_POSTAL')->textInput() ?>
+                    <?php $disabled = $model->CODIGO_POSTAL ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'CODIGO_POSTAL')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'COLONIA')->textInput() ?>
+                    <?php $disabled = $model->COLONIA ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'COLONIA')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'DES_LOC')->textInput() ?>
+                    <?php $disabled = $model->DES_LOC ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'DES_LOC')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'NOM_LOC')->textInput() ?>
+                    <?php $disabled = $model->NOM_LOC ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'NOM_LOC')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'CORREOELECTRONICO')->textInput() ?>
+                    <?php $disabled = $model->CORREOELECTRONICO ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'CORREOELECTRONICO')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'TELMOVIL')->textInput() ?>
+                    <?php $disabled = $model->TELMOVIL ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'TELMOVIL')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'TELCASA')->textInput() ?>
+                    <?php $disabled = $model->TELCASA ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'TELCASA')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'DISTRITO')->textInput() ?>
+                    <?php $disabled = $model->DISTRITO ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'DISTRITO')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'DISTRITOLOCAL')->textInput() ?>
+                    <?php $disabled = $model->DISTRITOLOCAL ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'DISTRITOLOCAL')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'CASILLA')->textInput() ?>
+                    <?php $disabled = $model->CASILLA ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'CASILLA')->textInput($disabled) ?>
 
-                    <?= $form->field($model, 'SECCION')->textInput() ?>
+                    <?php $disabled = $model->SECCION ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'SECCION')->textInput($disabled) ?>
 
                     <div class="form-group">
                         <div class="col-md-12 text-center">
