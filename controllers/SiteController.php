@@ -218,7 +218,7 @@ class SiteController extends Controller
         //unset($params['IdPuestoDepende']);
 
         if( !empty($params) ) {
-            $result = DetalleEstructuraMovilizacion::getNodosDependientes($params);
+            $result = DetalleEstructuraMovilizacion::getNodosDependientes($params, true);
         }
 
         return json_encode($result);

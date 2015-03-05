@@ -463,7 +463,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         }
 
         $promovidos = [
-            'Puesto' => 'AVANCE POMOCIÓN',
+            'Puesto' => 'PROMOCIÓN',
             'Total' => $metaPromovidosPromotor['MetaByPromotor'],
             'Ocupados' => $cantidadPromovidosPromotor['promovidos'],
             'Vacantes' => ((int)$metaPromovidosPromotor['MetaByPromotor']) - ((int)$cantidadPromovidosPromotor['promovidos']),
@@ -527,7 +527,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      *
      * @return Array Nodos
      */
-    public static function getNodosDependientes($parametros)
+    public static function getNodosDependientes($parametros, $withFoto=false)
     {
         $filtros = http_build_query($parametros, '', ' AND ');
 
@@ -560,11 +560,20 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         if ($resultPuestos) {
             foreach ($resultPuestos as $nodo) {
                 if($nodo['IdPersonaPuesto'] != '00000000-0000-0000-0000-000000000000') {
-                    $persona = Yii::$app->db->createCommand("SELECT ([APELLIDO_PATERNO]+ ' ' +[APELLIDO_MATERNO]+ ' ' +[NOMBRE]) AS NOMBRECOMPLETO "
+                    $persona = Yii::$app->db->createCommand("SELECT ([APELLIDO_PATERNO]+ ' ' +[APELLIDO_MATERNO]+ ' ' +[NOMBRE]) AS NOMBRECOMPLETO, SEXO "
                                                 ."FROM [PadronGlobal] WHERE [CLAVEUNICA] = '".$nodo['IdPersonaPuesto']."'")->queryOne();
-                    $result[] = array_merge($nodo, $persona);
+                    $foto = ['foto'=>''];
+                    if ($withFoto) {
+                        $foto['foto'] = PadronGlobal::getFotoByUID($nodo['IdPersonaPuesto'], $persona['SEXO']);
+                    }
+                    unset($persona['SEXO']);
+                    $result[] = array_merge($nodo, $persona, $foto);
                 } else {
-                    $result[] = array_merge($nodo, ['NOMBRECOMPLETO' => 'No asignado']);
+                    $foto = ['foto'=>''];
+                    if ($withFoto) {
+                        $foto['foto'] = PadronGlobal::getFotoByUID(null, null);
+                    }
+                    $result[] = array_merge($nodo, ['NOMBRECOMPLETO' => 'No asignado'], $foto);
                 }
             }
         }
@@ -615,7 +624,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             }
 
             $promovidos = [
-                'Puesto' => 'AVANCE POMOCIÓN',
+                'Puesto' => 'PROMOCIÓN',
                 'Total' => $metaPromovidosPromotor,
                 'Ocupados' => $cantidadPromovidosPromotor,
                 'Vacantes' => $metaPromovidosPromotor-$cantidadPromovidosPromotor,

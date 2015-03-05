@@ -40,9 +40,14 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
 $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
 ?>
+
+
 <div class="row">
     <!-- left column -->
     <div class="col-lg-12">
+
+        <div id="tablaPrueba"></div>
+
         <!-- general form elements -->
         <div class="box box-primary box-success">
 
@@ -148,6 +153,11 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                             <div class="panel panel-success">
                                                 <div class="panel-body">
                                                     <div id="indicadoresPuesto" class="text-center" class="col-xs-12 col-sm-12 col-md-12">
+                                                        <span class="btn btn-app btn-sm btn-primary" id="meta_proyec">
+                                                            <span class="line-height-1 bigger-170" id="no_meta_proyec"> 0 </span>
+                                                            <br>
+                                                            <span class=""> Meta Proyec </span>
+                                                        </span>
                                                         <span class="btn btn-app btn-sm btn-yellow" id="dependencias">
                                                             <span class="line-height-1 bigger-170" id="no_dependencias"></span>
                                                             <br><span id="descripcion_dependencias"></span>
@@ -161,11 +171,6 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                             <br>
                                                             <span class=""> Vacantes </span>
                                                         </span>-->
-                                                        <span class="btn btn-app btn-sm btn-primary" id="meta_proyec">
-                                                            <span class="line-height-1 bigger-170" id="no_meta_proyec"> 0 </span>
-                                                            <br>
-                                                            <span class=""> Meta Proyec </span>
-                                                        </span>
                                                         <span class="btn btn-app btn-sm btn-purple" id="meta_promocion">
                                                             <span class="line-height-1 bigger-170" id="no_meta_promocion">0%</span>
                                                             <br>
@@ -184,13 +189,13 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         <span class="btn btn-app btn-sm btn-info" id="infoEstrucAlterna">
                                                             <span class="line-height-1 bigger-170"> 0 </span>
                                                             <br>
-                                                            <span> Organización </span>
+                                                            <span> Estruc. Alterna </span>
                                                         </span>
                                                     </div><br>
 
                                                     <div id="seccion_coordinados" style="display: none;">
                                                         <strong>Coordina a:</strong>
-                                                        <ul id="list_coordinados"></ul>
+                                                        <div class="row" id="list_coordinados"></div>
                                                     </div>
 
                                                     <div id="seccion_vacantes" style="display: none;">

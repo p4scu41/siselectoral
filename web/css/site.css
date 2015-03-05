@@ -62,7 +62,7 @@
 }
 .imgPerson {
     height: 100px;
-    width: 80px;
+    width: 90px;
 }
 #containerPerson .well {
     margin-bottom: 0 !important;
@@ -492,7 +492,7 @@ body > .header .logo span {
     font-size: small;
 }
 #list_coordinados, #list_vacantes {
-    max-height: 150px;
+    max-height: 200px;
     overflow: auto;
 }
 #descripcion_dependencias {
@@ -515,6 +515,10 @@ body > .header .logo span {
     }
     #list_coordinados {
         max-height: initial;
+    }
+    #list_coordinados .imgPerson {
+        height: 80px;
+        width: 70px;
     }
     .imgPerson {
         height: 140px;

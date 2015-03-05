@@ -102,7 +102,7 @@ $(document).ready(function(){
             $('#alertDescDependiente').remove();
         }
 
-        console.log(node.data.IdPuesto);
+        //console.log(node.data.IdPuesto);
 
         if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
             $('#loadIndicator').hide();
@@ -203,8 +203,11 @@ $(document).ready(function(){
         }).done(function(response) {
             if(response) {
                 meta = response[ response.length-2 ];
-                tablaResumenNodo = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
                 $('#no_meta').html(meta['Avances %']+'%');
+
+                tablaResumenNodo = $(ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
+
+                tablaResumenNodo.find('tr:last').prev().replaceWith('<tr><td colspan="5">AVANCE DE LA META DE PROMOCIÓN CIUDADA</td></tr>');
                 $('#resumenNodo').html(tablaResumenNodo);
             } else {
                 $('#no_meta').html('0%');
@@ -229,15 +232,31 @@ $(document).ready(function(){
                     for(nodo in result) {
                         no_coordinados++;
                         nombre_coordinados = result[nodo].DescripcionPuesto;
-                        $li = $('<li data-id="'+result[nodo].IdNodoEstructuraMov+'" data-persona="'+result[nodo].IdPersonaPuesto+'"><a href="#">'+result[nodo].DescripcionPuesto+
-                                ' - '+result[nodo].DescripcionEstructura+' ('+result[nodo].NOMBRECOMPLETO+')</a></li>');
-                        $li.click(muestraDependiente);
+                        $li = $('<div class="col-xs-3 col-sm-4 col-md-4" data-id="'+result[nodo].IdNodoEstructuraMov+'" data-persona="'+result[nodo].IdPersonaPuesto+'">'+
+                                '<div class="thumbnail">'+
+                                    '<img src="'+result[nodo].foto+'" class="img-rounded imgPerson">'+
+                                    '<div class="caption">'+
+                                        '<div class="text-center"><strong>'+result[nodo].DescripcionEstructura+'</strong></div>'+
+                                        '<div class="text-center">'+result[nodo].NOMBRECOMPLETO+'</div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>');
+
+                        //$li.click(muestraDependiente);
 
                         $('#list_coordinados').append($li);
 
                         if (result[nodo].IdPersonaPuesto == '00000000-0000-0000-0000-000000000000') {
                             no_vacantes++;
-                            $('#list_vacantes').append('<li>'+result[nodo].DescripcionPuesto+' - '+result[nodo].DescripcionEstructura+'</li>');
+                            $('#list_vacantes').append('<div class="col-xs-3 col-sm-4 col-md-4">'+
+                                '<div class="thumbnail">'+
+                                    '<img src="'+result[nodo].foto+'" class="img-rounded imgPerson">'+
+                                    '<div class="caption">'+
+                                        '<p class="text-center"><strong>'+result[nodo].DescripcionEstructura+'</strong></p>'+
+                                        '<p class="text-center">Sin asignación</p><p>&nbsp;</p>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>');
                         }
                     }
                     nombre_coordinados = nombre_coordinados.replace('DE', '').replace('COORDINADOR', 'C.').toLowerCase() ;
@@ -298,7 +317,7 @@ $(document).ready(function(){
         });
     };
 
-    function muestraDependiente(event) {
+    /*function muestraDependiente(event) {
         if($('#alertDescDependiente').length == 0) {
             $('#tabPuesto .panel-body').append('<div class="alert alert-success" role="alert" id="alertDescDependiente">'+
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
@@ -307,13 +326,13 @@ $(document).ready(function(){
         } else {
             $('#descDependiente').html('<i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>');
         }
-        /*$self = this;
-
-        $('#modalPerson').modal('hide');
-        $('#modalPerson').on('hidden.bs.modal', function (e) {
-            verModalNodo(null, $($self).data('id'));
-            console.log('Oculto');
-        });*/
+//        $self = this;
+//
+//        $('#modalPerson').modal('hide');
+//        $('#modalPerson').on('hidden.bs.modal', function (e) {
+//            verModalNodo(null, $($self).data('id'));
+//            console.log('Oculto');
+//        });
 
         if ($(this).data('persona') != '00000000-0000-0000-0000-000000000000') {
             $.ajax({
@@ -333,7 +352,7 @@ $(document).ready(function(){
         } else {
             $('#descDependiente').html('Puesto no Asignado');
         }
-    }
+    }*/
 
     $('#dependencias').click(function(){
         $('#seccion_resumenNodo').hide();
@@ -623,6 +642,7 @@ $(document).ready(function(){
         var idMuni = $(this).val();
 
         if (idMuni != '') {
+            $('#btnResumen').show();
             $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
                 for (var i=0; i<result.length; i++) {
                     options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
@@ -640,6 +660,7 @@ $(document).ready(function(){
             });
         } else {
             $('#loadIndicator').hide();
+            $('#btnResumen').hide();
         }
     });
 
@@ -652,8 +673,12 @@ $(document).ready(function(){
     });
 
     $('#printResumenNodo').click(function(){
-        $imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson">'+
-                '<div class="panel-body"></div></div></div>');
+        $imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson" style="margin-bottom: 1px !important;">'+
+                '<div class="panel-body">'+
+                '<h3 class="text-center" style="margin-top: 1px !important;"><strong>SIRECI</strong></h3>'+
+                '<h4 class="text-center">ESTRATEGIA DE PROMOCIÓN CIUDADANA</h4>'+
+                '<h5 class="text-center">STATUS DE LA ESTRUCTURA Y AVANCE MUNICIPAL DE '+$('#municipio option:selected').text()+'</h5>'+
+                '</div></div></div>');
         $imprimible.find('.panel-body').append( '<div class="text-center col-xs-3">'+$('#imgPerson').parent().html()+'</div>');
         $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone().addClass('col-xs-9') );
         $imprimible.find('.panel-body').append( $('#indicadoresPuesto').clone() );
@@ -664,7 +689,7 @@ $(document).ready(function(){
         $imprimible.find('#verMasResumenNodo').remove();
         $imprimible.find('#btnAsignarPersona').remove();
 
-        console.log($imprimible.html());
+        //console.log($imprimible.html());
 
         $($imprimible).printArea({"mode":"popup","popClose":true});
     });
