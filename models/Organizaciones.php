@@ -56,10 +56,19 @@ class Organizaciones extends \yii\db\ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public static function primaryKey()
+    {
+        return ['IdOrganizacion'];
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getIntegrantes()
     {
-        return $this->hasMany(IntegrantesOrganizaciones::className(), ['IdOrganizacion' => 'IdOrganizacion']);
+        return $this->hasMany(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaIntegrante'])
+                ->viaTable('IntegrantesOrganizaciones', ['IdOrganizacion' => 'IdOrganizacion']);
     }
 }

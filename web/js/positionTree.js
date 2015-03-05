@@ -315,6 +315,33 @@ $(document).ready(function(){
         }).done(function(response){
             $('#no_meta_promocion').html(response+'%');
         });
+
+        // Obtiene los programas
+        $.ajax({
+            url: urlGetProgramas,
+            dataType: "json",
+            data: '_csrf='+$('[name=_csrf]').val()+'&idMuni='+$('#municipio').val(),
+            type: "GET",
+        }).done(function(response){
+            count = 0;
+
+            if (response.length) {
+                $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
+                    '<thead><tr><th>Nombre</th><th>Integrantes</th></tr></thead><tbody>';
+
+                for(fila in response) {
+                    $tabla += '<tr><td>'+response[fila].Nombre+'</td><td>'+response[fila].Integrantes+'</td></tr>';
+                    count++;
+                }
+                $tabla += '</tbody></table>';
+            } else {
+                $tabla = 'No ha programas disponibles en este municipio';
+                $('#seccion_programas').hide();
+            }
+
+            $('#list_programas').html($tabla);
+            $('#no_programas').html(count);
+        });
     };
 
     /*function muestraDependiente(event) {
@@ -358,6 +385,7 @@ $(document).ready(function(){
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
+        $('#seccion_programas').hide();
         $('#seccion_coordinados').toggle('slow', function() {
             if ($('#seccion_coordinados').is(':hidden')) {
                 if ( $('#alertDescDependiente').length > 0 ) {
@@ -373,6 +401,7 @@ $(document).ready(function(){
         $('#seccion_coordinados').hide();
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
+        $('#seccion_programas').hide();
         $('#seccion_resumenNodo').toggle('slow', function() {
             if (!$('#seccion_resumenNodo').is(':hidden')) {
                 $('#seccion_resumenNodo').ScrollTo();
@@ -388,6 +417,7 @@ $(document).ready(function(){
         $('#seccion_coordinados').hide();
         $('#seccion_resumenNodo').hide();
         $('#treeEstrucAlterna').hide();
+        $('#seccion_programas').hide();
         $('#seccion_vacantes').toggle('slow', function() {
             if (!$('#seccion_vacantes').is(':hidden')) {
                 $('#seccion_vacantes').ScrollTo();
@@ -403,7 +433,16 @@ $(document).ready(function(){
         $('#seccion_coordinados').hide();
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
+        $('#seccion_programas').hide();
         $('#treeEstrucAlterna').toggle('slow');
+    });
+
+    $('#btn_programas').click(function(){
+        $('#seccion_coordinados').hide();
+        $('#seccion_resumenNodo').hide();
+        $('#seccion_vacantes').hide();
+        $('#treeEstrucAlterna').hide();
+        $('#seccion_programas').toggle('slow');
     });
 
     $("#treeContainer").fancytree({

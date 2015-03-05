@@ -22,6 +22,7 @@ $this->registerJs('urlAsignarPersona="'.Url::toRoute('site/setpuestopersona', tr
 $this->registerJs('urlGetMetaBySeccion="'.Url::toRoute('site/getmetabyseccion', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetMetaByPromotor="'.Url::toRoute('site/getmetabypromotor', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetAvanceMeta="'.Url::toRoute('site/getavancemeta', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetProgramas="'.Url::toRoute('site/getprogramas', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('pl="'.Yii::$app->user->identity->nodoestructura->IdPuesto.'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
@@ -176,8 +177,8 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                             <br>
                                                             <span class="">Promoción</span>
                                                         </span>
-                                                        <span class="btn btn-app btn-sm btn-pink">
-                                                            <span class="line-height-1 bigger-170"> 0 </span>
+                                                        <span class="btn btn-app btn-sm btn-pink" id="btn_programas">
+                                                            <span class="line-height-1 bigger-170" id="no_programas"> 0 </span>
                                                             <br>
                                                             <span class=""> Programas </span>
                                                         </span>
@@ -201,6 +202,11 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                     <div id="seccion_vacantes" style="display: none;">
                                                         Puestos inmediatos vacantes:
                                                         <ul id="list_vacantes"></ul>
+                                                    </div>
+
+                                                    <div id="seccion_programas" style="display: none;">
+                                                        Programas disponibles en el municipio:
+                                                        <div id="list_programas"></div>
                                                     </div>
 
                                                     <div id="seccion_resumenNodo" style="display: none;">

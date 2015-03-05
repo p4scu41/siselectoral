@@ -46,4 +46,12 @@ class Puestos extends \yii\db\ActiveRecord
             'Nivel' => 'Nivel',
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function primaryKey()
+    {
+        return ['IdPuesto'];
+    }
 }

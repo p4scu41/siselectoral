@@ -790,4 +790,38 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             return $countPromocion['promovidos'];
         }
     }
+
+    /**
+     * Obtiene todas las estructuras alterna dependientes del nodo superior
+     *
+     * @param Int $idNodo
+     * @return JSON personalizado para fancytree
+     */
+    public function getEstrucAlterna($idMuni, $idNodo)
+    {
+        $sql = 'SELECT * FROM DetalleEstructuraMovilizacion WHERE IdOrganizacion != -1 AND Municipio = '.$idMuni.
+                ' AND Dependencias LIKE \'%|'.$idNodo.'|%\'';
+
+        $alternas = Yii::$app->db->createCommand($sql)->queryAll();
+
+        $tree = '[';
+
+        foreach($alternas as $nodo) {
+            $count = 0;
+            $puesto = Puestos::find()->where(['IdPuesto'=>$nodo['IdPuesto']])->one();
+            $org = Organizaciones::find()->where(['IdOrganizacion'=>$nodo['IdOrganizacion']])->one();
+
+            if ($org) {
+                $count = count($org->integrantes);
+            }
+
+            $tree .= '{"key": "'.$nodo['IdNodoEstructuraMov'].'", "title": "'.$puesto->Descripcion.' - '.$nodo['Descripcion'].' '.('['.$count.']').'", '.
+                    '"data": { "IdPuesto": "'.$puesto->IdPuesto.'", "puesto": "'.$puesto->Descripcion.'", "persona": "'.$nodo['IdPersonaPuesto'].'",'.
+                    ' "iconclass": "glyphicon glyphicon-user"}, "folder": true, "lazy": true},';
+        }
+
+        $tree .= ']';
+
+        return str_replace('},]', '}]', $tree);
+    }
 }

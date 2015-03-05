@@ -13,6 +13,7 @@ use app\models\ContactForm;
 use app\models\CMunicipio;
 use app\models\Puestos;
 use app\models\DetalleEstructuraMovilizacion;
+use app\models\Organizaciones;
 
 class SiteController extends Controller
  {
@@ -153,14 +154,15 @@ class SiteController extends Controller
         $estructura = new DetalleEstructuraMovilizacion();
 
         unset($post['_csrf']);
-        $alterna = false;
+        //$alterna = false;
 
         if (isset($post['alterna'])) {
-            $alterna = true;
-            unset($post['alterna']);
+            //$alterna = true;
+            //unset($post['alterna']);
+            $tree = $estructura->getEstrucAlterna($_POST['Municipio'], $_POST['IdPuestoDepende']);
+        } else {
+            $tree = $estructura->getTree($post);
         }
-
-        $tree = $estructura->getTree($post, $alterna);
 
         return $tree;
     }
@@ -268,5 +270,22 @@ class SiteController extends Controller
         $meta = DetalleEstructuraMovilizacion::getAvanceMeta($id);
 
         return $meta;
+    }
+
+    public function actionGetprogramas($idMuni)
+    {
+        $programas = Organizaciones::find()->where(['IdMunicipio'=>$idMuni, 'idTipoOrganizacion'=>22])->asArray()->all();
+
+        foreach ($programas as $key => $value) {
+            $prog = Organizaciones::find()->where(['IdOrganizacion'=>$value['IdOrganizacion']])->one();
+            $count = 0;
+            if ($prog) {
+                $count = count($prog->integrantes);
+            }
+
+            $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count]);
+        }
+
+        return json_encode($programas);
     }
 }
