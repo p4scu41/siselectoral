@@ -812,7 +812,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $org = Organizaciones::find()->where(['IdOrganizacion'=>$nodo['IdOrganizacion']])->one();
 
             if ($org) {
-                $count = count($org->integrantes);
+                $count = Organizaciones::getCountIntegrantes($nodo['IdOrganizacion'], $idMuni);
             }
 
             $tree .= '{"key": "'.$nodo['IdNodoEstructuraMov'].'", "title": "'.$puesto->Descripcion.' - '.$nodo['Descripcion'].' '.('['.$count.']').'", '.

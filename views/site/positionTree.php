@@ -23,6 +23,7 @@ $this->registerJs('urlGetMetaBySeccion="'.Url::toRoute('site/getmetabyseccion', 
 $this->registerJs('urlGetMetaByPromotor="'.Url::toRoute('site/getmetabypromotor', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetAvanceMeta="'.Url::toRoute('site/getavancemeta', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetProgramas="'.Url::toRoute('site/getprogramas', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetIntegrantes="'.Url::toRoute('site/getintegrantesprogbyseccion', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('pl="'.Yii::$app->user->identity->nodoestructura->IdPuesto.'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
@@ -199,6 +200,9 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         <div class="row" id="list_coordinados"></div>
                                                     </div>
 
+                                                    <div id="seccion_promocion" style="display: none;">
+                                                    </div>
+
                                                     <div id="seccion_vacantes" style="display: none;">
                                                         Puestos inmediatos vacantes:
                                                         <ul id="list_vacantes"></ul>
@@ -207,6 +211,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                     <div id="seccion_programas" style="display: none;">
                                                         Programas disponibles en el municipio:
                                                         <div id="list_programas"></div>
+                                                        <div id="list_integrantes" class="tblListIntegrantesBySeccion" style="display: none;"></div>
                                                     </div>
 
                                                     <div id="seccion_resumenNodo" style="display: none;">

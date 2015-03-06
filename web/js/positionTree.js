@@ -207,8 +207,20 @@ $(document).ready(function(){
 
                 tablaResumenNodo = $(ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
 
-                tablaResumenNodo.find('tr:last').prev().replaceWith('<tr><td colspan="5">AVANCE DE LA META DE PROMOCIÓN CIUDADA</td></tr>');
+                //tablaResumenNodo.find('tr:last').addClass('itemHide');
+                //tablaResumenNodo.find('tr:last').prev().replaceWith('<tr><td colspan="5">AVANCE DE LA META DE PROMOCIÓN CIUDADA</td></tr>');
+
+                tablaPromocion = $('<div class="table-responsive"><table class="table table-condensed table-bordered table-hover" id="tablaPromocion">'+
+                                    '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADA</strong></td></tr>'+
+                                    '</th><th>Total</th><th>Ocupados</th><th>Vacantes</th><th>Avances %</th></tr></table></div>');
+                tablaPromocion.find('#tablaPromocion').append( tablaResumenNodo.find('tr:last') );
+                tablaPromocion.find('tr:last td:first').remove();
+
+                tablaResumenNodo.find('tr:last').remove();
+                tablaResumenNodo.find('tr:last').remove();
+
                 $('#resumenNodo').html(tablaResumenNodo);
+                $('#seccion_promocion').html( tablaPromocion );
             } else {
                 $('#no_meta').html('0%');
                 $('#resumenNodo').html('');
@@ -327,22 +339,54 @@ $(document).ready(function(){
 
             if (response.length) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
-                    '<thead><tr><th>Nombre</th><th>Integrantes</th></tr></thead><tbody>';
+                    '<thead><tr><th>Nombre</th><th>Integrantes</th><th>Sección</th></tr></thead><tbody>';
 
                 for(fila in response) {
-                    $tabla += '<tr><td>'+response[fila].Nombre+'</td><td>'+response[fila].Integrantes+'</td></tr>';
+                    $tabla += '<tr><td>'+response[fila].Nombre+'</td><td>'+response[fila].Integrantes+'</td><td class="text-center">'+
+                            '<button class="btn btn-default" type="button" data-idorg="'+response[fila].IdOrganizacion+'">'+
+                            '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></td></tr>';
                     count++;
                 }
                 $tabla += '</tbody></table>';
+
+
             } else {
                 $tabla = 'No ha programas disponibles en este municipio';
                 $('#seccion_programas').hide();
             }
 
             $('#list_programas').html($tabla);
+            $('#list_programas button').click(getIntegrantesBySeccion);
             $('#no_programas').html(count);
+            $('#list_integrantes').html('');
+            $('#list_integrantes').hide();
         });
     };
+
+    function getIntegrantesBySeccion() {
+        //console.log($(this).data('idorg')+'-'+$('#municipio').val());
+        $.ajax({
+            url: urlGetIntegrantes,
+            dataType: "json",
+            data: {idOrg:$(this).data('idorg') ,idMuni:$('#municipio').val()},
+            type: "GET",
+        }).done(function(response) {
+            if ( response.length ) {
+                $tabla = 'Distribución de los integrantes por sección<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
+                        '<thead><tr><th>Sección</th><th>Total</th></tr></thead><tbody>';
+
+                for(fila in response) {
+                    $tabla += '<tr><td>'+parseInt(response[fila].SECCION)+'</td><td>'+response[fila].total+'</td></tr>';
+                    count++;
+                }
+                $tabla += '</tbody></table>';
+            } else {
+                $tabla = 'Sin integrantes'
+            }
+            $('#list_integrantes').html($tabla);
+            $('#list_integrantes').toggle();
+        });
+    }
 
     /*function muestraDependiente(event) {
         if($('#alertDescDependiente').length == 0) {
@@ -386,6 +430,7 @@ $(document).ready(function(){
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
         $('#seccion_programas').hide();
+        $('#seccion_promocion').hide();
         $('#seccion_coordinados').toggle('slow', function() {
             if ($('#seccion_coordinados').is(':hidden')) {
                 if ( $('#alertDescDependiente').length > 0 ) {
@@ -402,6 +447,7 @@ $(document).ready(function(){
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
         $('#seccion_programas').hide();
+        $('#seccion_promocion').hide();
         $('#seccion_resumenNodo').toggle('slow', function() {
             if (!$('#seccion_resumenNodo').is(':hidden')) {
                 $('#seccion_resumenNodo').ScrollTo();
@@ -418,6 +464,7 @@ $(document).ready(function(){
         $('#seccion_resumenNodo').hide();
         $('#treeEstrucAlterna').hide();
         $('#seccion_programas').hide();
+        $('#seccion_promocions').hide();
         $('#seccion_vacantes').toggle('slow', function() {
             if (!$('#seccion_vacantes').is(':hidden')) {
                 $('#seccion_vacantes').ScrollTo();
@@ -434,6 +481,7 @@ $(document).ready(function(){
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
         $('#seccion_programas').hide();
+        $('#seccion_promocion').hide();
         $('#treeEstrucAlterna').toggle('slow');
     });
 
@@ -442,7 +490,17 @@ $(document).ready(function(){
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
+        $('#seccion_promocion').hide();
         $('#seccion_programas').toggle('slow');
+    });
+
+    $('#meta_promocion').click(function(){
+        $('#seccion_coordinados').hide();
+        $('#seccion_resumenNodo').hide();
+        $('#seccion_vacantes').hide();
+        $('#treeEstrucAlterna').hide();
+        $('#seccion_programas').hide();
+        $('#seccion_promocion').toggle('slow');
     });
 
     $("#treeContainer").fancytree({
@@ -718,11 +776,14 @@ $(document).ready(function(){
                 '<h4 class="text-center">ESTRATEGIA DE PROMOCIÓN CIUDADANA</h4>'+
                 '<h5 class="text-center">STATUS DE LA ESTRUCTURA Y AVANCE MUNICIPAL DE '+$('#municipio option:selected').text()+'</h5>'+
                 '</div></div></div>');
+        $seccion_resumenNodo = $('#seccion_resumenNodo').clone().show();
+        $seccion_resumenNodo.find('#tablaResumen').append( '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADA</strong></td></tr>' );
+        $seccion_resumenNodo.find('#tablaResumen').append( $('#tablaPromocion').find('tr:last').prepend('<td>PROMOCIÓN</td>') );
         $imprimible.find('.panel-body').append( '<div class="text-center col-xs-3">'+$('#imgPerson').parent().html()+'</div>');
         $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone().addClass('col-xs-9') );
         $imprimible.find('.panel-body').append( $('#indicadoresPuesto').clone() );
         $imprimible.find('.panel-body').append( $('#seccion_coordinados').clone().show() );
-        $imprimible.find('.panel-body').append( $('#seccion_resumenNodo').clone().show() );
+        $imprimible.find('.panel-body').append( $seccion_resumenNodo );
         $imprimible.find('.panel-body').append( $('#fechaResumenNodo').clone() );
         $imprimible.find(' .btn.btn-app').blur();
         $imprimible.find('#verMasResumenNodo').remove();

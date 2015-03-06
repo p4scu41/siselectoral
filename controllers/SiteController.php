@@ -292,12 +292,19 @@ class SiteController extends Controller
             $prog = Organizaciones::find()->where(['IdOrganizacion'=>$value['IdOrganizacion']])->one();
             $count = 0;
             if ($prog) {
-                $count = Yii::$app->db->createCommand('SELECT COUNT(*) as total FROM IntegrantesOrganizaciones WHERE [IdOrganizacion] = '.$value['IdOrganizacion'])->queryOne();
+                $count = Organizaciones::getCountIntegrantes($value['IdOrganizacion'], $idMuni);
             }
 
-            $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count['total']]);
+            $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count]);
         }
 
         return json_encode($programas);
+    }
+
+    public function actionGetintegrantesprogbyseccion($idOrg, $idMuni)
+    {
+        $integrantes = Organizaciones::getCountIntegrantesBySeccion($idOrg, $idMuni);
+
+        return json_encode($integrantes);
     }
 }

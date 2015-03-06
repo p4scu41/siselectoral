@@ -71,4 +71,51 @@ class Organizaciones extends \yii\db\ActiveRecord
         return $this->hasMany(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaIntegrante'])
                 ->viaTable('IntegrantesOrganizaciones', ['IdOrganizacion' => 'IdOrganizacion']);
     }
+
+    /**
+     * Obtiene el número de integrantes de la organización
+     *
+     * @param Int $idOrganicacion
+     * @return Int Cantidad de integrantes de la organización
+     */
+    public static function getCountIntegrantes($idOrganicacion, $idMuni)
+    {
+        $count = Yii::$app->db->createCommand('SELECT
+                    COUNT([PadronGlobal].[CLAVEUNICA]) AS total
+                    FROM
+                        [IntegrantesOrganizaciones]
+                    INNER JOIN [PadronGlobal] ON
+                        [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
+                    WHERE
+                        [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
+                        [PadronGlobal].[MUNICIPIO] = '.$idMuni)->queryOne();
+
+        return $count['total'];
+    }
+
+    /**
+     * Obtiene el número de integrantes de la organización divididos por sección
+     *
+     * @param Int $idOrganicacion
+     * @return Array Cantidad de integrantes por seccion
+     */
+    public static function getCountIntegrantesBySeccion($idOrganicacion, $idMuni)
+    {
+        $count = Yii::$app->db->createCommand('SELECT
+                    [PadronGlobal].[SECCION]
+                    ,COUNT([PadronGlobal].[CLAVEUNICA]) AS total
+                FROM
+                    [IntegrantesOrganizaciones]
+                INNER JOIN [PadronGlobal] ON
+                    [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
+                WHERE
+                    [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
+                    [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
+                GROUP BY
+                    [PadronGlobal].[SECCION]
+                ORDER BY
+                    [SECCION]')->queryAll();
+
+        return $count;
+    }
 }
