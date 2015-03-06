@@ -55,6 +55,18 @@ class SiteController extends Controller
         ];
     }
 
+    public function beforeAction($action)
+    {
+        if (parent::beforeAction($action)) {
+            // change layout for error action
+            if ($action->id == 'error')
+                $this->layout = 'error';
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function actionIndex()
     {
         if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
@@ -280,10 +292,10 @@ class SiteController extends Controller
             $prog = Organizaciones::find()->where(['IdOrganizacion'=>$value['IdOrganizacion']])->one();
             $count = 0;
             if ($prog) {
-                $count = count($prog->integrantes);
+                $count = Yii::$app->db->createCommand('SELECT COUNT(*) as total FROM IntegrantesOrganizaciones WHERE [IdOrganizacion] = '.$value['IdOrganizacion'])->queryOne();
             }
 
-            $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count]);
+            $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count['total']]);
         }
 
         return json_encode($programas);
