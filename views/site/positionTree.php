@@ -25,6 +25,7 @@ $this->registerJs('urlGetAvanceMeta="'.Url::toRoute('site/getavancemeta', true).
 $this->registerJs('urlGetProgramas="'.Url::toRoute('site/getprogramas', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetIntegrantes="'.Url::toRoute('site/getintegrantesprogbyseccion', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('pl="'.Yii::$app->user->identity->nodoestructura->IdPuesto.'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlListInte="'.Url::toRoute('organizacion/listintegrantesfromseccion').'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {
@@ -344,3 +345,20 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
 </div><!-- /.modal -->
 
 <canvas id="canvas"></canvas>
+
+<div class="modal fade" id="modalListIntegrantes" tabindex='-1'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Lista de integrantes</h4>
+            </div>
+            <div class="modal-body">
+                Hola mundo
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

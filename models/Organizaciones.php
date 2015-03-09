@@ -103,19 +103,48 @@ class Organizaciones extends \yii\db\ActiveRecord
     {
         $count = Yii::$app->db->createCommand('SELECT
                     [PadronGlobal].[SECCION]
+                    ,[CSeccion].[MetaAlcanzar]
                     ,COUNT([PadronGlobal].[CLAVEUNICA]) AS total
+                FROM
+                    [IntegrantesOrganizaciones]
+                INNER JOIN [PadronGlobal] ON
+                    [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
+                INNER JOIN [CSeccion] ON
+                    [CSeccion].[NumSector] = [PadronGlobal].[SECCION] AND
+                    [CSeccion].[IdMunicipio] = [PadronGlobal].[MUNICIPIO]
+                WHERE
+                    [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
+                    [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
+                GROUP BY
+                    [PadronGlobal].[SECCION], [CSeccion].[MetaAlcanzar]
+                ORDER BY
+                    [SECCION]')->queryAll();
+
+        return $count;
+    }
+
+    /**
+     * Obtiene el número de integrantes de la organización divididos por sección
+     *
+     * @param Int $idOrganicacion
+     * @return Array Cantidad de integrantes por seccion
+     */
+    public static function getListIntegrantesFromSeccion($idOrganicacion, $idSeccion)
+    {
+        $listIntegrantes = Yii::$app->db->createCommand('SELECT
+                    [PadronGlobal].[CLAVEUNICA]
+                    ,[PadronGlobal].[SEXO]
+                    ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NOMBRE
+                    ,[PadronGlobal].[FECHANACIMIENTO]
                 FROM
                     [IntegrantesOrganizaciones]
                 INNER JOIN [PadronGlobal] ON
                     [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
                 WHERE
                     [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
-                    [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
-                GROUP BY
-                    [PadronGlobal].[SECCION]
-                ORDER BY
-                    [SECCION]')->queryAll();
+                    [PadronGlobal].[SECCION] = '.$idSeccion.'
+                ORDER BY NOMBRE')->queryAll();
 
-        return $count;
+        return $listIntegrantes;
     }
 }

@@ -506,13 +506,18 @@ modalPerson #tablaResumen tr:last-child {
 #resultBuscarPersona {
     max-height: 200px;
 }
-.tblListIntegrantesBySeccion {
+.tblListIntegrantesBySeccion,
+#modalListIntegrantes .modal-body{
     max-height: 200px;
     overflow: auto;
 }
 #tablaPromocion td, #tablaPromocion th{
     text-align: center;
     vertical-align: middle;
+}
+/* Manda el jquery dialog al frente del bootstrap modal */
+.ui-front {
+    z-index: 10000;
 }
 
 @media print {

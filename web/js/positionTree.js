@@ -342,7 +342,7 @@ $(document).ready(function(){
                     '<thead><tr><th>Nombre</th><th>Integrantes</th><th>Sección</th></tr></thead><tbody>';
 
                 for(fila in response) {
-                    $tabla += '<tr><td>'+response[fila].Nombre+'</td><td>'+response[fila].Integrantes+'</td><td class="text-center">'+
+                    $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
                             '<button class="btn btn-default" type="button" data-idorg="'+response[fila].IdOrganizacion+'">'+
                             '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></td></tr>';
                     count++;
@@ -364,28 +364,55 @@ $(document).ready(function(){
     };
 
     function getIntegrantesBySeccion() {
-        //console.log($(this).data('idorg')+'-'+$('#municipio').val());
+        idorg = $(this).data('idorg');
+
         $.ajax({
             url: urlGetIntegrantes,
             dataType: "json",
-            data: {idOrg:$(this).data('idorg') ,idMuni:$('#municipio').val()},
+            data: {idOrg:idorg, idMuni:$('#municipio').val()},
             type: "GET",
         }).done(function(response) {
             if ( response.length ) {
                 $tabla = 'Distribución de los integrantes por sección<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
-                        '<thead><tr><th>Sección</th><th>Total</th></tr></thead><tbody>';
+                        '<thead><tr><th class="text-center">Sección</th><th class="text-center">Total</th><th class="text-center">Meta</th><th class="text-center">Integrantes</th></tr></thead><tbody>';
 
                 for(fila in response) {
-                    $tabla += '<tr><td>'+parseInt(response[fila].SECCION)+'</td><td>'+response[fila].total+'</td></tr>';
-                    count++;
+                    $tabla += '<tr class="text-center"><td>'+parseInt(response[fila].SECCION)+'</td><td>'+response[fila].total+'</td>'+
+                            '<td>'+response[fila].MetaAlcanzar+'</td><td><button class="btn btn-default" type="button" data-idorg="'+idorg+'" '+
+                            'data-seccion="'+parseInt(response[fila].SECCION)+'"><span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></tr>';
                 }
                 $tabla += '</tbody></table>';
             } else {
                 $tabla = 'Sin integrantes'
             }
             $('#list_integrantes').html($tabla);
+            $('#list_integrantes button').click(listIntegratesFromSeccion);
             $('#list_integrantes').toggle();
         });
+    }
+
+    function listIntegratesFromSeccion() {
+        $('#modalListIntegrantes .modal-body').html('<div class="text-center"><i class="fa fa-spinner fa-pulse fa-lg"></i></div>');
+
+        $.ajax({
+            url: urlListInte,
+            dataType: "json",
+            data: {idOrganizacion:$(this).data('idorg'), idSeccion:$(this).data('seccion')},
+            type: "GET",
+        }).done(function(response) {
+            if ( response.length ) {
+                $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
+                        '<thead><tr><th class="text-center">Nombre</th><th class="text-center">Sexo</th><th class="text-center">Fecha Nacimiento</th></tr></thead><tbody>';
+
+                for(fila in response) {
+                    $tabla += '<tr><td>'+response[fila].NOMBRE+'</td><td>'+response[fila].SEXO+'</td><td>'+response[fila].FECHANACIMIENTO+'</td></tr>';
+                }
+                $tabla += '</tbody></table>';
+                $('#modalListIntegrantes .modal-body').html($tabla);
+            }
+        });
+
+        $('#modalListIntegrantes').modal('show');
     }
 
     /*function muestraDependiente(event) {
