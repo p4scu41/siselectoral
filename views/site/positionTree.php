@@ -110,6 +110,10 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
     </div>
 </div>
 
+<p class="text-right">
+    <button class="btn btn-default btnCollapseTree"><i class="fa fa-compress"></i> </button>
+</p>
+
 <div class="table-responsive">
     <table id="treeContainer" class="table table-condensed table-striped table-bordered table-hover" style="display: none">
         <colgroup>
@@ -126,6 +130,10 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
         </tbody>
     </table>
 </div>
+
+<p class="text-right">
+    <button class="btn btn-default btnCollapseTree"><i class="fa fa-compress"></i> </button>
+</p>
 
 <div class="modal fade" id="modalPerson" tabindex='-1'>
     <div class="modal-dialog">

@@ -9,7 +9,20 @@ $this->title = 'Detalles estructura';
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['breadcrumbs'][] = 'Persona';
 $this->registerJsFile('http://maps.google.com/maps/api/js?sensor=false');
+$this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerJsFile(Url::to('@web/js/persona.js'));
+$this->registerJs('puesto = "'.$puesto.'";'.
+            'municipio = "'.$persona->MUNICIPIO.'";'.
+            'nodo = "'.$nodo.'";'
+        , \yii\web\View::POS_HEAD);
+$this->registerJs('urlResumenNodo="'.Url::toRoute('site/getresumennodo', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetProgramas="'.Url::toRoute('site/getprogramas', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetIntegrantes="'.Url::toRoute('site/getintegrantesprogbyseccion', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlListInte="'.Url::toRoute('organizacion/listintegrantesfromseccion').'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlBranch="'.Url::toRoute('site/getbranch', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";', \yii\web\View::POS_HEAD);
+$this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
+
 ?>
 <div class="row">
     <!-- left column -->
@@ -60,18 +73,45 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                     <br>
                                     <span class="">Promoción</span>
                                 </span>
-                                <span class="btn btn-app btn-sm btn-pink">
-                                    <span class="line-height-1 bigger-170"> 0 </span>
+                                <span class="btn btn-app btn-sm btn-pink" id="btn_programas">
+                                    <span class="line-height-1 bigger-170" id="no_programas"> 0 </span>
                                     <br>
                                     <span class=""> Programas </span>
                                 </span>
-                                <span class="btn btn-app btn-sm btn-grey">
+                                <span class="btn btn-app btn-sm btn-grey" id="infoEstrucAlterna">
                                     <span class="line-height-1 bigger-170"> 0 </span>
                                     <br>
                                     <span class=""> Estruc. Alterna </span>
                                 </span>
                             </div>
                             <br>
+
+                            <div class="table-responsive" id="resumenNodo" style="display: none;">
+                                <i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>
+                            </div>
+                            <div id="seccion_promocion" style="display: none;"></div>
+                            <div id="seccion_programas" style="display: none;">
+                                Programas disponibles en el municipio:
+                                <div id="list_programas"></div>
+                                <div id="list_integrantes" class="tblListIntegrantesBySeccion" style="display: none;"></div>
+                            </div>
+                            <div class="table-responsive">
+                                <table id="treeEstrucAlterna" class="table table-condensed table-striped table-bordered table-hover" style="display: none">
+                                    <colgroup>
+                                        <col width="*"></col>
+                                        <col width="80px"></col>
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Puesto</th>
+                                            <th class="text-center">Asignaci&oacute;n</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                         <div class="col-md-8">
                             <form class="form-horizontal" method="POST" id="frmPersonDetails">
@@ -230,4 +270,21 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
         }
     }
     ?>
+</div>
+
+<div class="modal fade" id="modalListIntegrantes" tabindex='-1'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Lista de integrantes</h4>
+            </div>
+            <div class="modal-body">
+                Hola mundo
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>

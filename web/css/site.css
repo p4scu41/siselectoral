@@ -519,6 +519,9 @@ modalPerson #tablaResumen tr:last-child {
 .ui-front {
     z-index: 10000;
 }
+.btnCollapseTree {
+    display: none;
+}
 
 @media print {
     #indicadoresPuesto .btn.btn-app{

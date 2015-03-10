@@ -100,9 +100,13 @@ class PadronController extends Controller
         $no_meta_estruc = 0;
         $no_meta_proyec = 0;
         $no_meta_promocion = 0;
+        $IdPuesto = 0;
+        $IdNodo = 0;
 
         if($estructura != null) {
             $puesto = Puestos::findOne(['IdPuesto' => $estructura->IdPuesto]);
+            $IdPuesto = $estructura->IdPuesto;
+            $IdNodo = $estructura->IdNodoEstructuraMov;
 
             $puestoPersona = $puesto->Descripcion.' - '.$estructura->Descripcion;
 
@@ -138,7 +142,9 @@ class PadronController extends Controller
             'no_meta_estruc' => $no_meta_estruc,
             'no_meta_proyec' => $no_meta_proyec,
             'no_meta_promocion' => $no_meta_promocion,
-            'actionPersona' => $actionPersona
+            'actionPersona' => $actionPersona,
+            'puesto' => $IdPuesto,
+            'nodo' => $IdNodo,
         ]);
     }
 

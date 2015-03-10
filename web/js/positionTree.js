@@ -82,6 +82,7 @@ $(document).ready(function(){
         CookieParams = $.deparam($.cookie('parametros'));
 
         $('#btnResumen').show();
+        $('.btnCollapseTree').show();
         $('#municipio option[value='+parseInt(CookieParams.Municipio)+']').attr('selected', true);
         $('#puesto option[value='+parseInt(CookieParams.IdPuesto)+']').attr('selected', true);
     }
@@ -297,9 +298,9 @@ $(document).ready(function(){
             type: "POST",
             /*data: '_csrf='+$('[name=_csrf]').val()+'&idNodo='+node.key,
             type: "GET",*/
-        }).done(function(response){
+        }).done(function(response) {
             if (response.length>0) {
-                $('#infoEstrucAlterna span:first').text('1');
+                $('#infoEstrucAlterna span:first').text(response.length);
                 treeEstrucAlterna.reload(response);
             } else {
                 $('#infoEstrucAlterna span:first').text('0');
@@ -328,6 +329,8 @@ $(document).ready(function(){
             $('#no_meta_promocion').html(response+'%');
         });
 
+        $('#no_programas').html('<i class="fa fa-refresh fa-spin" style="font-size: x-large;"></i>');
+
         // Obtiene los programas
         $.ajax({
             url: urlGetProgramas,
@@ -351,7 +354,7 @@ $(document).ready(function(){
 
 
             } else {
-                $tabla = 'No ha programas disponibles en este municipio';
+                $tabla = 'No hay programas disponibles en este municipio';
                 $('#seccion_programas').hide();
             }
 
@@ -578,6 +581,12 @@ $(document).ready(function(){
         }
     });
 
+    $('.btnCollapseTree').click(function(){
+        $("#treeContainer").fancytree("getRootNode").visit(function(node){
+            node.setExpanded(false);
+        });
+    });
+
     $("#treeEstrucAlterna").fancytree({
         extensions: ["table"],
         table: {
@@ -652,10 +661,12 @@ $(document).ready(function(){
                     $('#alertResult').html('No se encontraron resultados en la b&uacute;squeda');
                     $('#alertResult').show();
                     $('#btnResumen').hide();
+                    $('.btnCollapseTree').hide();
                     $("#treeContainer").attr({'style': 'display: none'});
                 } else {
                     $('#alertResult').hide();
                     $('#btnResumen').show();
+                    $('.btnCollapseTree').show();
                     $("#treeContainer").removeAttr('style');
 
                     $('#treeContainer').ScrollTo();
@@ -699,6 +710,8 @@ $(document).ready(function(){
                 $('#alertResult').hide();
                 tablaResumen = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
                 $('#modalResumen .table-responsive').html(tablaResumen);
+
+                $('<tr><td colspan="5">&nbsp;</td></tr>').insertBefore('#tablaResumen tr:last');
 
                 $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text());
                 $('#fechaResumen').html('Fecha de corte: '+padLeft(fecha.getDate(),2)+'-'+padLeft((fecha.getMonth()+1),2)+'-'+fecha.getFullYear());
@@ -767,6 +780,7 @@ $(document).ready(function(){
 
         if (idMuni != '') {
             $('#btnResumen').show();
+            $('.btnCollapseTree').show();
             $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
                 for (var i=0; i<result.length; i++) {
                     options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
@@ -785,6 +799,7 @@ $(document).ready(function(){
         } else {
             $('#loadIndicator').hide();
             $('#btnResumen').hide();
+            $('.btnCollapseTree').hide();
         }
     });
 
