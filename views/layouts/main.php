@@ -49,7 +49,7 @@ AppAsset::register($this);
                             <img src="<?php echo Yii::getAlias('@web'); ?>/img/avatar5.png" class="img-circle" alt="User Image" />
                         </div>
                         <div class="pull-left info">
-                            <p>Administrador</p>
+                            <p><?= Yii::$app->user->identity->login ?></p>
 
                             <a href="#"><i class="fa fa-circle text-success"></i> En linea</a>
                         </div>

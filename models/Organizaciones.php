@@ -136,6 +136,7 @@ class Organizaciones extends \yii\db\ActiveRecord
                     ,[PadronGlobal].[SEXO]
                     ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NOMBRE
                     ,[PadronGlobal].[FECHANACIMIENTO]
+                    ,[PadronGlobal].[COLONIA]
                 FROM
                     [IntegrantesOrganizaciones]
                 INNER JOIN [PadronGlobal] ON

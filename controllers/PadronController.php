@@ -143,7 +143,7 @@ class PadronController extends Controller
             'no_meta_proyec' => $no_meta_proyec,
             'no_meta_promocion' => $no_meta_promocion,
             'actionPersona' => $actionPersona,
-            'puesto' => $IdPuesto,
+            'idPuesto' => $IdPuesto,
             'nodo' => $IdNodo,
         ]);
     }

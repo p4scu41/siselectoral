@@ -106,11 +106,11 @@ $(document).ready(function(){
 
         if (response.length) {
             $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
-                '<thead><tr><th>Nombre</th><th>Integrantes</th><th>Sección</th></tr></thead><tbody>';
+                '<thead><tr><th>Nombre</th><th>Beneficiarios</th><th>Sección</th></tr></thead><tbody>';
 
             for(fila in response) {
                 $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
-                        '<button class="btn btn-default" type="button" data-idorg="'+response[fila].IdOrganizacion+'">'+
+                        '<button class="btn btn-default" type="button" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'">'+
                         '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></td></tr>';
                 count++;
             }
@@ -131,7 +131,7 @@ $(document).ready(function(){
 
     function getIntegrantesBySeccion() {
         idorg = $(this).data('idorg');
-
+        self = this;
         $.ajax({
             url: urlGetIntegrantes,
             dataType: "json",
@@ -140,11 +140,11 @@ $(document).ready(function(){
         }).done(function(response) {
             if ( response.length ) {
                 $tabla = 'Distribución de los integrantes por sección<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
-                        '<thead><tr><th class="text-center">Sección</th><th class="text-center">Total</th><th class="text-center">Meta</th><th class="text-center">Integrantes</th></tr></thead><tbody>';
+                        '<thead><tr><th class="text-center">Sección</th><th class="text-center">Meta</th><th class="text-center">Ben.</th><th class="text-center">Ver</th></tr></thead><tbody>';
 
                 for(fila in response) {
-                    $tabla += '<tr class="text-center"><td>'+parseInt(response[fila].SECCION)+'</td><td>'+response[fila].total+'</td>'+
-                            '<td>'+response[fila].MetaAlcanzar+'</td><td><button class="btn btn-default" type="button" data-idorg="'+idorg+'" '+
+                    $tabla += '<tr class="text-center"><td>'+parseInt(response[fila].SECCION)+'</td><td>'+response[fila].MetaAlcanzar+'</td>'+
+                            '<td>'+response[fila].total+'</td><td><button class="btn btn-default" type="button" data-idorg="'+idorg+'" data-nombreorg="'+$(self).data('nombreorg')+'" '+
                             'data-seccion="'+parseInt(response[fila].SECCION)+'"><span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></tr>';
                 }
                 $tabla += '</tbody></table>';
@@ -159,7 +159,7 @@ $(document).ready(function(){
 
     function listIntegratesFromSeccion() {
         $('#modalListIntegrantes .modal-body').html('<div class="text-center"><i class="fa fa-spinner fa-pulse fa-lg"></i></div>');
-
+        self = this;
         $.ajax({
             url: urlListInte,
             dataType: "json",
@@ -168,16 +168,17 @@ $(document).ready(function(){
         }).done(function(response) {
             if ( response.length ) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
-                        '<thead><tr><th class="text-center">Nombre</th><th class="text-center">Sexo</th><th class="text-center">Fecha Nacimiento</th></tr></thead><tbody>';
+                        '<thead><tr><th class="text-center">Nombre</th><th class="text-center">Sexo</th><th class="text-center">Fecha Nacimiento</th><th class="text-center">Colonia</th></tr></thead><tbody>';
 
                 for(fila in response) {
-                    $tabla += '<tr><td>'+response[fila].NOMBRE+'</td><td>'+response[fila].SEXO+'</td><td>'+response[fila].FECHANACIMIENTO+'</td></tr>';
+                    $tabla += '<tr><td>'+response[fila].NOMBRE+'</td><td>'+response[fila].SEXO+'</td><td>'+response[fila].FECHANACIMIENTO+'</td><td>'+response[fila].COLONIA+'</td></tr>';
                 }
                 $tabla += '</tbody></table>';
                 $('#modalListIntegrantes .modal-body').html($tabla);
             }
         });
-
+        $('#modalListIntegrantes .modal-title').html('Programa '+$(self).data('nombreorg')+'<br>Beneficiarios de la sección '+$(self).data('seccion'));
+        $('#modalListIntegrantes .modal-title').addClass('text-center');
         $('#modalListIntegrantes').modal('show');
     }
 

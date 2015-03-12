@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = 'Persona';
 $this->registerJsFile('http://maps.google.com/maps/api/js?sensor=false');
 $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerJsFile(Url::to('@web/js/persona.js'));
-$this->registerJs('puesto = "'.$puesto.'";'.
+$this->registerJs('puesto = "'.$idPuesto.'";'.
             'municipio = "'.$persona->MUNICIPIO.'";'.
             'nodo = "'.$nodo.'";'
         , \yii\web\View::POS_HEAD);

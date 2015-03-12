@@ -74,6 +74,12 @@ class SiteController extends Controller
                 ->select(['IdMunicipio', 'DescMunicipio'])
                 ->orderBy('DescMunicipio')
                 ->all();
+        } elseif (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idDistrito'])) {
+            $listMunicipios = CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->where(['DistritoLocal'=>Yii::$app->user->identity->persona->DISTRITOLOCAL])
+                ->orderBy('DescMunicipio')
+                ->all();
         } else {
             $listMunicipios = CMunicipio::find()
                 ->select(['IdMunicipio', 'DescMunicipio'])
@@ -133,6 +139,12 @@ class SiteController extends Controller
         if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
             $listMunicipios = CMunicipio::find()
                 ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio')
+                ->all();
+        } elseif (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idDistrito'])) {
+            $listMunicipios = CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->where(['DistritoLocal'=>Yii::$app->user->identity->persona->DISTRITOLOCAL])
                 ->orderBy('DescMunicipio')
                 ->all();
         } else {
