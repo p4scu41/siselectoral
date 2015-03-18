@@ -27,7 +27,7 @@ use yii\helpers\Url;
         </ul>
     </li>
     <li>
-        <a href="#">
+        <a href="<?= Url::to(['reporte/index']) ?>">
             <i class="fa fa-bar-chart"></i> <span>Reportes</span>
         </a>
     </li>

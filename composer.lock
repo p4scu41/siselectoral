@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "23ac68aa41dba50355cb097232bd747c",
+    "hash": "a30b9f5c3eae84ab8d40522c16a7bb59",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -447,6 +447,49 @@
             "time": "2015-02-01 13:03:27"
         },
         {
+            "name": "kartik-v/mpdf",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kartik-v/mpdf.git",
+                "reference": "a9d6960e47b4c8d28ba72c229c13a6444d8e2658"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kartik-v/mpdf/zipball/a9d6960e47b4c8d28ba72c229c13a6444d8e2658",
+                "reference": "a9d6960e47b4c8d28ba72c229c13a6444d8e2658",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=4.3.10"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "mpdf.php",
+                    "classes"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-1.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Ian N Back"
+                }
+            ],
+            "description": "A PHP class to generate PDF files from HTML with Unicode/UTF-8 and CJK support. This is a fork of the official mPDF library.",
+            "homepage": "http://www.mpdf1.com/mpdf/index.php",
+            "keywords": [
+                "pdf",
+                "php",
+                "utf-8"
+            ],
+            "time": "2015-02-18 16:00:43"
+        },
+        {
             "name": "kartik-v/php-date-formatter",
             "version": "v1.3.0",
             "source": {
@@ -583,6 +626,53 @@
                 "yii2"
             ],
             "time": "2015-02-07 01:55:51"
+        },
+        {
+            "name": "kartik-v/yii2-mpdf",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kartik-v/yii2-mpdf.git",
+                "reference": "b73e05b72ebaa05de904bd88c0a703eb4ee38f16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kartik-v/yii2-mpdf/zipball/b73e05b72ebaa05de904bd88c0a703eb4ee38f16",
+                "reference": "b73e05b72ebaa05de904bd88c0a703eb4ee38f16",
+                "shasum": ""
+            },
+            "require": {
+                "kartik-v/mpdf": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "kartik\\mpdf\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD 3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kartik Visweswaran",
+                    "email": "kartikv2@gmail.com",
+                    "homepage": "http://www.krajee.com/"
+                }
+            ],
+            "description": "A Yii2 wrapper component for the mPDF library which generates PDF files from UTF-8 encoded HTML.",
+            "homepage": "https://github.com/kartik-v/yii2-mpdf",
+            "keywords": [
+                "component",
+                "extension",
+                "html",
+                "mpdf",
+                "pdf",
+                "utf8",
+                "yii2"
+            ],
+            "time": "2015-03-11 07:33:59"
         },
         {
             "name": "kartik-v/yii2-widget-activeform",
@@ -1530,6 +1620,110 @@
             "time": "2014-11-10 04:57:44"
         },
         {
+            "name": "mgargano/simplehtmldom",
+            "version": "1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matstars/simplehtmldom.git",
+                "reference": "37fb0d7c1bda45c5a4cf14fdef56c1edf6aa42be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matstars/simplehtmldom/zipball/37fb0d7c1bda45c5a4cf14fdef56c1edf6aa42be",
+                "reference": "37fb0d7c1bda45c5a4cf14fdef56c1edf6aa42be",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "SimpleHtmlDom": "src/"
+                },
+                "files": [
+                    "src/simple_html_dom.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "The MIT License"
+            ],
+            "authors": [
+                {
+                    "name": "S.C. Chen",
+                    "email": "me578022@gmail.com",
+                    "homepage": "http://simplehtmldom.sourceforge.net/",
+                    "role": "Lead Developer"
+                }
+            ],
+            "description": "Composer package that gives you access to and (unlike all the others at this time) autoloads S.C. Chen's PHP Simple HTML DOM Parser Library",
+            "homepage": "http://simplehtmldom.sourceforge.net/",
+            "keywords": [
+                "Simple",
+                "dom",
+                "html"
+            ],
+            "time": "2014-01-05 18:17:34"
+        },
+        {
+            "name": "phpoffice/phpexcel",
+            "version": "1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPOffice/PHPExcel.git",
+                "reference": "e69a5e4d0ffa7fb6f171859e0a04346e580df30b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/e69a5e4d0ffa7fb6f171859e0a04346e580df30b",
+                "reference": "e69a5e4d0ffa7fb6f171859e0a04346e580df30b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xml": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PHPExcel": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Maarten Balliauw",
+                    "homepage": "http://blog.maartenballiauw.be"
+                },
+                {
+                    "name": "Mark Baker"
+                },
+                {
+                    "name": "Franck Lefevre",
+                    "homepage": "http://blog.rootslabs.net"
+                },
+                {
+                    "name": "Erik Tilt"
+                }
+            ],
+            "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
+            "homepage": "http://phpexcel.codeplex.com",
+            "keywords": [
+                "OpenXML",
+                "excel",
+                "php",
+                "spreadsheet",
+                "xls",
+                "xlsx"
+            ],
+            "time": "2014-03-02 15:22:49"
+        },
+        {
             "name": "swiftmailer/swiftmailer",
             "version": "v5.3.1",
             "source": {
@@ -2118,7 +2312,8 @@
     "stability-flags": {
         "kartik-v/yii2-datecontrol": 20,
         "kartik-v/yii2-krajee-base": 20,
-        "kartik-v/yii2-widgets": 20
+        "kartik-v/yii2-widgets": 20,
+        "kartik-v/yii2-mpdf": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

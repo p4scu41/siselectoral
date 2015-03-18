@@ -163,7 +163,7 @@ class SiteController extends Controller
                 ->all(), 'IdPuesto', 'Descripcion'
         );
 
-        DetalleEstructuraMovilizacion::getResumen(102);
+        //DetalleEstructuraMovilizacion::getResumen(102);
 
         return $this->render('positionTree', [
             'municipios' => $municipios,

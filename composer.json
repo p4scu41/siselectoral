@@ -20,7 +20,10 @@
         "yiisoft/yii2-swiftmailer": "*",
         "kartik-v/yii2-datecontrol": "dev-master",
         "kartik-v/yii2-krajee-base": "dev-master",
-        "kartik-v/yii2-widgets": "dev-master"
+        "kartik-v/yii2-widgets": "dev-master",
+        "kartik-v/yii2-mpdf": "dev-master",
+        "phpoffice/phpexcel": "~1.8",
+        "mgargano/simplehtmldom": "~1.5"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

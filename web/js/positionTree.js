@@ -218,7 +218,6 @@ $(document).ready(function(){
                 tablaPromocion.find('tr:last td:first').remove();
 
                 tablaResumenNodo.find('tr:last').remove();
-                tablaResumenNodo.find('tr:last').remove();
 
                 $('#resumenNodo').html(tablaResumenNodo);
                 $('#seccion_promocion').html( tablaPromocion );
@@ -710,10 +709,10 @@ $(document).ready(function(){
             } else {
                 var fecha = new Date();
                 $('#alertResult').hide();
-                tablaResumen = ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download');
+                tablaResumen = $(ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
                 $('#modalResumen .table-responsive').html(tablaResumen);
 
-                $('<tr><td colspan="5">&nbsp;</td></tr>').insertBefore('#tablaResumen tr:last');
+                $('<tr><td colspan="5">&nbsp;</td></tr>').insertBefore( tablaResumen.find('tr:last'));
 
                 $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text());
                 $('#fechaResumen').html('Fecha de corte: '+padLeft(fecha.getDate(),2)+'-'+padLeft((fecha.getMonth()+1),2)+'-'+fecha.getFullYear());
@@ -761,6 +760,10 @@ $(document).ready(function(){
             $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
                     '&Nivel='+$(this).find('option:selected').data('nivel')+'&IdPuestoDepende='+$(this).val(),
                     function(result){
+                        if (result == null) {
+                            result = {};
+                        }
+
                         if (result.length>0) {
                             id = doId(result[0].DescripcionPuesto);
                             agregaPuesto(result, id);

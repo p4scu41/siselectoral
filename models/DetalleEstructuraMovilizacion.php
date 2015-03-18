@@ -464,7 +464,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         $promovidos = [
             'Puesto' => 'PROMOCIÓN',
-            'Total' => $metaPromovidosPromotor['MetaByPromotor'],
+            'Total' => (int)$metaPromovidosPromotor['MetaByPromotor'],
             'Ocupados' => $cantidadPromovidosPromotor['promovidos'],
             'Vacantes' => ((int)$metaPromovidosPromotor['MetaByPromotor']) - ((int)$cantidadPromovidosPromotor['promovidos']),
             'Avances %' => $avancePromovidos,
