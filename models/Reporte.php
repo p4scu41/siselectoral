@@ -20,7 +20,7 @@ class Reporte extends \yii\db\ActiveRecord
                     [CSeccion].[NumSector] AS \'Sección\',
                     CASE
                         WHEN tblPadron.[CLAVEUNICA] IS NULL
-                        THEN \'Sin Asignación\'
+                        THEN \'NO ASIGNADO\'
                         ELSE (tblPadron.[APELLIDO_PATERNO]+\' \'+tblPadron.[APELLIDO_MATERNO]+\' \'+tblPadron.[NOMBRE])
                     END AS Responsable,
                     [CSeccion].MetaAlcanzar AS Meta,
@@ -30,7 +30,7 @@ class Reporte extends \yii\db\ActiveRecord
                         FROM [Promocion]
                         INNER JOIN [PadronGlobal] ON
                             [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdpersonaPromovida]
-                        WHERE [PadronGlobal].[MUNICIPIO] = 51 AND [PadronGlobal].[SECCION] = [CSeccion].[NumSector]
+                        WHERE [PadronGlobal].[MUNICIPIO] = '.$idMuni.' AND [PadronGlobal].[SECCION] = [CSeccion].[NumSector]
                     ) / [CSeccion].MetaAlcanzar * 100, 0) AS \'Avance %\'
                 FROM
                     [DetalleEstructuraMovilizacion]
@@ -40,8 +40,7 @@ class Reporte extends \yii\db\ActiveRecord
                     [CSeccion].[IdMunicipio] = [DetalleEstructuraMovilizacion].[Municipio] AND
                     [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector]
                 WHERE
-                    [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND
-                    tblPadron.[MUNICIPIO] = '.$idMuni.'
+                    [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
                 ORDER BY
                     [CSeccion].[NumSector] ASC';
 
@@ -72,7 +71,7 @@ class Reporte extends \yii\db\ActiveRecord
             array_unshift($arrayDatos, $primeraFila);
 
             foreach ($encabezado as $columna) {
-                $htmlTable .= '<th class="text-center">'.utf8_encode($columna).'</th>';
+                $htmlTable .= '<th class="text-center">'.htmlentities(utf8_encode($columna)).'</th>';
             }
 
             $htmlTable .= '</tr></thead><tbody>';
@@ -96,6 +95,276 @@ class Reporte extends \yii\db\ActiveRecord
         $htmlTable .= '</tbody></table>';
 
         return $htmlTable;
+    }
+
+    /**
+     *
+     *
+     * @param Int $idMuni
+     * @return Array
+     */
+    /*public static function estructura($idMuni)
+    {
+        $sqlPuesto = 'SELECT MIN([IdPuesto]) AS [IdPuesto] FROM [DetalleEstructuraMovilizacion] WHERE [Municipio] = '.$idMuni;
+        $puesto = Yii::$app->db->createCommand($sqlPuesto)->queryOne();
+
+        $sqlNodos = 'SELECT
+                    [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                    ,[DetalleEstructuraMovilizacion].[IdPuesto]
+                    ,[Puestos].[Descripcion] AS DescripcionPuesto
+                    ,[DetalleEstructuraMovilizacion].[IdPuestoDepende]
+                    ,[DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                    ,[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]+\' \'+[PadronGlobal].[NOMBRE] AS Responsable
+                    ,[DetalleEstructuraMovilizacion].[Dependencias]
+                    ,[DetalleEstructuraMovilizacion].[Descripcion] AS DescripcionNodo
+                    ,[PadronGlobal].[TELCASA]
+                    ,[PadronGlobal].[TELMOVIL]
+                    ,[PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                FROM
+                    [DetalleEstructuraMovilizacion]
+                LEFT JOIN
+                    [PadronGlobal] ON
+                    [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                INNER JOIN
+                    [Puestos] ON
+                    [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+                WHERE
+                    [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND [DetalleEstructuraMovilizacion].[IdPuesto] = '.$puesto['IdPuesto'];
+
+        $nodos = Yii::$app->db->createCommand($sqlNodos)->queryAll();
+        $arrayEstructura = [];
+
+        foreach ($nodos as $nodo) {
+            $elemento = [
+                'Puesto'       => $nodo['DescripcionPuesto'],
+                'Nombre'       => $nodo['Responsable'],
+                'Tel. Celular' => $nodo['TELMOVIL'],
+                'Tel. Casa'    => $nodo['TELCASA'],
+                'Domicilio'    => $nodo['Domicilio'],
+            ];
+
+            array_push($arrayEstructura, $elemento);
+
+            $sqlNodosDependientes = 'SELECT
+                    [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                    ,[DetalleEstructuraMovilizacion].[IdPuesto]
+                    ,[Puestos].[Descripcion] AS DescripcionPuesto
+                    ,[DetalleEstructuraMovilizacion].[IdPuestoDepende]
+                    ,[DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                    ,[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]+\' \'+[PadronGlobal].[NOMBRE] AS Responsable
+                    ,[DetalleEstructuraMovilizacion].[Dependencias]
+                    ,[DetalleEstructuraMovilizacion].[Descripcion] AS DescripcionNodo
+                    ,[PadronGlobal].[TELCASA]
+                    ,[PadronGlobal].[TELMOVIL]
+                    ,[PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                FROM
+                    [DetalleEstructuraMovilizacion]
+                LEFT JOIN
+                    [PadronGlobal] ON
+                    [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                INNER JOIN
+                    [Puestos] ON
+                    [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+                WHERE
+                    [DetalleEstructuraMovilizacion].[IdPuestoDepende] = '.$nodo['IdNodoEstructuraMov'];
+
+            $nodosDependientes = Yii::$app->db->createCommand($sqlNodosDependientes)->queryAll();
+
+            foreach ($nodosDependientes as $nodoHijo) {
+                $elemento = [
+                    'Puesto'       => $nodoHijo['DescripcionPuesto'],
+                    'Nombre'       => $nodoHijo['Responsable'],
+                    'Tel. Celular' => $nodoHijo['TELMOVIL'],
+                    'Tel. Casa'    => $nodoHijo['TELCASA'],
+                    'Domicilio'    => $nodoHijo['Domicilio'],
+                ];
+
+                array_push($arrayEstructura, $elemento);
+
+                self::nodosHijos(&$arrayEstructura, $nodoHijo['IdNodoEstructuraMov']);
+            }
+        }
+
+        return $arrayEstructura;
+    }*/
+
+    /**
+     *
+     *
+     * @param type $arrayEstructura
+     * @param type $idNodo
+     */
+    /*public static function nodosHijos(&$arrayEstructura, $idNodo)
+    {
+        $sqlNodos = 'SELECT
+                    [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                    ,[DetalleEstructuraMovilizacion].[IdPuesto]
+                    ,[Puestos].[Descripcion] AS DescripcionPuesto
+                    ,[DetalleEstructuraMovilizacion].[IdPuestoDepende]
+                    ,[DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                    ,[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]+\' \'+[PadronGlobal].[NOMBRE] AS Responsable
+                    ,[DetalleEstructuraMovilizacion].[Dependencias]
+                    ,[DetalleEstructuraMovilizacion].[Descripcion] AS DescripcionNodo
+                    ,[PadronGlobal].[TELCASA]
+                    ,[PadronGlobal].[TELMOVIL]
+                    ,[PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                FROM
+                    [DetalleEstructuraMovilizacion]
+                LEFT JOIN
+                    [PadronGlobal] ON
+                    [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                INNER JOIN
+                    [Puestos] ON
+                    [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+                WHERE
+                    [DetalleEstructuraMovilizacion].[IdPuestoDepende] = '.$idNodo;
+
+        $nodos = Yii::$app->db->createCommand($sqlNodos)->queryAll();
+
+        if (count($nodosDependientes)) {
+            foreach ($nodos as $nodo) {
+                $elemento = [
+                    'Puesto'       => $nodo['DescripcionPuesto'],
+                    'Nombre'       => $nodo['Responsable'],
+                    'Tel. Celular' => $nodo['TELMOVIL'],
+                    'Tel. Casa'    => $nodo['TELCASA'],
+                    'Domicilio'    => $nodo['Domicilio'],
+                ];
+
+                array_push($arrayEstructura, $elemento);
+
+                $sqlNodosDependientes = 'SELECT
+                        [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                        ,[DetalleEstructuraMovilizacion].[IdPuesto]
+                        ,[Puestos].[Descripcion] AS DescripcionPuesto
+                        ,[DetalleEstructuraMovilizacion].[IdPuestoDepende]
+                        ,[DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                        ,[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]+\' \'+[PadronGlobal].[NOMBRE] AS Responsable
+                        ,[DetalleEstructuraMovilizacion].[Dependencias]
+                        ,[DetalleEstructuraMovilizacion].[Descripcion] AS DescripcionNodo
+                        ,[PadronGlobal].[TELCASA]
+                        ,[PadronGlobal].[TELMOVIL]
+                        ,[PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                    FROM
+                        [DetalleEstructuraMovilizacion]
+                    LEFT JOIN
+                        [PadronGlobal] ON
+                        [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                    INNER JOIN
+                        [Puestos] ON
+                        [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+                    WHERE
+                        [DetalleEstructuraMovilizacion].[IdPuestoDepende] = '.$nodo['IdNodoEstructuraMov'];
+
+                $nodosDependientes = Yii::$app->db->createCommand($sqlNodosDependientes)->queryAll();
+
+                if (count($nodosDependientes)) {
+                    foreach ($nodosDependientes as $nodoHijo) {
+                        $elemento = [
+                            'Puesto'       => $nodoHijo['DescripcionPuesto'],
+                            'Nombre'       => $nodoHijo['Responsable'],
+                            'Tel. Celular' => $nodoHijo['TELMOVIL'],
+                            'Tel. Casa'    => $nodoHijo['TELCASA'],
+                            'Domicilio'    => $nodoHijo['Domicilio'],
+                        ];
+
+                        array_push($arrayEstructura, $elemento);
+
+                        return true;
+
+                        //self::nodosHijos(&$arrayEstructura, $nodoHijo['IdNodoEstructuraMov']);
+                    }
+                }
+            }
+        }
+    }*/
+
+    /**
+     *
+     * @param type $idNodo
+     * @return type
+     */
+    public static function nodoEstructuraJSON($idNodo)
+    {
+        $sqlNodo = 'SELECT
+                    [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                    ,[Puestos].[Descripcion] AS DescripcionPuesto
+                    ,[CSeccion].[NumSector] as Seccion
+                    ,CASE
+                        WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
+                        THEN \'NO ASIGNADO\'
+                        ELSE ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]+\' \'+[PadronGlobal].[NOMBRE])
+                    END AS Responsable
+                    ,[PadronGlobal].[TELCASA]
+                    ,[PadronGlobal].[TELMOVIL]
+                    ,[PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                FROM
+                    [DetalleEstructuraMovilizacion]
+                LEFT JOIN
+                    [PadronGlobal] ON
+                    [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                INNER JOIN
+                    [Puestos] ON
+                    [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+                LEFT JOIN
+                    [CSeccion] ON
+                    [DetalleEstructuraMovilizacion].[Municipio]  = [CSeccion].[IdMunicipio] AND
+                    [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
+                WHERE
+                    [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo;
+        $estructura = '';
+
+        $nodo = Yii::$app->db->createCommand($sqlNodo)->queryOne();
+
+        $estructura .= '{ "Puesto": "'.$nodo['DescripcionPuesto'].'", '
+                        .'"Nombre": "'.str_replace('\\', 'Ñ', $nodo['Responsable']).'",'
+                        .'"Sección": "'.$nodo['Seccion'].'",'
+                        .'"Tel. Celular": "'.$nodo['TELMOVIL'].'", '
+                        .'"Tel. Casa": "'.$nodo['TELCASA'].'", '
+                        .'"Domicilio": "'.str_replace('\\', 'Ñ', $nodo['Domicilio']).'" },';
+
+        $sqlNodosDependientes = 'SELECT
+                        [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                    FROM
+                        [DetalleEstructuraMovilizacion]
+                    WHERE
+                        [DetalleEstructuraMovilizacion].[IdPuestoDepende] = '.$nodo['IdNodoEstructuraMov'];
+
+        $child = Yii::$app->db->createCommand($sqlNodosDependientes)->queryAll();
+
+        if (count($child) > 0) {
+            foreach ($child as $row) {
+                $estructura .= self::nodoEstructuraJSON($row['IdNodoEstructuraMov']);
+            }
+        }
+
+        return $estructura;
+    }
+
+    public static function estructura($idMuni)
+    {
+        $sqlPuesto = 'SELECT MIN([IdPuesto]) AS [IdPuesto] FROM [DetalleEstructuraMovilizacion] WHERE [Municipio] = '.$idMuni;
+        $puesto = Yii::$app->db->createCommand($sqlPuesto)->queryOne();
+
+        $sqlNodos = 'SELECT
+                    [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                FROM
+                    [DetalleEstructuraMovilizacion]
+                WHERE
+                    [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND [DetalleEstructuraMovilizacion].[IdPuesto] = '.$puesto['IdPuesto'];
+
+        $nodos = Yii::$app->db->createCommand($sqlNodos)->queryAll();
+        $estructura = '[';
+
+        if (count($nodos)) {
+            foreach ($nodos as $nodo) {
+                $estructura .= self::nodoEstructuraJSON($nodo['IdNodoEstructuraMov']);
+            }
+        }
+
+        $estructura .= ']';
+
+        return json_decode(str_replace('},]', '}]', $estructura), true);
     }
 
 }

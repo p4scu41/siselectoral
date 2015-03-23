@@ -34,6 +34,22 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ?>
                                 <?= Html::dropDownList('Municipio', $selectMunicipio, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
                             </div>
+
+                            <div class="form-group">
+                                <label>Tipo de reporte:</label> &nbsp; &nbsp;
+                                <div class="radio">
+                                    <label>
+                                      <input type="radio" name="tipoReporte" value="1" <?= Yii::$app->request->post('tipoReporte')==1 ? 'checked' : '' ?> >
+                                      Avance Seccional
+                                    </label>
+                                 </div> &nbsp; &nbsp;
+                                <div class="radio">
+                                    <label>
+                                      <input type="radio" name="tipoReporte" value="2" <?= Yii::$app->request->post('tipoReporte')==2 ? 'checked' : '' ?> >
+                                      Estructura
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                         <p>
                             <button type="submit" class="btn btn-success" id="btnBuscar">

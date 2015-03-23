@@ -7,6 +7,7 @@ use kartik\mpdf\Pdf;
 use yii\helpers\ArrayHelper;
 use app\models\CMunicipio;
 use app\models\Reporte;
+use app\models\DetalleEstructuraMovilizacion;
 
 class ReporteController extends \yii\web\Controller
 {
@@ -31,17 +32,27 @@ class ReporteController extends \yii\web\Controller
                 ->all();
         }
 
+
+
         $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
 
         $reporteHTML = '';
         $titulo = '';
 
         if (Yii::$app->request->post('Municipio')) {
-            $reporteDatos = Reporte::avanceSeccional( Yii::$app->request->post('Municipio') );
-            $omitirCentrado = array(2);
-            $reporteHTML = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
             $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
-            $titulo = 'Avance Seccional de '.$municipio->DescMunicipio;
+
+            if (Yii::$app->request->post('tipoReporte') == 1) {
+                $reporteDatos = Reporte::avanceSeccional( Yii::$app->request->post('Municipio') );
+                $omitirCentrado = array(2);
+                $titulo = 'Avance Seccional de '.$municipio->DescMunicipio;
+            } elseif (Yii::$app->request->post('tipoReporte') == 2) {
+                $reporteDatos = Reporte::estructura( Yii::$app->request->post('Municipio') );
+                $omitirCentrado = array(1, 2, 5, 6);
+                $titulo = 'Estructura Municipal de '.$municipio->DescMunicipio;
+            }
+
+            $reporteHTML = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
         }
 
         return $this->render('index',[
