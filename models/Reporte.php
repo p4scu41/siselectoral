@@ -71,7 +71,7 @@ class Reporte extends \yii\db\ActiveRecord
             array_unshift($arrayDatos, $primeraFila);
 
             foreach ($encabezado as $columna) {
-                $htmlTable .= '<th class="text-center">'.htmlentities(utf8_encode($columna)).'</th>';
+                $htmlTable .= '<th class="text-center">'.(mb_check_encoding($columna, 'UTF-8') ? $columna : utf8_encode($columna)).'</th>';
             }
 
             $htmlTable .= '</tr></thead><tbody>';
@@ -345,6 +345,10 @@ class Reporte extends \yii\db\ActiveRecord
     {
         $sqlPuesto = 'SELECT MIN([IdPuesto]) AS [IdPuesto] FROM [DetalleEstructuraMovilizacion] WHERE [Municipio] = '.$idMuni;
         $puesto = Yii::$app->db->createCommand($sqlPuesto)->queryOne();
+
+        if ($puesto['IdPuesto'] == null) {
+            return [];
+        }
 
         $sqlNodos = 'SELECT
                     [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]

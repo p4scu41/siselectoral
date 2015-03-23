@@ -31,9 +31,7 @@ class ReporteController extends \yii\web\Controller
                 ->orderBy('DescMunicipio')
                 ->all();
         }
-
-
-
+        
         $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
 
         $reporteHTML = '';
