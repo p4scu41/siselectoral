@@ -31,10 +31,10 @@ class ReporteController extends \yii\web\Controller
                 ->orderBy('DescMunicipio')
                 ->all();
         }
-        
+
         $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
 
-        $reporteHTML = '';
+        /*$reporteHTML = '';
         $titulo = '';
 
         if (Yii::$app->request->post('Municipio')) {
@@ -51,13 +51,44 @@ class ReporteController extends \yii\web\Controller
             }
 
             $reporteHTML = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
-        }
+        }*/
 
         return $this->render('index',[
             'municipios' => $municipios,
-            'reporte' => $reporteHTML,
-            'titulo' => $titulo,
+            //'reporte' => $reporteHTML,
+            //'titulo' => $titulo,
         ]);
+    }
+
+    public function actionGenerar() {
+        $respuesta = [
+            'reporteHTML' => '',
+            'titulo' => ''
+        ];
+
+        if (Yii::$app->request->post('Municipio')) {
+            $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
+
+            if (Yii::$app->request->post('tipoReporte') == 1) { // Avance Seccional
+                $reporteDatos = Reporte::avanceSeccional( Yii::$app->request->post('Municipio') );
+                $omitirCentrado = array(2);
+                $respuesta['titulo'] = 'Avance Seccional de '.$municipio->DescMunicipio;
+            } else if (Yii::$app->request->post('tipoReporte') == 2) { // Estructura
+                $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
+                $nodo = null;
+                if (count($nodos)) {
+                    $nodo = array_pop($nodos);
+                }
+
+                $reporteDatos = Reporte::estructura( Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('puestos') );
+                $omitirCentrado = array(1, 2, 5, 6);
+                $respuesta['titulo'] = 'Estructura Municipal de '.$municipio->DescMunicipio;
+            }
+
+            $respuesta['reporteHTML'] = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
+        }
+
+        return json_encode($respuesta);
     }
 
     public function actionPdf()

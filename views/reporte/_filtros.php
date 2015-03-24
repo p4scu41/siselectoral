@@ -9,7 +9,6 @@ $this->title = 'Reportes';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-
 <div class="row">
     <!-- left column -->
     <div class="col-lg-12">
@@ -30,9 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="form-group">
                                 <label for="Municipio">Municipio</label>
                                 <?php
-                                    $selectMunicipio = Yii::$app->request->post('Municipio') ? Yii::$app->request->post('Municipio') : Yii::$app->user->identity->persona->MUNICIPIO;
+                                    //$selectMunicipio = Yii::$app->request->post('Municipio') ? Yii::$app->request->post('Municipio') : Yii::$app->user->identity->persona->MUNICIPIO;
                                 ?>
-                                <?= Html::dropDownList('Municipio', $selectMunicipio, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
+                                <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
                             </div>
 
                             <div class="form-group">
@@ -52,9 +51,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
                         </div>
                         <p>
-                            <button type="submit" class="btn btn-success" id="btnBuscar">
+                            <button type="button" class="btn btn-success" id="btnGenerarReporte">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Generar reporte
                             </button> &nbsp;
+                            <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
                     <?php ActiveForm::end(); ?>
                 </div>

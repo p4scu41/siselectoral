@@ -284,11 +284,12 @@ class Reporte extends \yii\db\ActiveRecord
      * @param type $idNodo
      * @return type
      */
-    public static function nodoEstructuraJSON($idNodo)
+    public static function nodoEstructuraJSON($idNodo, $puestos)
     {
         $sqlNodo = 'SELECT
                     [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
                     ,[Puestos].[Descripcion] AS DescripcionPuesto
+                    ,[DetalleEstructuraMovilizacion].[Descripcion] AS DescripcionNodo
                     ,[CSeccion].[NumSector] as Seccion
                     ,CASE
                         WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
@@ -312,11 +313,21 @@ class Reporte extends \yii\db\ActiveRecord
                     [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
                 WHERE
                     [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo;
+
+        if (count($puestos)) {
+            $sqlNodo .= ' AND [DetalleEstructuraMovilizacion].[IdPuesto] IN ('.implode(',',$puestos).')';
+        }
+
         $estructura = '';
 
         $nodo = Yii::$app->db->createCommand($sqlNodo)->queryOne();
 
+        if (!$nodo) {
+            return $estructura;
+        }
+
         $estructura .= '{ "Puesto": "'.$nodo['DescripcionPuesto'].'", '
+                        .'"Descripción": "'.$nodo['DescripcionNodo'].'",'
                         .'"Nombre": "'.str_replace('\\', 'Ñ', $nodo['Responsable']).'",'
                         .'"Sección": "'.$nodo['Seccion'].'",'
                         .'"Tel. Celular": "'.$nodo['TELMOVIL'].'", '
@@ -334,35 +345,43 @@ class Reporte extends \yii\db\ActiveRecord
 
         if (count($child) > 0) {
             foreach ($child as $row) {
-                $estructura .= self::nodoEstructuraJSON($row['IdNodoEstructuraMov']);
+                $estructura .= self::nodoEstructuraJSON($row['IdNodoEstructuraMov'], $puestos);
             }
         }
 
         return $estructura;
     }
 
-    public static function estructura($idMuni)
+    public static function estructura($idMuni, $idNodo = null, $puestos = [])
     {
-        $sqlPuesto = 'SELECT MIN([IdPuesto]) AS [IdPuesto] FROM [DetalleEstructuraMovilizacion] WHERE [Municipio] = '.$idMuni;
-        $puesto = Yii::$app->db->createCommand($sqlPuesto)->queryOne();
+        $nodos = '';
+        if ($idNodo == null) {
+            $sqlPuesto = 'SELECT MIN([IdPuesto]) AS [IdPuesto] FROM [DetalleEstructuraMovilizacion] WHERE [Municipio] = '.$idMuni;
+            $puesto = Yii::$app->db->createCommand($sqlPuesto)->queryOne();
 
-        if ($puesto['IdPuesto'] == null) {
-            return [];
+            if ($puesto['IdPuesto'] == null) {
+                return [];
+            }
+
+            $sqlNodos = 'SELECT
+                        [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                    FROM
+                        [DetalleEstructuraMovilizacion]
+                    WHERE
+                        [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND [DetalleEstructuraMovilizacion].[IdPuesto] = '.$puesto['IdPuesto'];
+
+            $nodos = Yii::$app->db->createCommand($sqlNodos)->queryAll();
+        } else {
+            $nodos = [ ['IdNodoEstructuraMov' => $idNodo] ];
         }
 
-        $sqlNodos = 'SELECT
-                    [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
-                FROM
-                    [DetalleEstructuraMovilizacion]
-                WHERE
-                    [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND [DetalleEstructuraMovilizacion].[IdPuesto] = '.$puesto['IdPuesto'];
+        //print_r($nodos);
 
-        $nodos = Yii::$app->db->createCommand($sqlNodos)->queryAll();
         $estructura = '[';
 
         if (count($nodos)) {
             foreach ($nodos as $nodo) {
-                $estructura .= self::nodoEstructuraJSON($nodo['IdNodoEstructuraMov']);
+                $estructura .= self::nodoEstructuraJSON($nodo['IdNodoEstructuraMov'], $puestos);
             }
         }
 

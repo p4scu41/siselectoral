@@ -2,17 +2,19 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+$this->registerJsFile(Url::to('@web/js/reporte.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
+$this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlReporte="'.Url::toRoute('reporte/generar', true).'";', \yii\web\View::POS_HEAD);
+
 echo $this->render('_filtros', ['municipios' => $municipios]);
 
 echo '<div id="reporteContainer">';
 echo '<h3 class="text-center" id="titulo">'.$titulo.'</h3>';
-echo $reporte;
+echo '<div id="tabla_reporte">'.$reporte.'</div>';
 echo '</div>';
-$this->registerJsFile(Url::to('@web/js/reporte.js'));
-$this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
-?>
 
-<?php
 if ($reporte != '') {
     ?>
     <a href="#" data-url="<?= Url::to(['reporte/pdf'], true) ?>" class="btn btn-default" id="btnExportPdf">
