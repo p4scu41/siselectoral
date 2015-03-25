@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use kartik\mpdf\Pdf;
 use yii\helpers\ArrayHelper;
 use app\models\CMunicipio;
@@ -11,6 +12,23 @@ use app\models\DetalleEstructuraMovilizacion;
 
 class ReporteController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'generar', 'pdf', 'excel'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'generar', 'pdf', 'excel'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ]
+        ];
+    }
+
     public function actionIndex()
     {
         if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
@@ -81,7 +99,7 @@ class ReporteController extends \yii\web\Controller
                 }
 
                 $reporteDatos = Reporte::estructura( Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('puestos') );
-                $omitirCentrado = array(1, 2, 5, 6);
+                $omitirCentrado = array(1, 2, 3, 9, 10, 11);
                 $respuesta['titulo'] = 'Estructura Municipal de '.$municipio->DescMunicipio;
             }
 
@@ -123,7 +141,12 @@ class ReporteController extends \yii\web\Controller
     {
         $content = Yii::$app->request->post('content');
         $titulo = Yii::$app->request->post('title');
-        $pathFile = Yii::getAlias('@runtime').'/tmp/'.strtotime("now").'.csv';
+        $pathFolder = Yii::getAlias('@runtime').'/tmp';
+        $pathFile = $pathFolder.'/'.strtotime("now").'.csv';
+
+        if (!is_dir($pathFolder)) {
+            mkdir($pathFolder, 0755);
+        }
 
         file_put_contents($pathFile, $content);
 

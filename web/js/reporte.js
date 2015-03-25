@@ -110,6 +110,22 @@ $(document).ready(function(){
     });
 
     $('#btnGenerarReporte').click(function(event) {
+        $('.alert').remove();
+
+        if ($('#municipio').val() == '') {
+            $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                '<span aria-hidden="true">&times;</span></button>Debe seleccionar un municipio</div>');
+            return false;
+        }
+
+        if ($('[name=tipoReporte]:checked').val() == undefined) {
+            $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                '<span aria-hidden="true">&times;</span></button>Debe seleccionar el tipo de reporte</div>');
+            return false;
+        }
+
         $('#loadIndicator').show();
         $('#div_loading').show();
 
@@ -122,6 +138,7 @@ $(document).ready(function(){
                 $('#titulo').html(result.titulo);
                 $('#tabla_reporte').html(result.reporteHTML);
                 $('#loadIndicator').hide();
+                $('#opcionesExportar').show();
                 $('#div_loading').fadeOut('slow');
             }
         });

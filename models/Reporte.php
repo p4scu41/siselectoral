@@ -326,10 +326,76 @@ class Reporte extends \yii\db\ActiveRecord
             return $estructura;
         }
 
+        $sqlDatosEstructura = 'SELECT
+                    \'MetaEstructura\' AS Meta,
+                    COUNT([IdEstructuraMovilizacion]) AS MetaEstructura
+                FROM
+                    [DetalleEstructuraMovilizacion]
+                WHERE
+                    [Dependencias] LIKE \'%|'.$idNodo.'|%\'
+                UNION
+                SELECT
+                    \'AvanceEstructura\' AS Meta,
+                    COUNT([IdEstructuraMovilizacion]) AS AvanceEstructura
+                FROM
+                    [DetalleEstructuraMovilizacion]
+                WHERE
+                    [Dependencias] LIKE \'%|'.$idNodo.'|%\'
+                    AND IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\'';
+
+        $metaEstructura = [
+            'meta' => '',
+            'avance' => ''
+        ];
+
+        $datosEstructura = Yii::$app->db->createCommand($sqlDatosEstructura)->queryAll();
+
+        if (count($datosEstructura)) {
+            $metaEstructura['meta'] = $datosEstructura[0]['MetaEstructura'];
+            $metaEstructura['avance'] = ($metaEstructura['meta'] != 0 ? round($datosEstructura[1]['MetaEstructura']/$metaEstructura['meta']*100) : 0);
+        }
+
+        $sqlDatosPromocion = 'SELECT
+                    \'MetaPromocion\' AS Meta,
+                    SUM([Meta]) AS MetaPromocion
+                FROM
+                    [DetalleEstructuraMovilizacion]
+                WHERE
+                    [IdNodoEstructuraMov] = '.$idNodo.' OR
+                    [Dependencias] LIKE \'%|'.$idNodo.'|%\'
+                UNION
+                SELECT
+                    \'AvancePromocion\' AS Meta,
+                    COUNT([Promocion].[IdpersonaPromovida]) AS AvancePromocion
+                FROM
+                    [Promocion]
+                INNER JOIN
+                    [DetalleEstructuraMovilizacion] ON
+                        [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = [Promocion].[IdPuesto]
+                WHERE
+                    [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo.'  OR
+                    [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'';
+
+        $metaPromocion = [
+            'meta' => '',
+            'avance' => ''
+        ];
+
+        $datosPromocion = Yii::$app->db->createCommand($sqlDatosPromocion)->queryAll();
+
+        if (count($datosPromocion)) {
+            $metaPromocion['meta'] = $datosPromocion[1]['MetaPromocion'];;
+            $metaPromocion['avance'] = ($datosPromocion['meta'] != 0 ? round($datosPromocion[0]['MetaPromocion']/$datosPromocion['meta']*100) : 0);
+        }
+
         $estructura .= '{ "Puesto": "'.$nodo['DescripcionPuesto'].'", '
                         .'"Descripción": "'.$nodo['DescripcionNodo'].'",'
                         .'"Nombre": "'.str_replace('\\', 'Ñ', $nodo['Responsable']).'",'
                         .'"Sección": "'.$nodo['Seccion'].'",'
+                        .'"Meta Estruc": "'.$metaEstructura['meta'].'",'
+                        .'"% Avance Estruc": "'.$metaEstructura['avance'].'",'
+                        .'"Meta Promo": "'.$metaPromocion['meta'].'",'
+                        .'"% Avance Promo": "'.$metaPromocion['avance'].'",'
                         .'"Tel. Celular": "'.$nodo['TELMOVIL'].'", '
                         .'"Tel. Casa": "'.$nodo['TELCASA'].'", '
                         .'"Domicilio": "'.str_replace('\\', 'Ñ', $nodo['Domicilio']).'" },';

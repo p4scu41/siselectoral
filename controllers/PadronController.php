@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use app\models\PadronGlobal;
 use app\models\PadronGlobalSearch;
 use app\models\DetalleEstructuraMovilizacion;
@@ -25,6 +26,17 @@ class PadronController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['get', 'persona', 'buscar', 'view', 'create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['get', 'persona', 'buscar', 'view', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
