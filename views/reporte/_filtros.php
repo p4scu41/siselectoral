@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-$this->title = 'Reportes';
+$this->title = 'Reporte de Estructura Municipal';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -34,25 +34,31 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
                             </div>
 
-                            <div class="form-group">
+                            <!--<div class="form-group">
                                 <label>Tipo de reporte:</label> &nbsp; &nbsp;
                                 <div class="radio">
                                     <label>
-                                      <input type="radio" name="tipoReporte" value="1" <?= Yii::$app->request->post('tipoReporte')==1 ? 'checked' : '' ?> >
+                                      <input type="radio" name="tipoReporte" value="1" >
                                       Avance Seccional
                                     </label>
                                  </div> &nbsp; &nbsp;
                                 <div class="radio">
                                     <label>
-                                      <input type="radio" name="tipoReporte" value="2" <?= Yii::$app->request->post('tipoReporte')==2 ? 'checked' : '' ?> >
+                                      <input type="radio" name="tipoReporte" value="2" >
                                       Estructura
                                     </label>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                         <p>
+                            <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Resumen
+                            </button> &nbsp;
+                            <button type="button" class="btn btn-success" id="btnReporteSeccional">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Avance Seccional
+                            </button> &nbsp;
                             <button type="button" class="btn btn-success" id="btnGenerarReporte">
-                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Generar reporte
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Reporte
                             </button> &nbsp;
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>

@@ -25,6 +25,7 @@ class AppAsset extends AssetBundle
         'css/AdminLTE.css',
         'css/fileinput.min.css',
         'css/jquery-ui.min.css',
+        'css/iCheck/all.css',
     ];
     public $js = [
         'js/plugins/bootstrap.min.js',
@@ -37,6 +38,7 @@ class AppAsset extends AssetBundle
         'js/plugins/jquery.fancytree-all.min.js',
         'js/plugins/jquery.dotdotdot.js',
         'js/plugins/fileinput.min.js',
+        'js/plugins/iCheck/icheck.min.js',
         'js/plugins/jquery.alerts.js',
         'js/AdminLTE/app.js',
     ];
