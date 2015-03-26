@@ -113,6 +113,7 @@ $(document).ready(function(){
         $form.find('#content').text( content );
         $form.find('#title').val( $('#titulo').html() );
         $form.attr('action', $(this).data('url'));
+        $('#formExport').html($form);
         $form.submit();
 
         event.stopPropagation();
