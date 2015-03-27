@@ -32,9 +32,12 @@ function agregaPuesto(result, id) {
 
 function agregaPuestoDepende() {
     nivel = $(this).data('nivel');
-    changeNivelEstruc(nivel, $(this).val());
+    seleccionado = $(this).val();
+    detalleReporte = $('input:checked:last').val();
+    console.clear();
+    console.log('Nivel: '+nivel+', Detalle: '+detalleReporte);
 
-    if( $(this).val()!='' && $(this).val()!=0 ) {
+    if( seleccionado!='' && seleccionado!=0 && nivel<detalleReporte) {
         $('#loadIndicator').show();
 
         $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
@@ -73,28 +76,6 @@ function changeNivelEstruc(nivel, nodo)
         $('.chkPuesto[value='+nivel+']').parent().parent().hide();
         $('.chkPuesto[value='+nivel+']').prop('checked', true);
     }
-}
-
-function changeCheckNivel()
-{
-    puesto = $(this).val();
-
-    //console.log(puesto);
-    //console.log($('checkbox[value='+(puesto+1)+']').prop('checked'));
-
-    if( $('checkbox[value='+(puesto+1)+']').prop('checked') == true ) {
-        console.log('No puede dehabilitar un nodo padre');
-        return false;
-    }
-
-    /*$('.chkPuesto').each(function(){
-        if ($(this).val() < (puesto-1)) {
-            $(this).iCheck('check');
-            //$(this).iCheck('uncheck');
-            //$(this).prop('checked', true);
-            return false;
-        }
-   });*/
 }
 
 $(document).ready(function(){
@@ -145,8 +126,6 @@ $(document).ready(function(){
                     radioClass: 'iradio_minimal-green',
                 });
                 $("#bodyForm").append('<div class="form-group"><label>Seleccione el nivel de estructura: </label></div><br>');
-                //$('.chkPuesto').click(changeCheckNivel);
-                $('.chkPuesto').on('ifClicked', changeCheckNivel);
             }).done(function(result) {
                 if (result.length>0) {
                     id = doId(result[0].Descripcion);
@@ -198,7 +177,7 @@ $(document).ready(function(){
         });
     });
 
-    $('#btnResumen').click(function(){
+    $('#btnResumen').click(function() {
         $('.alert').remove();
 
         if ($('#municipio').val() == '') {
