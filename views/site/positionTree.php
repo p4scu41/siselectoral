@@ -259,6 +259,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                             <div class="panel panel-success">
                                                 <div class="panel-body">
                                                     <form class="form-horizontal" method="POST" id="frmPersonDetails"></form>
+                                                    <div id="divAsignarPersona"></div>
                                                 </div>
                                             </div>
                                         </div>

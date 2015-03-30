@@ -4,16 +4,16 @@ function buildSelect(id, result) {
             '<select id="'+id+'" class="form-control" name="IdPuestoDepende[]" data-nivel='+result[0].Nivel+'>'+
             '<option value="0">Todos</option>';
 
-        for (var i=0; i<result.length; i++) {
-            filtro += '<option value="'+result[i].IdNodoEstructuraMov+'" data-nivel="'+
-                result[i].Nivel+'">'+result[i].DescripcionEstructura+'</option>';
-        }
+    for (var i=0; i<result.length; i++) {
+        filtro += '<option value="'+result[i].IdNodoEstructuraMov+'" data-nivel="'+
+            result[i].Nivel+'">'+result[i].DescripcionEstructura+'</option>';
+    }
 
-        filtro += '</select></div>';
+    filtro += '</select></div>';
 
-        $objFiltro = $(filtro);
+    $objFiltro = $(filtro);
 
-        return $objFiltro.clone(true);
+    return $objFiltro.clone(true);
 }
 
 function agregaPuesto(result, id) {
@@ -33,9 +33,8 @@ function agregaPuesto(result, id) {
 function agregaPuestoDepende() {
     nivel = $(this).data('nivel');
     seleccionado = $(this).val();
-    detalleReporte = $('input:checked:last').val();
 
-    if( seleccionado!='' && seleccionado!=0 && nivel<detalleReporte) {
+    if( seleccionado!='' && seleccionado!=0) {
         $('#loadIndicator').show();
 
         $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
@@ -84,26 +83,11 @@ $(document).ready(function(){
         $('#loadIndicator').show();
         $('.filtroEstructura').remove();
 
-        var options = '<br /><div class="form-group"><label>Seleccione el detalle del reporte: </label> <br/>&nbsp; ';
-
         var idMuni = $(this).val();
 
         if (idMuni != '') {
             $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
-                for (var i=0; i<result.length; i++) {
-                    //options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
-                    options += '<div class="checkbox"> &nbsp; <label>'+
-                            '<input type="checkbox" name="puestos[]" value="'+result[i].IdPuesto+'" '+
-                            'data-nivel="'+result[i].Nivel+'" class="chkPuesto" checked> '+
-                            result[i].Descripcion+' </label> &nbsp; </div>';
-                }
-                options += '</div><br>';
-                $("#bodyForm").append(options);
-                $('.chkPuesto').iCheck({
-                    checkboxClass: 'icheckbox_minimal-green',
-                    radioClass: 'iradio_minimal-green',
-                });
-                $("#bodyForm").append('<div class="form-group"><label>Seleccione el nivel de estructura: </label></div><br>');
+                $("#bodyForm").append('<br><div class="form-group"><label>Seleccione el nivel de estructura: </label></div><br>');
             }).done(function(result) {
                 if (result.length>0) {
                     id = doId(result[0].Descripcion);
@@ -119,7 +103,7 @@ $(document).ready(function(){
         }
     });
 
-    $('#btnGenerarReporte, #btnReporteSeccional').click(function(event) {
+    $('#btnGenerarReporte').click(function(event) {
         $('.alert').remove();
 
         if ($('#municipio').val() == '') {
@@ -127,14 +111,6 @@ $(document).ready(function(){
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
                 '<span aria-hidden="true">&times;</span></button>Debe seleccionar un municipio</div>');
             return false;
-        }
-
-        tipoReporte = '';
-
-        if ($(this).prop('id') == 'btnReporteSeccional') {
-            tipoReporte = 1;
-        } else if ($(this).prop('id') == 'btnGenerarReporte') {
-            tipoReporte = 2;
         }
 
         $('#loadIndicator').show();
@@ -143,7 +119,7 @@ $(document).ready(function(){
         $.ajax({
             type: 'POST',
             url: urlReporte,
-            data: $('#formBuscar').serialize()+'&tipoReporte='+tipoReporte,
+            data: $('#formBuscar').serialize()+'&tipoReporte=3',
             dataType: 'json',
             success: function(result) {
                 $('#titulo').html(result.titulo);
@@ -151,42 +127,6 @@ $(document).ready(function(){
                 $('#loadIndicator').hide();
                 $('.opcionesExportar').show();
                 $('#div_loading').fadeOut('slow');
-            }
-        });
-    });
-
-    $('#btnResumen').click(function() {
-        $('.alert').remove();
-
-        if ($('#municipio').val() == '') {
-            $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                '<span aria-hidden="true">&times;</span></button>Debe seleccionar un municipio</div>');
-            return false;
-        }
-
-        $('#loadIndicator').show();
-        $.ajax({
-            url: urlResumen,
-            dataType: "json",
-            data: {_csrf: $('[name=_csrf]').val() ,idMuni: $('#municipio').val()},
-            type: "GET",
-        }).done(function(response){
-            $('#loadIndicator').hide();
-            if (response.length == 0) {
-                $('#alertResult').html('No se encontraron resultados en la b&uacute;squeda');
-                $('#alertResult').show();
-            } else {
-                var fecha = new Date();
-                $('#alertResult').hide();
-                tablaResumen = $(ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
-                $('#modalResumen .table-responsive').html(tablaResumen);
-
-                $('<tr><td colspan="5">&nbsp;</td></tr>').insertBefore( tablaResumen.find('tr:last'));
-
-                $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text());
-                $('#fechaResumen').html('Fecha de corte: '+padLeft(fecha.getDate(),2)+'-'+padLeft((fecha.getMonth()+1),2)+'-'+fecha.getFullYear());
-                $('#modalResumen').modal('show');
             }
         });
     });

@@ -233,12 +233,46 @@ class PadronController extends Controller
     public function actionCreate()
     {
         $model = new PadronGlobal();
+        $municipios = ArrayHelper::map(
+            CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio')
+                ->all(),
+            'IdMunicipio',
+            'DescMunicipio'
+        );
+        $escolaridad = ArrayHelper::map(
+                ElementoCatalogo::find()->where(['IdTipoCatalogo'=>1])
+                ->select(['IdElementoCatalogo', 'Descripcion'])
+                ->orderBy('Descripcion')
+                ->all(),
+            'IdElementoCatalogo',
+            'Descripcion'
+        );
+        $ocupacion = ArrayHelper::map(
+                ElementoCatalogo::find()->where(['IdTipoCatalogo'=>2])
+                ->select(['IdElementoCatalogo', 'Descripcion'])
+                ->orderBy('Descripcion')
+                ->all(),
+            'IdElementoCatalogo',
+            'Descripcion'
+        );
+        $estado_civil = ArrayHelper::map(
+                ElementoCatalogo::find()->where(['IdTipoCatalogo'=>3])
+                ->select(['IdElementoCatalogo', 'Descripcion'])
+                ->orderBy('Descripcion')
+                ->all(), 'IdElementoCatalogo', 'Descripcion'
+        );
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->CLAVEUNICA]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'municipios' => $municipios,
+                'escolaridad' => $escolaridad,
+                'ocupacion' => $ocupacion,
+                'estado_civil' => $estado_civil
             ]);
         }
     }

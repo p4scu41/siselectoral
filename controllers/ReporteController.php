@@ -31,54 +31,33 @@ class ReporteController extends \yii\web\Controller
 
     public function actionIndex()
     {
+        $findMuni = CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio');
+        
         if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all();
+            $listMunicipios = $findMuni->all();
         } elseif (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idDistrito'])) {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
+            $listMunicipios = $findMuni
                 ->where(['DistritoLocal'=>Yii::$app->user->identity->persona->DISTRITOLOCAL])
-                ->orderBy('DescMunicipio')
                 ->all();
         } else {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
+            $listMunicipios = $findMuni
                 ->where(['IdMunicipio'=>Yii::$app->user->identity->persona->MUNICIPIO])
-                ->orderBy('DescMunicipio')
                 ->all();
         }
 
         $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
 
-        /*$reporteHTML = '';
-        $titulo = '';
-
-        if (Yii::$app->request->post('Municipio')) {
-            $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
-
-            if (Yii::$app->request->post('tipoReporte') == 1) {
-                $reporteDatos = Reporte::avanceSeccional( Yii::$app->request->post('Municipio') );
-                $omitirCentrado = array(2);
-                $titulo = 'Avance Seccional de '.$municipio->DescMunicipio;
-            } elseif (Yii::$app->request->post('tipoReporte') == 2) {
-                $reporteDatos = Reporte::estructura( Yii::$app->request->post('Municipio') );
-                $omitirCentrado = array(1, 2, 5, 6);
-                $titulo = 'Estructura Municipal de '.$municipio->DescMunicipio;
-            }
-
-            $reporteHTML = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
-        }*/
-
-        return $this->render('index',[
+        return $this->render('index', [
             'municipios' => $municipios,
             //'reporte' => $reporteHTML,
             //'titulo' => $titulo,
         ]);
     }
 
-    public function actionGenerar() {
+    public function actionGenerar()
+    {
         $respuesta = [
             'reporteHTML' => '',
             'titulo' => ''
@@ -88,19 +67,33 @@ class ReporteController extends \yii\web\Controller
             $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
 
             if (Yii::$app->request->post('tipoReporte') == 1) { // Avance Seccional
-                $reporteDatos = Reporte::avanceSeccional( Yii::$app->request->post('Municipio') );
+                $reporteDatos = Reporte::avanceSeccional(Yii::$app->request->post('Municipio'));
                 $omitirCentrado = array(2);
                 $respuesta['titulo'] = 'Avance Seccional de '.$municipio->DescMunicipio;
-            } else if (Yii::$app->request->post('tipoReporte') == 2) { // Estructura
+            } elseif (Yii::$app->request->post('tipoReporte') == 2) { // Estructura
                 $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
                 $nodo = null;
                 if (count($nodos)) {
                     $nodo = array_pop($nodos);
                 }
 
-                $reporteDatos = Reporte::estructura( Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('puestos') );
+                $reporteDatos = Reporte::estructura(
+                    Yii::$app->request->post('Municipio'),
+                    $nodo,
+                    Yii::$app->request->post('puestos')
+                );
                 $omitirCentrado = array(1, 2, 3, 9, 10, 11);
                 $respuesta['titulo'] = 'Estructura Municipal de '.$municipio->DescMunicipio;
+            } elseif (Yii::$app->request->post('tipoReporte') == 3) { // Promovidos
+                $omitirCentrado = array(1, 4);
+                $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
+                $nodo = null;
+                if (count($nodos)) {
+                    $nodo = array_pop($nodos);
+                }
+
+                $respuesta['titulo'] = 'Listado de Promotores con sus respectivos Promovidos';
+                $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo);
             }
 
             $respuesta['reporteHTML'] = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
@@ -179,8 +172,39 @@ class ReporteController extends \yii\web\Controller
         $objWriter->save('php://output');
         $content = ob_get_clean();
 
-        Yii::$app->response->sendContentAsFile($content, $titulo.".xlsx", 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        Yii::$app->response->sendContentAsFile(
+            $content,
+            $titulo.".xlsx",
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
         Yii::$app->end();
     }
 
+    public function actionPromovidos()
+    {
+        if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
+            $listMunicipios = CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio')
+                ->all();
+        } elseif (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idDistrito'])) {
+            $listMunicipios = CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->where(['DistritoLocal'=>Yii::$app->user->identity->persona->DISTRITOLOCAL])
+                ->orderBy('DescMunicipio')
+                ->all();
+        } else {
+            $listMunicipios = CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->where(['IdMunicipio'=>Yii::$app->user->identity->persona->MUNICIPIO])
+                ->orderBy('DescMunicipio')
+                ->all();
+        }
+
+        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+
+        return $this->render('promovidos', [
+            'municipios' => $municipios,
+        ]);
+    }
 }

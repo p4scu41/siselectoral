@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Url;
+
 ?>
 
 <!-- sidebar menu: : style can be found in sidebar.less -->
@@ -26,10 +27,19 @@ use yii\helpers\Url;
             </li>
         </ul>
     </li>
-    <li>
-        <a href="<?= Url::to(['reporte/index']) ?>">
+    <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'reporte') !== false ? 'active' : '' ?>">
+        <a href="#">
             <i class="fa fa-bar-chart"></i> <span>Reportes</span>
+            <i class="fa fa-angle-left pull-right"></i>
         </a>
+        <ul class="treeview-menu" style="display: none;">
+            <li class="<?= Yii::$app->request->getPathInfo() == 'reporte/' ? 'active' : '' ?>">
+                <a href="<?= Url::to(['reporte/index']) ?>" style="margin-left: 10px;"><i class="fa fa-sitemap"></i> Estructura</a>
+            </li>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'reporte/promovidos') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['reporte/promovidos']) ?>" style="margin-left: 10px;"><i class="fa fa-users"></i> Promovidos</a>
+            </li>
+        </ul>
     </li>
     <li>
         <a href="#">

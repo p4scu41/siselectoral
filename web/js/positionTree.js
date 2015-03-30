@@ -103,30 +103,30 @@ $(document).ready(function(){
             $('#alertDescDependiente').remove();
         }
 
-        //console.log(node.data.IdPuesto);
+        // pl = Puesto Login
+        // Solo puede asignar puesto de promotor
+        if (node.data.IdPuesto == 6 || node.data.IdPuesto == 7) {
+            // El usuario logueado solo puede asignar puestos a sus estructura inferior
+            if( $('#divAsignarPersona #btnAsignarPersona').length == 0) {
+                $('#divAsignarPersona').append(btnAsignarPersona);
+            }
+
+            btnAsignarPersona.find('button').data('idNodo', node.key);
+
+            btnAsignarPersona.delegate('button','click', function(event){
+                $('#modalPerson').modal('hide');
+                $('#resultBuscarPersona').html('');
+                $('#modalAsignaPersona').modal('show');
+            });
+        } else {
+            $('#divAsignarPersona').html('');
+        }
 
         if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
             $('#loadIndicator').hide();
             $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
             $('#imgPerson').attr('src', imgNoPerson);
             $('#frmPersonDetails').html('<div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>');
-
-            // pl = Puesto Login
-            // Solo puede asignar puesto de promotor
-            if (node.data.IdPuesto == 7) {
-                // El usuario logueado solo puede asignar puestos a sus estructura inferior
-                if( $('#frmPersonDetails #btnAsignarPersona').length == 0) {
-                    $('#frmPersonDetails').append(btnAsignarPersona);
-                }
-
-                btnAsignarPersona.find('button').data('idNodo', node.key);
-
-                btnAsignarPersona.delegate('button','click', function(event){
-                    $('#modalPerson').modal('hide');
-                    $('#resultBuscarPersona').html('');
-                    $('#modalAsignaPersona').modal('show');
-                });
-            }
 
             $('#modalPerson').modal('show');
             $('#btnViewPerson').data('id', '#');
