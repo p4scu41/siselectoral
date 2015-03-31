@@ -11,9 +11,9 @@ $this->params['breadcrumbs'][] = 'Persona';
 $this->registerJsFile('http://maps.google.com/maps/api/js?sensor=false');
 $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerJsFile(Url::to('@web/js/persona.js'));
-$this->registerJs('puesto = "'.$idPuesto.'";'.
-            'municipio = "'.$persona->MUNICIPIO.'";'.
-            'nodo = "'.$nodo.'";'
+$this->registerJs('puesto = "'.(int)$idPuesto.'";'.
+            'municipio = "'.(int)$persona->MUNICIPIO.'";'.
+            'nodo = "'.(int)$nodo.'";'
         , \yii\web\View::POS_HEAD);
 $this->registerJs('urlResumenNodo="'.Url::toRoute('site/getresumennodo', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetProgramas="'.Url::toRoute('site/getprogramas', true).'";', \yii\web\View::POS_HEAD);
@@ -218,7 +218,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
 
 <div>
     <?php
-    if(!empty($jefe)) {
+    if (!empty($jefe)) {
         echo '<div class="well well-sm"><strong>Coordinado por:</strong></div>
             <div class="media">
                 <div class="media-left">
@@ -243,7 +243,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
     }
     ?>
     <?php
-    if(!empty($dependientes)) {
+    if (!empty($dependientes)) {
         echo '<div class="well well-sm"><strong>Coordina a:</strong></div>';
 
         foreach ($dependientes as $dependiente) {

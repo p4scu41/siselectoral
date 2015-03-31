@@ -25,6 +25,9 @@ use yii\helpers\Url;
             <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron/buscar') !== false ? 'active' : '' ?>">
                 <a href="<?= Url::to(['padron/buscar']) ?>" style="margin-left: 10px;"><i class="fa fa-search"></i> Buscar</a>
             </li>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron/create') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['padron/create']) ?>" style="margin-left: 10px;"><i class="fa fa-user-plus"></i> Registrar</a>
+            </li>
         </ul>
     </li>
     <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'reporte') !== false ? 'active' : '' ?>">

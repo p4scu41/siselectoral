@@ -1,4 +1,4 @@
-/*var mapDomicilio;
+var mapDomicilio;
 var mapCasilla;
 myLatlng = new google.maps.LatLng(16.7528099, -93.1154969);
 
@@ -64,7 +64,7 @@ $('#modalMapDomicilio').on('shown.bs.modal', function () {
 $('#modalMapCasilla').on('shown.bs.modal', function () {
     google.maps.event.trigger(mapCasilla, "resize");
     mapCasilla.setCenter(myLatlng);
-});*/
+});
 
 $(document).ready(function(){
     $.ajax({
@@ -182,21 +182,23 @@ $(document).ready(function(){
         $('#modalListIntegrantes').modal('show');
     }
 
-    // Obtiene la estructura alterna
-    $.ajax({
-        url: urlTree,//urlTreeAltern
-        dataType: "json",
-        data: '_csrf='+$('[name=csrf-token]').attr('content')+'&Municipio='+municipio+'&IdPuestoDepende='+puesto+'&alterna=true',
-        type: "POST",
-    }).done(function(response) {
-        if (response.length>0) {
-            $('#infoEstrucAlterna span:first').text(response.length);
-            treeEstrucAlterna.reload(response);
-        } else {
-            $('#infoEstrucAlterna span:first').text('0');
-            $('#treeEstrucAlterna').hide();
-        }
-    });
+    if (municipio != "" && puesto != "") {
+        // Obtiene la estructura alterna
+        $.ajax({
+            url: urlTree,//urlTreeAltern
+            dataType: "json",
+            data: '_csrf='+$('[name=csrf-token]').attr('content')+'&Municipio='+municipio+'&IdPuestoDepende='+puesto+'&alterna=true',
+            type: "POST",
+        }).done(function(response) {
+            if (response.length>0) {
+                $('#infoEstrucAlterna span:first').text(response.length);
+                treeEstrucAlterna.reload(response);
+            } else {
+                $('#infoEstrucAlterna span:first').text('0');
+                $('#treeEstrucAlterna').hide();
+            }
+        });
+    }
 
     $("#treeEstrucAlterna").fancytree({
         extensions: ["table"],

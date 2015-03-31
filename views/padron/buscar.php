@@ -43,29 +43,38 @@ $this->params['breadcrumbs'][] = $this->title;
             'NOMBRE',
             [
                 'attribute' => 'MUNICIPIO',
-                'value' => function ($model, $key, $index, $column){
+                'value' => function ($model, $key, $index, $column) {
                     return $model->municipio->DescMunicipio;
                 },
                 //'filter' => $municipios,
             ],
-            [
+            /*[
                 'attribute' => 'SEXO',
-                'value' => function ($model, $key, $index, $column){
+                'value' => function ($model, $key, $index, $column) {
                     return $model->genero;
                 },
                 //'filter' => ['M'=>'Mujer', 'H'=>'Hombre'],
-            ],
+            ],*/
             [
                 'attribute' => 'FECHANACIMIENTO',
-                'value' => function ($model, $key, $index, $column){
+                'value' => function ($model, $key, $index, $column) {
                     if ($model->FECHANACIMIENTO) {
                         $fecha = new DateTime($model->FECHANACIMIENTO);
                         return $fecha->format('d-m-Y');
                     }
                     return '';
                 },
-                //'filter' => ['M'=>'Mujer', 'H'=>'Hombre'],
             ],
+            'SECCION',
+            [
+                'attribute' => 'DOMICILIO',
+                'value' => function ($model, $key, $index, $column) {
+                    return $model->DOMICILIO.
+                        ($model->CODIGO_POSTAL ? ', C.P. '.$model->CODIGO_POSTAL: '')
+                        .', '.$model->DES_LOC.' '.$model->NOM_LOC;
+                },
+            ],
+
             ['class' => 'yii\grid\ActionColumn',
               'template'=>'{ver}',
                 'buttons'=>[

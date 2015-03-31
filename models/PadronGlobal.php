@@ -47,6 +47,7 @@ use yii\web\UploadedFile;
  * @property integer $ESTADO_CIVIL
  * @property integer $OCUPACION
  * @property integer $ESCOLARIDAD
+ * @property integer $AGREGADO
  */
 class PadronGlobal extends \yii\db\ActiveRecord
 {
@@ -66,6 +67,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'NUM_EXTERIOR', 'COLONIA', 'DOMICILIO', 'NOM_LOC', 'CODIGO_POSTAL', 'FECHANACIMIENTO', 'MUNICIPIO'], 'required'],
             [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'string'],
             [['CONS_ALF_POR_SECCION', 'LUGAR_NACIMIENTO', 'DIGITO_VERIFICADOR', 'CLAVE_HOMONIMIA', 'CODIGO_POSTAL', 'FOLIO_NACIONAL', 'EN_LISTA_NOMINAL', 'ENTIDAD', 'DISTRITO', 'MUNICIPIO', 'SECCION', 'LOCALIDAD', 'MANZANA', 'NUM_EMISION_CREDENCIAL'], 'number'],
             [['DISTRITOLOCAL', 'FECHA_NACI_CLAVE_ELECTORAL', 'ESTADO_CIVIL', 'OCUPACION', 'ESCOLARIDAD'], 'integer'],
@@ -112,12 +114,13 @@ class PadronGlobal extends \yii\db\ActiveRecord
             'TELCASA' => 'Tel. Casa',
             'CASILLA' => 'Casilla',
             'DOMICILIO' => 'Domicilio',
-            'DES_LOC' => 'Des Loc',
-            'NOM_LOC' => 'Nom Loc',
+            'DES_LOC' => 'Tipo Localidad',
+            'NOM_LOC' => 'Localidad',
             'foto' => 'Foto',
             'ESTADO_CIVIL' => 'Estado Civil',
             'OCUPACION' => 'Ocupación',
-            'ESCOLARIDAD' => 'Escolaridad'
+            'ESCOLARIDAD' => 'Escolaridad',
+            'AGREGADO' => 'Agregado'
         ];
     }
 
@@ -160,7 +163,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
      */
     public function getEdad()
     {
-        $fecha = time() - strtotime( $this->getfechaNac('Y-m-d') );
+        $fecha = time() - strtotime($this->getfechaNac('Y-m-d'));
         $edad = floor($fecha / 31557600); // 60s * 60m * 24h * 365.25d
 
         return $edad;
@@ -176,7 +179,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
     {
         $fechaNac = $this->FECHANACIMIENTO;
 
-        if(empty($fechaNac)) {
+        if (empty($fechaNac)) {
             $y = '19'.substr($this->ALFA_CLAVE_ELECTORAL, 6, 2);
             $m = substr($this->ALFA_CLAVE_ELECTORAL, 8, 2);
             $d = substr($this->ALFA_CLAVE_ELECTORAL, 10, 2);
@@ -238,7 +241,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
 
         if ($ancho > 200 || $alto > 250) {
              // Redimensionar
-            ResizeImage::smart_resize_image($pathFoto, null, 200, 250, false , $pathFoto, false, false, 100);
+            ResizeImage::smart_resize_image($pathFoto, null, 200, 250, false, $pathFoto, false, false, 100);
         }
 
         $type = pathinfo($pathFoto, PATHINFO_EXTENSION);
@@ -246,5 +249,12 @@ class PadronGlobal extends \yii\db\ActiveRecord
         $base64Foto = 'data:image/' . $type . ';base64,' . base64_encode($imageByte);
 
         return $base64Foto;
+    }
+
+    public static function newUID()
+    {
+        $uid = Yii::$app->db->createCommand('SELECT NEWID() as newUID')->queryOne();
+
+        return $uid['newUID'];
     }
 }

@@ -10,7 +10,19 @@ $this->params['breadcrumbs'][] = 'Persona';
 $this->params['breadcrumbs'][] = 'Detalles';
 
 $this->registerJsFile('http://maps.google.com/maps/api/js?sensor=false');
+$this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerJsFile(Url::to('@web/js/persona.js'));
+$this->registerJs('puesto = "'.$idPuesto.'";'.
+            'municipio = "'.$persona->MUNICIPIO.'";'.
+            'nodo = "'.$nodo.'";'
+        , \yii\web\View::POS_HEAD);
+$this->registerJs('urlResumenNodo="'.Url::toRoute('site/getresumennodo', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetProgramas="'.Url::toRoute('site/getprogramas', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetIntegrantes="'.Url::toRoute('site/getintegrantesprogbyseccion', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlListInte="'.Url::toRoute('organizacion/listintegrantesfromseccion').'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlBranch="'.Url::toRoute('site/getbranch', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";', \yii\web\View::POS_HEAD);
+$this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
 ?>
 <div class="row">
     <!-- left column -->
@@ -82,15 +94,15 @@ $this->registerJsFile(Url::to('@web/js/persona.js'));
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">Zona</label>
-                                    <div class="col-sm-10">
-                                        <div class="well well-sm">&nbsp;</div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
                                     <label class="col-sm-2 control-label">Sección</label>
                                     <div class="col-sm-10">
                                         <div class="well well-sm"><?= ($model->SECCION) ? $model->SECCION : '&nbsp;'; ?></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Casilla</label>
+                                    <div class="col-sm-10">
+                                        <div class="well well-sm"><?= ($model->CASILLA) ? $model->CASILLA : '&nbsp;'; ?></div>
                                     </div>
                                 </div>
                                 <div class="form-group">

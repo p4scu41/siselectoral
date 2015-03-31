@@ -8,6 +8,10 @@ use kartik\datecontrol\DateControl;
 /* @var $this yii\web\View */
 /* @var $model app\models\PadronGlobal */
 /* @var $form yii\widgets\ActiveForm */
+
+$this->registerJs('$("input:not([type=file])").change(function() {
+		$(this).val( normalize($(this).val()).toUpperCase() );
+	});');
 ?>
 
 <div class="padron-global-form">
@@ -27,6 +31,8 @@ use kartik\datecontrol\DateControl;
                         <img src="<?= $model->getFoto() ?>" class="img-rounded imgPerson" id="imgPerson">
                     </div> <br>
 
+                    <?= $form->errorSummary($model); ?>
+
                     <?= $form->field($model, 'foto')->fileInput(['class'=>'file',
                             'data-browse-label'=> 'Seleccionar Foto',
                             'data-browse-icon'=>'<i class="glyphicon glyphicon-picture"></i> &nbsp;',
@@ -45,10 +51,10 @@ use kartik\datecontrol\DateControl;
                     <?php $disabled = $model->APELLIDO_MATERNO ? ['disabled'=>'true'] : [] ?>
                     <?= $form->field($model, 'APELLIDO_MATERNO')->textInput($disabled) ?>
 
-                    <?php $disabled = $model->APELLIDO_PATERNO ? ['disabled'=>'true'] : [] ?>
-                    <?= $form->field($model, 'APELLIDO_PATERNO')->textInput($disabled) ?>
+                    <?php $disabled = $model->NOMBRE ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'NOMBRE')->textInput($disabled) ?>
 
-                    <?php $disabled = $model->FECHANACIMIENTO ? ['class'=>'form-control', 'disabled'=>'true'] : ['class'=>'form-control'] ?>
+                    <?php $disabled = $model->FECHANACIMIENTO ? ['class'=>'form-control', 'disabled'=>'true', 'required'=>'true'] : ['class'=>'form-control', 'required'=>'true'] ?>
                     <?= $form->field($model, 'FECHANACIMIENTO')->widget(DateControl::classname(), [
                             'displayFormat' => 'dd/MM/yyyy',
                             'saveFormat' => 'yyyy-MM-dd',
@@ -94,7 +100,7 @@ use kartik\datecontrol\DateControl;
                     <?php $disabled = $model->COLONIA ? ['disabled'=>'true'] : [] ?>
                     <?= $form->field($model, 'COLONIA')->textInput($disabled) ?>
 
-                    <?php $disabled = $model->DES_LOC ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = $model->DES_LOC ? ['disabled'=>'true', 'placeholder'=>'Ejem. Col., Barr., Ejido, Rancheria.'] : ['placeholder'=>'Ejem. Col., Barr., Ejido, Rancheria.'] ?>
                     <?= $form->field($model, 'DES_LOC')->textInput($disabled) ?>
 
                     <?php $disabled = $model->NOM_LOC ? ['disabled'=>'true'] : [] ?>
