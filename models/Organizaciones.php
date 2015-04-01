@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "Organizaciones".
@@ -32,7 +33,7 @@ class Organizaciones extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['IdOrganizacion'], 'required'],
+            [['Nombre', 'IdPersonaRepresentante', 'IdPersonaEnlace', 'IdMunicipio', 'idTipoOrganizacion'], 'required'],
             [['IdOrganizacion', 'IdMunicipio', 'idTipoOrganizacion'], 'integer'],
             [['Nombre', 'Siglas', 'IdPersonaRepresentante', 'IdPersonaEnlace', 'Observaciones'], 'string']
         ];
@@ -47,11 +48,11 @@ class Organizaciones extends \yii\db\ActiveRecord
             'IdOrganizacion' => 'Id Organizacion',
             'Nombre' => 'Nombre',
             'Siglas' => 'Siglas',
-            'IdPersonaRepresentante' => 'Id Persona Representante',
-            'IdPersonaEnlace' => 'Id Persona Enlace',
-            'IdMunicipio' => 'Id Municipio',
+            'IdPersonaRepresentante' => 'Representante',
+            'IdPersonaEnlace' => 'Enlace',
+            'IdMunicipio' => 'Municipio',
             'Observaciones' => 'Observaciones',
-            'idTipoOrganizacion' => 'Id Tipo Organizacion',
+            'idTipoOrganizacion' => 'Tipo',
         ];
     }
 
@@ -66,10 +67,76 @@ class Organizaciones extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getRepresentante()
+    {
+        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaRepresentante']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnlace()
+    {
+        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaEnlace']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMunicipio()
+    {
+        return $this->hasOne(CMunicipio::className(), ['IdMunicipio' => 'IdMunicipio']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTipoOrganizacion()
+    {
+        return $this->hasOne(ElementoCatalogo::className(), ['IdElementoCatalogo' => 'idTipoOrganizacion']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getIntegrantes()
     {
         return $this->hasMany(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaIntegrante'])
                 ->viaTable('IntegrantesOrganizaciones', ['IdOrganizacion' => 'IdOrganizacion']);
+    }
+
+    /**
+     * Devuelve un array con municipios y tipos
+     * necesarios para los combos en el formulario
+     * 
+     * @return Array
+     */
+    public static function getDependencias()
+    {
+        $dependencias = [
+            'municipios' => null,
+            'tipos' => null
+        ];
+
+        $dependencias['municipios'] = ArrayHelper::map(
+            CMunicipio::find()
+                ->select(['IdMunicipio', 'DescMunicipio'])
+                ->orderBy('DescMunicipio')
+                ->all(),
+            'IdMunicipio',
+            'DescMunicipio'
+        );
+
+        $dependencias['tipos'] = ArrayHelper::map(
+                ElementoCatalogo::find()->where(['IdTipoCatalogo'=>4])
+                ->select(['IdElementoCatalogo', 'Descripcion'])
+                ->orderBy('Descripcion')
+                ->all(),
+            'IdElementoCatalogo',
+            'Descripcion'
+        );
+
+        return $dependencias;
     }
 
     /**
@@ -134,7 +201,8 @@ class Organizaciones extends \yii\db\ActiveRecord
         $listIntegrantes = Yii::$app->db->createCommand('SELECT
                     [PadronGlobal].[CLAVEUNICA]
                     ,[PadronGlobal].[SEXO]
-                    ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NOMBRE
+                    ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NOMBRE
                     ,[PadronGlobal].[FECHANACIMIENTO]
                     ,[PadronGlobal].[COLONIA]
                 FROM

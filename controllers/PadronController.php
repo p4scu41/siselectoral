@@ -214,6 +214,50 @@ class PadronController extends Controller
     }
 
     /**
+     * Lists all PadronGlobal models.
+     * 
+     * @return mixed
+     */
+    public function actionFind()
+    {
+        $where = '1=1 ';
+        $municipio = Yii::$app->request->post('municipio');
+        $seccion = Yii::$app->request->post('seccion');
+        $apellidoPaterno = Yii::$app->request->post('apellidoPaterno');
+        $apellidoMaterno = Yii::$app->request->post('apellidoMaterno');
+        $nombre = Yii::$app->request->post('nombre');
+
+        if ($municipio) {
+            $where .= ' AND MUNICIPIO = '.$municipio;
+        }
+
+        if ($seccion) {
+            $where .= ' AND SECCION = '. $seccion;
+        }
+
+        if ($apellidoPaterno) {
+            $where .= ' AND APELLIDO_PATERNO LIKE \'%'.$apellidoPaterno.'%\'';
+        }
+
+        if ($apellidoMaterno) {
+            $where .= ' AND APELLIDO_MATERNO LIKE \'%'.$apellidoMaterno.'%\'';
+        }
+
+        if ($nombre) {
+            $where .=  ' AND NOMBRE LIKE \'%'.$nombre.'%\'';
+        }
+
+        $personas = PadronGlobal::find()
+            ->select('CLAVEUNICA, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, SECCION, CASILLA, DOMICILIO, NOM_LOC')
+            ->where($where)
+            ->orderBy('APELLIDO_PATERNO, APELLIDO_MATERNO, NOMBRE')
+            ->asArray()
+            ->all();
+
+        return json_encode($personas);
+    }
+
+    /**
      * Displays a single PadronGlobal model.
      * @param string $id
      * @return mixed

@@ -16,6 +16,11 @@ use yii\helpers\Url;
             <i class="fa fa-sitemap"></i> <span>Estrategia Municipal</span>
         </a>
     </li>
+    <li class="<?= Yii::$app->request->getPathInfo() == 'organizaciones/' ? 'active' : '' ?>">
+        <a href="<?= Url::to(['organizaciones/index']) ?>">
+            <i class="fa fa-list-alt"></i> <span>Organizaciones</span>
+        </a>
+    </li>
     <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'padron') !== false ? 'active' : '' ?>">
         <a href="#">
             <i class="fa fa-users"></i> <span>Persona</span>
@@ -25,9 +30,11 @@ use yii\helpers\Url;
             <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron/buscar') !== false ? 'active' : '' ?>">
                 <a href="<?= Url::to(['padron/buscar']) ?>" style="margin-left: 10px;"><i class="fa fa-search"></i> Buscar</a>
             </li>
+            <?php if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) { ?>
             <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron/create') !== false ? 'active' : '' ?>">
                 <a href="<?= Url::to(['padron/create']) ?>" style="margin-left: 10px;"><i class="fa fa-user-plus"></i> Registrar</a>
             </li>
+            <?php } ?>
         </ul>
     </li>
     <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'reporte') !== false ? 'active' : '' ?>">
