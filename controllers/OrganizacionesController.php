@@ -20,10 +20,10 @@ class OrganizacionesController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -135,5 +135,53 @@ class OrganizacionesController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionIntegrantes($idOrg)
+    {
+        $model = $this->findModel($idOrg);
+        $integrantes = Organizaciones::listIntegrantes($idOrg);
+        $dependencias = Organizaciones::getDependencias();
+
+        return $this->render('integrantes', [
+                'model' => $model,
+                'integrantes' => $integrantes,
+                'municipios' => $dependencias['municipios'],
+            ]);
+    }
+
+    public function actionDelintegrante()
+    {
+        $idOrg = Yii::$app->request->post('org');
+        $idInte = Yii::$app->request->post('inte');
+        $response = ['error'=>false, 'mensaje'=>'Integrante eliminado exitosamente'];
+
+        try {
+            if (!Yii::$app->getRequest()->validateCsrfToken()) {
+                throw new Exception('Error CSRF');
+            }
+            Organizaciones::delIntegrante($idOrg, $idInte);
+        } catch (Exception $ex) {
+            $response = ['error'=>true, 'mensaje'=>'Error al eliminar el Integrante'];
+        }
+
+        return json_encode($response);
+    }
+
+    public function actionAddintegrante()
+    {
+        $idOrg = Yii::$app->request->post('org');
+        $idInte = Yii::$app->request->post('inte');
+        $response = ['error'=>false, 'mensaje'=>'Integrante agregado exitosamente'];
+
+        try {
+            $integrante = Organizaciones::AddIntegrante($idOrg, $idInte);
+
+            $response['integrante'] = $integrante;
+        } catch (Exception $ex) {
+            $response = ['error'=>true, 'mensaje'=>'Error al agregar el Integrante'];
+        }
+
+        return json_encode($response);
     }
 }

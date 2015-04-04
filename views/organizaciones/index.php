@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -51,6 +52,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model, $key, $index, $column) {
                     return $model->tipoOrganizacion->Descripcion;
                 }
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => 'Integrantes',
+                'template' => '{integrantes}',
+                'buttons' => [
+                  'integrantes' => function ($url, $model, $key) {
+                    return '<div class="text-center">'.Html::a('<i class="fa fa-users"></i>', Url::toRoute(['organizaciones/integrantes', 'idOrg' => $model->IdOrganizacion], true), [
+                            'title' => 'Ver Integrantes',
+                    ]).'</div>';
+                  }
+                ]
             ],
             ['class' => 'yii\grid\ActionColumn'],
         ],

@@ -105,6 +105,31 @@ class Organizaciones extends \yii\db\ActiveRecord
                 ->viaTable('IntegrantesOrganizaciones', ['IdOrganizacion' => 'IdOrganizacion']);
     }
 
+    public static function listIntegrantes($idOrganizacion)
+    {
+        $sqlIntegrantes = 'SELECT
+                [PadronGlobal].[CLAVEUNICA],
+                ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
+                        +\' \'+[PadronGlobal].[NOMBRE]) AS NombreCompleto,
+                [PadronGlobal].[SECCION],
+                [PadronGlobal].[TELCASA],
+                [PadronGlobal].[TELMOVIL],
+                [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
+                    +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+            FROM
+                [IntegrantesOrganizaciones]
+            INNER JOIN
+                [PadronGlobal] ON
+                    [PadronGlobal].[CLAVEUNICA] = [IntegrantesOrganizaciones].[IdPersonaIntegrante]
+            WHERE
+                [IdOrganizacion] = '.$idOrganizacion.'
+            ORDER BY NombreCompleto';
+
+        $integrantes = Yii::$app->db->createCommand($sqlIntegrantes)->queryAll();
+
+        return $integrantes;
+    }
+
     /**
      * Devuelve un array con municipios y tipos
      * necesarios para los combos en el formulario
@@ -215,5 +240,51 @@ class Organizaciones extends \yii\db\ActiveRecord
                 ORDER BY NOMBRE')->queryAll();
 
         return $listIntegrantes;
+    }
+
+    /**
+     * Eliminar integrantes de la organización
+     *
+     * @param Int $idOrg
+     * @param UID $idInte
+     */
+    public static function delIntegrante($idOrg, $idInte)
+    {
+        $sqlDelete = 'DELETE FROM [IntegrantesOrganizaciones]
+                    WHERE [IdOrganizacion]='.$idOrg.' AND IdPersonaIntegrante=\''.$idInte.'\'';
+
+        Yii::$app->db->createCommand($sqlDelete)->execute();
+    }
+
+    /**
+     * Agregar integrantes de la organización
+     *
+     * @param Int $idOrg
+     * @param UID $idInte
+     */
+    public static function addIntegrante($idOrg, $idInte)
+    {
+        $sqlInsert = 'INSERT INTO [IntegrantesOrganizaciones] ([IdOrganizacion] ,[IdPersonaIntegrante])
+                    VALUES ('.$idOrg.', \''.$idInte.'\')';
+
+        Yii::$app->db->createCommand($sqlInsert)->execute();
+
+        $sqlIntegrante = 'SELECT
+                [PadronGlobal].[CLAVEUNICA],
+                ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
+                        +\' \'+[PadronGlobal].[NOMBRE]) AS NombreCompleto,
+                [PadronGlobal].[SECCION],
+                [PadronGlobal].[TELCASA],
+                [PadronGlobal].[TELMOVIL],
+                [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
+                    +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+            FROM
+                [PadronGlobal]
+            WHERE
+                [PadronGlobal].[CLAVEUNICA] = \''.$idInte.'\'';
+
+        $integrante = Yii::$app->db->createCommand($sqlIntegrante)->queryOne();
+
+        return $integrante;
     }
 }

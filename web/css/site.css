@@ -522,6 +522,9 @@ modalPerson #tablaResumen tr:last-child {
 .btnCollapseTree {
     display: none;
 }
+#resultTblIntegrantes {
+    max-height: 400px;
+}
 
 @media print {
     #indicadoresPuesto .btn.btn-app{
