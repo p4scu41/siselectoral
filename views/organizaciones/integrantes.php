@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Url;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Organizaciones */
@@ -18,9 +19,16 @@ $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_
 
     <div>
         <?php $numIntegrantes = count($integrantes); ?>
-        Total de integrantes: <strong><?= $numIntegrantes ?></strong>
-        <a href="#" class="btn btn-success" id="btnAddIntegrante">Agregar nuevo integrante</a>
+        Total de integrantes: <strong><?= $numIntegrantes ?></strong> &nbsp;
+        <a href="#" class="btn btn-success" id="btnAddIntegrante">Agregar nuevo integrante</a> &nbsp; 
         <a href="<?= Url::toRoute('organizaciones/index', true) ?>" class="btn btn-default">Regrear al listado de organizaciones</a>
+        <br><br>
+        <p>
+            Filtrar por sección: &nbsp; 
+            <?= Html::dropDownList('secciones', null, [0=>'Seleccione una opción'] + $secciones,
+                ['class'=>'form-control inline', 'id'=>'secciones']); ?> &nbsp;
+            <span id="noIntegrantesSeccion"></span>
+        </p>
     </div><br>
     <div class="table-responsive" id="resultTblIntegrantes">
         <table id="tblIntegrantes" class="table table-condensed table-striped table-bordered table-hover">
@@ -37,7 +45,7 @@ $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_
                 for ($count=0; $count<$numIntegrantes; $count++) {
                     echo '<tr>'
                         . '<td>' . $integrantes[$count]['NombreCompleto'] . '</td>'
-                        . '<td>' . (int)$integrantes[$count]['SECCION'] . '</td>'
+                        . '<td class="seccion"> ' . (int)$integrantes[$count]['SECCION'] . ' </td>'
                         . '<td>' . $integrantes[$count]['Domicilio'] . '</td>'
                         . '<td class="text-center"><button class="btn btn-sm btn-danger btnDelIntegrante" '.
                             'data-id="'.$integrantes[$count]['CLAVEUNICA'].'" '.

@@ -12,7 +12,7 @@ $this->title = 'Organizaciones';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="organizaciones-index">
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php echo $this->render('_search', ['model' => $searchModel, 'municipios' => $municipios, 'tipos' => $tipos]); ?>
 
     <p>
         <?= Html::a('Crear nueva organización', ['create'], ['class' => 'btn btn-success']) ?>

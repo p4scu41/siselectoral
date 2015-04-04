@@ -69,4 +69,20 @@ $(document).ready(function (){
             $('#modalBuscarPersona').modal('hide');
         });
     });
+
+    $('#secciones').change(function () {
+        var contador = 0;
+        var $seleccionados;
+        
+        if ($(this).val() == 0) {
+            $('.seccion').parent().show();
+            $('#noIntegrantesSeccion').html('');
+        } else {
+            $('.seccion').parent().hide();
+            $seleccionados = $('.seccion:contains(" '+$(this).val()+' ")');
+            $seleccionados.parent().show();
+            contador = $seleccionados.length;
+            $('#noIntegrantesSeccion').html(contador + ' Integrante(s)');
+        }
+    });
 });

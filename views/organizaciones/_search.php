@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\OrganizacionesSearch */
@@ -10,30 +10,22 @@ use yii\widgets\ActiveForm;
 
 <div class="organizaciones-search">
 
+    <h4>Opciones de búsqueda: </h4>
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
+        'layout' => 'inline',
     ]); ?>
 
-    <?= $form->field($model, 'IdOrganizacion') ?>
+    <?= $form->field($model, 'Nombre', ['inputOptions' => [ 'placeholder' => $model->getAttributeLabel('Nombre') ]]) ?>
 
-    <?= $form->field($model, 'Nombre') ?>
+    <?= $form->field($model, 'IdMunicipio')->dropDownList($municipios, ['prompt' => 'Municipio']) ?>
 
-    <?= $form->field($model, 'Siglas') ?>
-
-    <?= $form->field($model, 'IdPersonaRepresentante') ?>
-
-    <?= $form->field($model, 'IdPersonaEnlace') ?>
-
-    <?php // echo $form->field($model, 'IdMunicipio') ?>
-
-    <?php // echo $form->field($model, 'Observaciones') ?>
-
-    <?php // echo $form->field($model, 'idTipoOrganizacion') ?>
+    <?= $form->field($model, 'idTipoOrganizacion')->dropDownList($tipos, ['prompt' => 'Tipo de organización']) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-default']) ?>
+        <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
+        <?= Html::resetButton('Cancelar', ['class' => 'btn btn-default']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

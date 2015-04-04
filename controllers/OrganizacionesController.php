@@ -46,10 +46,13 @@ class OrganizacionesController extends Controller
     {
         $searchModel = new OrganizacionesSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dependencias = Organizaciones::getDependencias();
 
         return $this->render('index', [
-            //'searchModel' => $searchModel,
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'municipios' => $dependencias['municipios'],
+            'tipos' => $dependencias['tipos'],
         ]);
     }
 
@@ -141,11 +144,13 @@ class OrganizacionesController extends Controller
     {
         $model = $this->findModel($idOrg);
         $integrantes = Organizaciones::listIntegrantes($idOrg);
+        $secciones = \yii\helpers\ArrayHelper::map($integrantes, 'SECCION', 'SECCION');
         $dependencias = Organizaciones::getDependencias();
 
         return $this->render('integrantes', [
                 'model' => $model,
                 'integrantes' => $integrantes,
+                'secciones' => $secciones,
                 'municipios' => $dependencias['municipios'],
             ]);
     }

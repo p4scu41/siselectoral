@@ -111,7 +111,7 @@ class Organizaciones extends \yii\db\ActiveRecord
                 [PadronGlobal].[CLAVEUNICA],
                 ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
                         +\' \'+[PadronGlobal].[NOMBRE]) AS NombreCompleto,
-                [PadronGlobal].[SECCION],
+                CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION],
                 [PadronGlobal].[TELCASA],
                 [PadronGlobal].[TELMOVIL],
                 [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
@@ -123,7 +123,7 @@ class Organizaciones extends \yii\db\ActiveRecord
                     [PadronGlobal].[CLAVEUNICA] = [IntegrantesOrganizaciones].[IdPersonaIntegrante]
             WHERE
                 [IdOrganizacion] = '.$idOrganizacion.'
-            ORDER BY NombreCompleto';
+            ORDER BY SECCION, NombreCompleto';
 
         $integrantes = Yii::$app->db->createCommand($sqlIntegrantes)->queryAll();
 
@@ -194,7 +194,7 @@ class Organizaciones extends \yii\db\ActiveRecord
     public static function getCountIntegrantesBySeccion($idOrganicacion, $idMuni)
     {
         $count = Yii::$app->db->createCommand('SELECT
-                    [PadronGlobal].[SECCION]
+                    CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION]
                     ,[CSeccion].[MetaAlcanzar]
                     ,COUNT([PadronGlobal].[CLAVEUNICA]) AS total
                 FROM
@@ -273,7 +273,8 @@ class Organizaciones extends \yii\db\ActiveRecord
                 [PadronGlobal].[CLAVEUNICA],
                 ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
                         +\' \'+[PadronGlobal].[NOMBRE]) AS NombreCompleto,
-                [PadronGlobal].[SECCION],
+                CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION],
+                [PadronGlobal].[MUNICIPIO],
                 [PadronGlobal].[TELCASA],
                 [PadronGlobal].[TELMOVIL],
                 [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
@@ -284,6 +285,21 @@ class Organizaciones extends \yii\db\ActiveRecord
                 [PadronGlobal].[CLAVEUNICA] = \''.$idInte.'\'';
 
         $integrante = Yii::$app->db->createCommand($sqlIntegrante)->queryOne();
+
+        // Se asigna al Jefe de Seción
+        $sqlAsignaJS = 'UPDATE [DetalleEstructuraMovilizacion] SET [IdOrganizacion] = '.$idOrg.'
+            WHERE [IdNodoEstructuraMov] = (SELECT TOP 1
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN
+                [CSeccion] ON
+                    [CSeccion].[IdMunicipio] = '.$integrante['MUNICIPIO'].' AND
+                    [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector] AND
+                    [CSeccion].[NumSector] = '.$integrante['SECCION'].'
+            WHERE [IdPuesto] = 5 AND [Municipio] = '.$integrante['MUNICIPIO'].')';
+
+        Yii::$app->db->createCommand($sqlAsignaJS)->execute();
 
         return $integrante;
     }
