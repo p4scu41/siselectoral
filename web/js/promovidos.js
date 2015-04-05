@@ -85,11 +85,13 @@ $(document).ready(function(){
 
         var idMuni = $(this).val();
 
+        $("#bodyForm .nivelEstructura, #bodyForm .filtroEstructura").remove();
+
         if (idMuni != '') {
             $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
-                $("#bodyForm").append('<br><div class="form-group"><label>Seleccione el nivel de estructura: </label></div><br>');
-            }).done(function(result) {
                 if (result.length>0) {
+                    $("#bodyForm").append('<div class="form-group nivelEstructura"><label>Seleccione el nivel de estructura: </label><br></div>');
+
                     id = doId(result[0].Descripcion);
                     $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
                         function(result){ agregaPuesto(result, id); }, "json")

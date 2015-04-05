@@ -28,10 +28,10 @@ class PadronController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['get', 'persona', 'buscar', 'view', 'create', 'update', 'delete'],
+                'only' => ['get', 'persona', 'buscar', 'buscarajax', 'find', 'view', 'create', 'update', 'delete'],
                 'rules' => [
                     [
-                        'actions' => ['get', 'persona', 'buscar', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['get', 'persona', 'buscar', 'buscarajax', 'find', 'view', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

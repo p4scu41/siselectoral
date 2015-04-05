@@ -40,6 +40,12 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
                                 ?>
                                 <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
                             </div>
+                            <label class="radio-inline">
+                                <input type="radio" name="tipo_promovido" value="1"> Promovidos Efectivos
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="tipo_promovido" value="2"> Intento de Promoción
+                            </label><br>
                         </div>
                         <p>
                             <button type="button" class="btn btn-success" id="btnGenerarReporte">

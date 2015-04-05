@@ -17,10 +17,10 @@ class ReporteController extends \yii\web\Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'generar', 'pdf', 'excel'],
+                'only' => ['index', 'generar', 'pdf', 'excel', 'promovidos'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'generar', 'pdf', 'excel'],
+                        'actions' => ['index', 'generar', 'pdf', 'excel', 'promovidos'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -93,7 +93,7 @@ class ReporteController extends \yii\web\Controller
                 }
 
                 $respuesta['titulo'] = 'Listado de Promotores con sus respectivos Promovidos';
-                $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo);
+                $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('tipo_promovido'));
             }
 
             $respuesta['reporteHTML'] = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);

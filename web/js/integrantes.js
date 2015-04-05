@@ -56,7 +56,7 @@ $(document).ready(function (){
 
                 trIntegrante = '<tr>'
                         + '<td>' + data.integrante.NombreCompleto + '</td>'
-                        + '<td>' + parseInt(data.integrante.SECCION) + '</td>'
+                        + '<td class="seccion">' + parseInt(data.integrante.SECCION) + '</td>'
                         + '<td>' + data.integrante.Domicilio + '</td>'
                         + '<td class="text-center"><button class="btn btn-sm btn-danger btnDelIntegrante" '+
                             'data-id="'+data.integrante.CLAVEUNICA+'" '+

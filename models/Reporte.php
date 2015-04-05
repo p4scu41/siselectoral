@@ -298,15 +298,27 @@ class Reporte extends \yii\db\ActiveRecord
         return json_decode(str_replace('},]', '}]', $estructura), true);
     }
 
+    public function promovidos($idMuni, $idNodo = null, $tipoPromovido)
+    {
+        $reporte = '';
+
+        if ($tipoPromovido == 1) {
+            $reporte = self::promovidosEfectivos($idMuni, $idNodo);
+        } else {
+            $reporte = self::promovidosIntentos($idMuni, $idNodo);
+        }
+
+        return $reporte;
+    }
+
     /**
-     * Obtiene el listado de promovidos con sus respectivos promotores
+     * Obtiene el listado de promovidos efectivos con sus respectivos promotores
      *
      * @param Int $idMuni
      * @param Int|Null $idNodo
-     * @param Array Int $puestos
      * @return JSON
      */
-    public static function promovidos($idMuni, $idNodo = null)
+    public static function promovidosEfectivos($idMuni, $idNodo = null)
     {
         $sqlPromotores = 'SELECT
                 [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov],
@@ -367,6 +379,98 @@ class Reporte extends \yii\db\ActiveRecord
                         [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdpersonaPromovida] AND
                         [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
                     WHERE [Promocion].[IdPuesto] = '.$promotor['IdNodoEstructuraMov'];
+
+                $promovidos = Yii::$app->db->createCommand($sqlPromovidos)->queryAll();
+
+                if (count($promovidos)) {
+                    foreach ($promovidos as $promovido) {
+                        $reporte .= '{ "Nombre": "'.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
+                                .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
+                                .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
+                                .'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'" },';
+                    }
+                } else {
+                    $reporte .= '{ "Nombre": "Sin Promovidos",'
+                                .'"Tel. Celular": "", '
+                                .'"Tel. Casa": "", '
+                                .'"Domicilio": "" },';
+                }
+            }
+
+            $reporte .= ']';
+        }
+
+        return json_decode(str_replace('},]', '}]', $reporte), true);
+    }
+
+    /**
+     * Obtiene el listado de intentos de promoción con sus respectivos promotores
+     *
+     * @param Int $idMuni
+     * @param Int|Null $idNodo
+     * @return JSON
+     */
+    public static function promovidosIntentos($idMuni, $idNodo = null)
+    {
+        $sqlPromotores = 'SELECT
+                DISTINCT([DetallePromocion].[IdPErsonaPromueve]),
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov],
+                [DetalleEstructuraMovilizacion].[IdPuestoDepende],
+                [DetalleEstructuraMovilizacion].[Descripcion],
+                [PadronGlobal].[CLAVEUNICA],
+                CASE
+                    WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
+                    THEN \'NO ASIGNADO\'
+                    ELSE ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
+                        +\' \'+[PadronGlobal].[NOMBRE])
+                END AS Responsable,
+                [PadronGlobal].[TELCASA],
+                [PadronGlobal].[TELMOVIL],
+                [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
+                    +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+            FROM
+                [DetallePromocion]
+            INNER JOIN
+                [DetalleEstructuraMovilizacion] ON
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [DetallePromocion].[IdPErsonaPromueve]
+            INNER JOIN
+                [PadronGlobal] ON
+                [PadronGlobal].[MUNICIPIO] = '.$idMuni.' AND
+                [PadronGlobal].[CLAVEUNICA] = [DetallePromocion].[IdPErsonaPromueve]
+            WHERE 1 = 1';
+
+        if ($idNodo != null) {
+            $sqlPromotores .= ' AND [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'';
+        }
+
+        $promotores = Yii::$app->db->createCommand($sqlPromotores)->queryAll();
+
+        if (count($promotores) == 0) {
+            return json_decode('[]');
+        } else {
+            $reporte = '[';
+
+            foreach ($promotores as $promotor) {
+                $reporte .= '{ "Nombre": "<b>'.str_replace('\\', 'Ñ', $promotor['Responsable']).'</b>",'
+                                .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
+                                .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
+                                .'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" },';
+
+                $sqlPromovidos = 'SELECT
+                        ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
+                            +\' \'+[PadronGlobal].[NOMBRE]) AS Persona,
+                        [PadronGlobal].[TELCASA],
+                        [PadronGlobal].[TELMOVIL],
+                        [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
+                            +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                    FROM
+                        [DetallePromocion]
+                    INNER JOIN
+                        [PadronGlobal] ON
+                        [PadronGlobal].[CLAVEUNICA] = [DetallePromocion].[IdPersonaPromovida] AND
+                        [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
+                    WHERE [DetallePromocion].[IdPErsonaPromueve] = \''.$promotor['IdPErsonaPromueve'].'\'';
 
                 $promovidos = Yii::$app->db->createCommand($sqlPromovidos)->queryAll();
 

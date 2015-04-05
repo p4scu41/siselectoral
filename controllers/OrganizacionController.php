@@ -3,9 +3,27 @@
 namespace app\controllers;
 
 use app\models\Organizaciones;
+use yii\filters\AccessControl;
 
 class OrganizacionController extends \yii\web\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['listintegrantesfromseccion'],
+                'rules' => [
+                    [
+                        'actions' => ['listintegrantesfromseccion'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     /**
      * Obtiene la lista de integrantes de una determinada seccion
      *
