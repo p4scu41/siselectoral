@@ -116,11 +116,14 @@ class Organizaciones extends \yii\db\ActiveRecord
                 [PadronGlobal].[TELMOVIL],
                 [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
                     +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                ,[CMunicipio].[DescMunicipio]
             FROM
                 [IntegrantesOrganizaciones]
             INNER JOIN
                 [PadronGlobal] ON
                     [PadronGlobal].[CLAVEUNICA] = [IntegrantesOrganizaciones].[IdPersonaIntegrante]
+            INNER JOIN [CMunicipio] ON
+                    [PadronGlobal].[MUNICIPIO] = [CMunicipio].[IdMunicipio]
             WHERE
                 [IdOrganizacion] = '.$idOrganizacion.'
             ORDER BY SECCION, NombreCompleto';
@@ -170,7 +173,7 @@ class Organizaciones extends \yii\db\ActiveRecord
      * @param Int $idOrganicacion
      * @return Int Cantidad de integrantes de la organización
      */
-    public static function getCountIntegrantes($idOrganicacion, $idMuni)
+    public static function getCountIntegrantes($idOrganicacion, $idMuni, $seccion = null)
     {
         $count = Yii::$app->db->createCommand('SELECT
                     COUNT([PadronGlobal].[CLAVEUNICA]) AS total
@@ -179,8 +182,9 @@ class Organizaciones extends \yii\db\ActiveRecord
                     INNER JOIN [PadronGlobal] ON
                         [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
                     WHERE
-                        [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
-                        [PadronGlobal].[MUNICIPIO] = '.$idMuni)->queryOne();
+                        [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND '.
+                        ($seccion!=null ? '[PadronGlobal].[SECCION] = '.$seccion.' AND ' : '')
+                        .'[PadronGlobal].[MUNICIPIO] = '.$idMuni)->queryOne();
 
         return $count['total'];
     }
@@ -191,7 +195,7 @@ class Organizaciones extends \yii\db\ActiveRecord
      * @param Int $idOrganicacion
      * @return Array Cantidad de integrantes por seccion
      */
-    public static function getCountIntegrantesBySeccion($idOrganicacion, $idMuni)
+    public static function getCountIntegrantesBySeccion($idOrganicacion, $idMuni, $idSeccion = null)
     {
         $count = Yii::$app->db->createCommand('SELECT
                     CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION]
@@ -206,8 +210,9 @@ class Organizaciones extends \yii\db\ActiveRecord
                     [CSeccion].[IdMunicipio] = [PadronGlobal].[MUNICIPIO]
                 WHERE
                     [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
-                    [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
-                GROUP BY
+                    [PadronGlobal].[MUNICIPIO] = '.$idMuni.
+                    ($idSeccion!=null ? ' AND  [PadronGlobal].[SECCION] = '.$idSeccion : '')
+                .'GROUP BY
                     [PadronGlobal].[SECCION], [CSeccion].[MetaAlcanzar]
                 ORDER BY
                     [SECCION]')->queryAll();
@@ -230,10 +235,13 @@ class Organizaciones extends \yii\db\ActiveRecord
                         +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NOMBRE
                     ,[PadronGlobal].[FECHANACIMIENTO]
                     ,[PadronGlobal].[COLONIA]
+                    ,[CMunicipio].[DescMunicipio]
                 FROM
                     [IntegrantesOrganizaciones]
                 INNER JOIN [PadronGlobal] ON
                     [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
+                INNER JOIN [CMunicipio] ON
+                    [PadronGlobal].[MUNICIPIO] = [CMunicipio].[IdMunicipio]
                 WHERE
                     [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
                     [PadronGlobal].[SECCION] = '.$idSeccion.'
@@ -302,5 +310,26 @@ class Organizaciones extends \yii\db\ActiveRecord
         Yii::$app->db->createCommand($sqlAsignaJS)->execute();
 
         return $integrante;
+    }
+
+    public static function getOrgsOnMuni($idMuni)
+    {
+        $sqlOrgs = 'SELECT
+                distinct [Organizaciones].[IdOrganizacion],
+                [Organizaciones].*
+            FROM
+                [IntegrantesOrganizaciones]
+            INNER JOIN
+                [PadronGlobal] ON
+                [PadronGlobal].[CLAVEUNICA] = [IntegrantesOrganizaciones].[IdPersonaIntegrante]
+            INNER JOIN
+                [Organizaciones] ON
+                [Organizaciones].[IdOrganizacion] = [IntegrantesOrganizaciones].[IdOrganizacion]
+            WHERE
+                [PadronGlobal].[MUNICIPIO] = '.$idMuni;
+
+        $orgs = Yii::$app->db->createCommand($sqlOrgs)->queryAll();
+
+        return $orgs;
     }
 }

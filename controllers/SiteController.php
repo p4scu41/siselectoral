@@ -296,15 +296,22 @@ class SiteController extends Controller
         return $meta;
     }
 
-    public function actionGetprogramas($idMuni)
+    public function actionGetprogramas($idMuni, $idNodo)
     {
-        $programas = Organizaciones::find()->where(['IdMunicipio'=>$idMuni, 'idTipoOrganizacion'=>22])->asArray()->all();
+        //$programas = Organizaciones::find()->where(['IdMunicipio'=>$idMuni, 'idTipoOrganizacion'=>22])->asArray()->all();
+        $programas = Organizaciones::getOrgsOnMuni($idMuni);
+        $nodo = DetalleEstructuraMovilizacion::find()->where('IdNodoEstructuraMov='.$idNodo)->one();
+        $seccion = null;
+        // Puesto = Jefe de Seccion
+        if ($nodo->puesto->Nivel == 5) {
+            $seccion = DetalleEstructuraMovilizacion::getSeccionNodo($idNodo);
+        }
 
         foreach ($programas as $key => $value) {
             $prog = Organizaciones::find()->where(['IdOrganizacion'=>$value['IdOrganizacion']])->one();
             $count = 0;
             if ($prog) {
-                $count = Organizaciones::getCountIntegrantes($value['IdOrganizacion'], $idMuni);
+                $count = Organizaciones::getCountIntegrantes($value['IdOrganizacion'], $idMuni, $seccion);
             }
 
             $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count]);
@@ -313,9 +320,17 @@ class SiteController extends Controller
         return json_encode($programas);
     }
 
-    public function actionGetintegrantesprogbyseccion($idOrg, $idMuni)
+    public function actionGetintegrantesprogbyseccion($idOrg, $idMuni, $idNodo)
     {
-        $integrantes = Organizaciones::getCountIntegrantesBySeccion($idOrg, $idMuni);
+        $nodo = DetalleEstructuraMovilizacion::find()->where('IdNodoEstructuraMov='.$idNodo)->one();
+        $seccion = null;
+        // Puesto = Jefe de Seccion
+        if ($nodo->puesto->Nivel == 5) {
+            $seccion = DetalleEstructuraMovilizacion::getSeccionNodo($idNodo);
+        }
+
+        $integrantes = Organizaciones::getCountIntegrantesBySeccion($idOrg, $idMuni, $seccion);
+
 
         return json_encode($integrantes);
     }

@@ -44,7 +44,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
                                 <input type="radio" name="tipo_promovido" value="1"> Promovidos Efectivos
                             </label>
                             <label class="radio-inline">
-                                <input type="radio" name="tipo_promovido" value="2"> Intento de Promoción
+                                <input type="radio" name="tipo_promovido" value="2"> Listado de Promoción
                             </label><br>
                         </div>
                         <p>

@@ -334,7 +334,7 @@ $(document).ready(function(){
         $.ajax({
             url: urlGetProgramas,
             dataType: "json",
-            data: '_csrf='+$('[name=_csrf]').val()+'&idMuni='+$('#municipio').val(),
+            data: '_csrf='+$('[name=_csrf]').val()+'&idMuni='+$('#municipio').val()+'&idNodo='+node.key,
             type: "GET",
         }).done(function(response){
             count = 0;
@@ -345,7 +345,7 @@ $(document).ready(function(){
 
                 for(fila in response) {
                     $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
-                            '<button class="btn btn-default" type="button" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'">'+
+                            '<button class="btn btn-default" type="button" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'">'+
                             '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></td></tr>';
                     count++;
                 }
@@ -368,10 +368,11 @@ $(document).ready(function(){
     function getIntegrantesBySeccion() {
         idorg = $(this).data('idorg');
         self = this;
+
         $.ajax({
             url: urlGetIntegrantes,
             dataType: "json",
-            data: {idOrg:idorg, idMuni:$('#municipio').val()},
+            data: {idOrg:idorg, idMuni:$('#municipio').val(), idNodo: $(self).data('idnodo')},
             type: "GET",
         }).done(function(response) {
             if ( response.length ) {

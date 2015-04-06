@@ -98,9 +98,9 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         }
 
         if ($alterna == false) {
-            $child = $this->find()->where($filtros)->andWhere('IdOrganizacion = -1')->all();
+            $child = $this->find()->where($filtros)->andWhere('(IdOrganizacion = -1 OR IdPuesto=5)')->all();
         } else {
-            $child = $this->find()->where($filtros)->andWhere('IdOrganizacion != -1')->all();
+            $child = $this->find()->where($filtros)->andWhere('(IdOrganizacion != -1 AND IdPuesto!=5)')->all();
         }
 
         foreach ($child as $row) {
@@ -109,9 +109,9 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $where = 'IdPuestoDepende = '.$row->IdNodoEstructuraMov;
 
             if ($alterna == false) {
-                $where .= ' AND IdOrganizacion = -1';
+                $where .= ' AND (IdOrganizacion = -1 OR IdPuesto=5)';
             } else {
-                $where .= ' AND IdOrganizacion != -1';
+                $where .= ' AND (IdOrganizacion != -1 AND IdPuesto!=5)';
             }
 
             $count = $this->find()->where($where)->count();
@@ -146,7 +146,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $where = 'IdPuestoDepende = '.$idNodo;
 
         if ($alterna == false) {
-            $where .= ' AND IdOrganizacion = -1';
+            $where .= ' AND (IdOrganizacion = -1 OR IdPuesto=5)';
         }
 
         $count = $this->find()->where($where)->count();
@@ -159,7 +159,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 $where = 'IdPuestoDepende = '.$row->IdNodoEstructuraMov;
 
                 if ($alterna == false) {
-                    $where .= ' AND IdOrganizacion = -1';
+                    $where .= ' AND (IdOrganizacion = -1 OR IdPuesto=5)';
                 }
 
                 $count = $this->find()->where($where)->count();
@@ -799,7 +799,21 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      */
     public function getEstrucAlterna($idMuni, $idNodo)
     {
-        $sql = 'SELECT * FROM DetalleEstructuraMovilizacion WHERE IdOrganizacion != -1 AND Municipio = '.$idMuni.
+
+        $sql = 'SELECT * FROM DetalleEstructuraMovilizacion WHERE (IdOrganizacion IN ('
+            . 'SELECT
+                    distinct [Organizaciones].[IdOrganizacion]
+                FROM
+                    [IntegrantesOrganizaciones]
+                INNER JOIN
+                    [PadronGlobal] ON
+                    [PadronGlobal].[CLAVEUNICA] = [IntegrantesOrganizaciones].[IdPersonaIntegrante]
+                INNER JOIN
+                    [Organizaciones] ON
+                    [Organizaciones].[IdOrganizacion] = [IntegrantesOrganizaciones].[IdOrganizacion]
+                WHERE
+                    [PadronGlobal].[MUNICIPIO] = '.$idMuni
+            . ')  AND IdPuesto!=5) AND Municipio = '.$idMuni.
                 ' AND Dependencias LIKE \'%|'.$idNodo.'|%\'';
 
         $alternas = Yii::$app->db->createCommand($sql)->queryAll();
@@ -823,5 +837,24 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $tree .= ']';
 
         return str_replace('},]', '}]', $tree);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPuesto()
+    {
+        return $this->hasOne(Puestos::className(), ['IdPuesto' => 'IdPuesto']);
+    }
+
+
+    public static function getSeccionNodo($idNodo)
+    {
+        $sqlSeccion = 'SELECT CSeccion.NumSector FROM DetalleEstructuraMovilizacion
+                        INNER JOIN CSeccion ON CSeccion.IdSector = DetalleEstructuraMovilizacion.IdSector
+                        WHERE IdNodoEstructuraMov = '.$idNodo;
+        $seccion = Yii::$app->db->createCommand($sqlSeccion)->queryOne();
+
+        return $seccion['NumSector'];
     }
 }

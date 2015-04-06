@@ -57,6 +57,7 @@ $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Sección</th>
                     <th class="text-center">Dirección</th>
+                    <th class="text-center">Municipio</th>
                     <th class="text-center">Eliminar</th>
                 </tr>
             </thead>
@@ -67,6 +68,7 @@ $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_
                         . '<td>' . $integrantes[$count]['NombreCompleto'] . '</td>'
                         . '<td class="seccion"> ' . (int)$integrantes[$count]['SECCION'] . ' </td>'
                         . '<td>' . $integrantes[$count]['Domicilio'] . '</td>'
+                        . '<td>' . $integrantes[$count]['DescMunicipio'] . '</td>'
                         . '<td class="text-center"><button class="btn btn-sm btn-danger btnDelIntegrante" '.
                             'data-id="'.$integrantes[$count]['CLAVEUNICA'].'" '.
                             '><i class="fa fa-user-times"></i></button></td>'
