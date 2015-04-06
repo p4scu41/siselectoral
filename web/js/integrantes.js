@@ -71,18 +71,89 @@ $(document).ready(function (){
     });
 
     $('#secciones').change(function () {
+        var filtro = $(this).select2('val');
         var contador = 0;
         var $seleccionados;
         
-        if ($(this).val() == 0) {
+        if (filtro.length == 0) {
             $('.seccion').parent().show();
             $('#noIntegrantesSeccion').html('');
         } else {
             $('.seccion').parent().hide();
-            $seleccionados = $('.seccion:contains(" '+$(this).val()+' ")');
-            $seleccionados.parent().show();
-            contador = $seleccionados.length;
+            var seccion = 0;
+
+            for(seccion in filtro) {
+                $seleccionados = $('.seccion:contains(" '+filtro[seccion]+' ")');
+                $seleccionados.parent().show();
+                contador += $seleccionados.length;
+            }
             $('#noIntegrantesSeccion').html(contador + ' Integrante(s)');
         }
     });
+
+    if ($('#tblIntegrantes tbody tr').length != 0) {
+        $('.opcionesExportar').show();
+    }
+
+    var $form = $('<form action="" method="post" target="_blank">'+
+            '<input type="text" name="title" id="title">'+
+            '<textarea name="content" id="content"></textarea>'+
+            '<input type="hidden" name="_csrf" value="'+yii.getCsrfToken()+'"></form>');
+
+    $('.btnExportPdf, .btnExportExcel').click(function(event){
+        var thead = $('#tblIntegrantes thead').clone();
+        thead.find('tr > th:last').remove();
+
+        var tbody = $('#tblIntegrantes tbody tr:visible').clone();
+        tbody.find('button').parent().remove();
+
+        var content = '<table class="table table-condensed table-striped table-bordered table-hover">'+
+            '<thead>'+thead.html()+'</thead>'+
+            '<tbody>'+$.map( tbody, function (element) { return '<tr>'+$(element).html()+'</tr>' }).join(' ')+'</tbody>'+
+            '</table>';
+
+        if ($(this).hasClass('btnExportExcel')) {
+            //http://jsfiddle.net/terryyounghk/KPEGU/
+            var $rows = $(content).find('tr:has(th), tr:has(td)'),
+
+            // Temporary delimiter characters unlikely to be typed by keyboard
+            // This is to avoid accidentally splitting the actual contents
+            tmpColDelim = String.fromCharCode(11), // vertical tab character
+            tmpRowDelim = String.fromCharCode(0), // null character
+
+            // actual delimiter characters for CSV format
+            colDelim = '","',
+            rowDelim = '"\r\n"',
+
+            // Grab text from table into CSV formatted string
+            content = '"' + $rows.map(function (i, row) {
+                var $row = $(row),
+                    $cols = $row.find('th, td');
+
+                return $cols.map(function (j, col) {
+                    var $col = $(col),
+                        text = $col.text();
+
+                    return text.replace('"', '""'); // escape double quotes
+
+                }).get().join(tmpColDelim);
+
+            }).get().join(tmpRowDelim)
+                .split(tmpRowDelim).join(rowDelim)
+                .split(tmpColDelim).join(colDelim) + '"';
+        }
+
+        $form.find('#content').text( content );
+        $form.find('#title').val( $('#titulo').html() );
+        $form.attr('action', $(this).data('url'));
+        $('#formExport').html($form);
+        $form.submit();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+    });
+    
+
+    //$("#color_1").select2("val");
 });

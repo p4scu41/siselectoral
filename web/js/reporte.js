@@ -65,7 +65,7 @@ $(document).ready(function(){
     $('.btnExportPdf, .btnExportExcel').click(function(event){
         content = $('#reporteContainer').html();
 
-        if ($(this).attr('id') == 'btnExportExcel') {
+        if ($(this).hasClass('btnExportExcel')) {
             content = $('#reporteContainer table').table2CSV({delivery: 'value'});
         }
 
