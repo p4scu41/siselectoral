@@ -64,7 +64,7 @@ $(document).ready(function(){
     $('.btnExportPdf, .btnExportExcel').click(function(event){
         content = $('#reporteContainer').html();
 
-        if ($(this).attr('id') == 'btnExportExcel') {
+        if ($(this).hasClass('btnExportExcel')) {
             content = $('#reporteContainer table').table2CSV({delivery: 'value'});
         }
 
@@ -112,6 +112,13 @@ $(document).ready(function(){
             $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
                 '<span aria-hidden="true">&times;</span></button>Debe seleccionar un municipio</div>');
+            return false;
+        }
+
+        if ($('#tipo_promovido').val() == '') {
+            $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                '<span aria-hidden="true">&times;</span></button>Debe seleccionar el tipo de reporte</div>');
             return false;
         }
 

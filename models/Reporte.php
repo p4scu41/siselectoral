@@ -437,6 +437,12 @@ class Reporte extends \yii\db\ActiveRecord
                         $countPromovidos++;
                     }
                 }
+
+                $reporte .= '{ "Nombre": " &nbsp; ",'
+                            .'"Tel. Celular": " &nbsp; ", '
+                            .'"Tel. Casa": " &nbsp; ", '
+                            .'"Domicilio": " &nbsp; ", '
+                            .'"Promovido Por": " &nbsp; " },';
             }
 
             $reporte .= ']';
@@ -526,6 +532,12 @@ class Reporte extends \yii\db\ActiveRecord
                                 .'"Tel. Casa": "", '
                                 .'"Domicilio": "" },';
                 }
+                
+                $reporte .= '{ "Nombre": " &nbsp; ",'
+                            .'"Tel. Celular": " &nbsp; ", '
+                            .'"Tel. Casa": " &nbsp; ", '
+                            .'"Domicilio": " &nbsp; ", '
+                            .'"Promovido Por": " &nbsp; " },';
             }
 
             $reporte .= ']';
