@@ -19,7 +19,11 @@ function (element, callback) {
     var id = \$(element).val();
 
     if (id == undefined) {
-        id = null;
+        if (\$("#promocionsearch-idpersonapromueve").val() != "") {
+            id = \$("#promocionsearch-idpersonapromueve").val();
+        } else {
+            id = null;
+        }
     }
 
     \$.ajax("{$url}", {

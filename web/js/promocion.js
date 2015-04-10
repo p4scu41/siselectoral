@@ -31,6 +31,4 @@ $(document).ready(function () {
         $('#modalBuscarPersona').modal('hide');
     });
 
-    //promocion-idpersonapuesto
-
 });

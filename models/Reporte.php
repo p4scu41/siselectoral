@@ -321,32 +321,30 @@ class Reporte extends \yii\db\ActiveRecord
     public static function promovidosEfectivos($idMuni, $idNodo = null)
     {
         $sqlPromotores = 'SELECT
-                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov],
-                [PadronGlobal].[CLAVEUNICA],
-                CASE
-                    WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
-                    THEN \'NO ASIGNADO\'
-                    ELSE ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
-                        +\' \'+[PadronGlobal].[NOMBRE])
-                END AS Responsable,
-                [PadronGlobal].[TELCASA],
-                [PadronGlobal].[TELMOVIL],
-                [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
+                DISTINCT([Promocion].[IdPersonaPromueve])
+                ,[DetalleEstructuraMovilizacion].[Descripcion] AS descripcionPuesto
+                ,([PadronGlobal].[NOMBRE] + \' \' +
+                    [PadronGlobal].[APELLIDO_PATERNO] + \' \' +
+                    [PadronGlobal].[APELLIDO_MATERNO]
+                ) AS nombrePersonaPromueve
+                ,[PadronGlobal].[TELCASA]
+                ,[PadronGlobal].[TELMOVIL]
+                ,[PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
                     +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
-            FROM 
-                [DetalleEstructuraMovilizacion]
-            LEFT JOIN
-                [PadronGlobal] ON 
-                    [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto] AND
-                    [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
-            WHERE 
-                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND
-                [DetalleEstructuraMovilizacion].[IdPuesto] = 7 AND
-                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] != \'00000000-0000-0000-0000-000000000000\' ';
+            FROM
+                [Promocion]
+            INNER JOIN [PadronGlobal] ON
+                [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdPersonaPromueve] AND
+                [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
+            INNER JOIN [DetalleEstructuraMovilizacion] ON
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA] AND
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' ';
 
         if ($idNodo != null) {
             $sqlPromotores .= ' AND [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'';
         }
+
+        //$sqlPromotores .= ' ORDER BY nombrePersonaPromueve';
         
         $promotores = Yii::$app->db->createCommand($sqlPromotores)->queryAll();
 
@@ -356,18 +354,15 @@ class Reporte extends \yii\db\ActiveRecord
             $reporte = '[';
 
             foreach ($promotores as $promotor) {
-                $reporte .= '{ "Nombre": "<b>'.str_replace('\\', 'Ñ', $promotor['Responsable']).'</b>",'
+                $reporte .= '{ "Nombre": "<b>'.$promotor['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promotor['nombrePersonaPromueve']).'</b>",'
                                 .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
                                 .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
-                                .'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" },';
+                                .'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" ,'
+                                .'"Promovido Por": "" },';
 
                 $sqlPromovidos = 'SELECT
-                        [Promocion].[IdpersonaPromovida]
-                        ,[Promocion].[IdPuesto]
-                        ,[Promocion].[IdPersonaPromueve]
-                        ,[Promocion].[IdPersonaPuesto]
-                        ,([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
-                            +\' \'+[PadronGlobal].[NOMBRE]) AS Persona,
+                        ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                            +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS Persona,
                         [PadronGlobal].[TELCASA],
                         [PadronGlobal].[TELMOVIL],
                         [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
@@ -376,24 +371,71 @@ class Reporte extends \yii\db\ActiveRecord
                         [Promocion]
                     INNER JOIN
                         [PadronGlobal] ON
-                        [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdpersonaPromovida] AND
+                        [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdPersonaPromovida] AND
                         [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
-                    WHERE [Promocion].[IdPuesto] = '.$promotor['IdNodoEstructuraMov'];
+                    WHERE [Promocion].[IdPErsonaPromueve] = \''.$promotor['IdPersonaPromueve'].'\'
+                        ORDER BY Persona';
 
                 $promovidos = Yii::$app->db->createCommand($sqlPromovidos)->queryAll();
 
                 if (count($promovidos)) {
+                    $countPromovidos = 1;
                     foreach ($promovidos as $promovido) {
-                        $reporte .= '{ "Nombre": "'.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
+                        $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
                                 .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
                                 .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
-                                .'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'" },';
+                                .'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",'
+                                .'"Promovido Por": " --- " },';
+                        $countPromovidos++;
                     }
                 } else {
                     $reporte .= '{ "Nombre": "Sin Promovidos",'
                                 .'"Tel. Celular": "", '
                                 .'"Tel. Casa": "", '
-                                .'"Domicilio": "" },';
+                                .'"Domicilio": "", '
+                                .'"Promovido Por": "" },';
+                }
+
+                $sqlPromovidosOtros = 'SELECT
+                        ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                            +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS Persona,
+                        [PadronGlobal].[TELCASA],
+                        [PadronGlobal].[TELMOVIL],
+                        [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
+                            +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio,
+                        ([padronPromueve].[NOMBRE] + \' \' +
+                            [padronPromueve].[APELLIDO_PATERNO] + \' \' +
+                            [padronPromueve].[APELLIDO_MATERNO]
+                        ) AS nombrePersonaPromueve,
+                        [DetalleEstructuraMovilizacion].[Descripcion] AS descripcionPuesto
+                    FROM
+                        [Promocion]
+                    INNER JOIN
+                        [PadronGlobal] AS [padronPromueve] ON
+                        [padronPromueve].[CLAVEUNICA] = [Promocion].[IdPErsonaPromueve] AND
+                        [padronPromueve].[MUNICIPIO] = '.$idMuni.'
+                    INNER JOIN
+                        [PadronGlobal] ON
+                        [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdPersonaPromovida]
+                    INNER JOIN
+                        [DetalleEstructuraMovilizacion] ON
+                        [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [Promocion].[IdPErsonaPromueve]
+                    WHERE
+                        [Promocion].[IdPersonaPuesto] = \''.$promotor['IdPersonaPromueve'].'\' AND
+                        [Promocion].[IdPErsonaPromueve] != \''.$promotor['IdPersonaPromueve'].'\'
+                        ORDER BY Persona';
+
+                $promovidosOtros = Yii::$app->db->createCommand($sqlPromovidosOtros)->queryAll();
+
+                if (count($promovidosOtros)) {
+                    foreach ($promovidosOtros as $promovido) {
+                        $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
+                                .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
+                                .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
+                                .'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",'
+                                .'"Promovido Por": "'.$promovido['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promovido['nombrePersonaPromueve']).'" },';
+                        $countPromovidos++;
+                    }
                 }
             }
 
@@ -413,36 +455,30 @@ class Reporte extends \yii\db\ActiveRecord
     public static function promovidosIntentos($idMuni, $idNodo = null)
     {
         $sqlPromotores = 'SELECT
-                DISTINCT([DetallePromocion].[IdPErsonaPromueve]),
-                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov],
-                [DetalleEstructuraMovilizacion].[IdPuestoDepende],
-                [DetalleEstructuraMovilizacion].[Descripcion],
-                [PadronGlobal].[CLAVEUNICA],
-                CASE
-                    WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
-                    THEN \'NO ASIGNADO\'
-                    ELSE ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
-                        +\' \'+[PadronGlobal].[NOMBRE])
-                END AS Responsable,
-                [PadronGlobal].[TELCASA],
-                [PadronGlobal].[TELMOVIL],
-                [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
+                [DetalleEstructuraMovilizacion].[Descripcion] AS descripcionPuesto
+                ,([PadronGlobal].[NOMBRE] + \' \' +
+                    [PadronGlobal].[APELLIDO_PATERNO] + \' \' +
+                    [PadronGlobal].[APELLIDO_MATERNO]
+                ) AS Responsable
+                ,[DetallePromocion].[IdPErsonaPromueve]
+                ,[PadronGlobal].[TELCASA]
+                ,[PadronGlobal].[TELMOVIL]
+                ,[PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
                     +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
             FROM
                 [DetallePromocion]
-            INNER JOIN
-                [DetalleEstructuraMovilizacion] ON
-                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND
-                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [DetallePromocion].[IdPErsonaPromueve]
-            INNER JOIN
-                [PadronGlobal] ON
-                [PadronGlobal].[MUNICIPIO] = '.$idMuni.' AND
-                [PadronGlobal].[CLAVEUNICA] = [DetallePromocion].[IdPErsonaPromueve]
-            WHERE 1 = 1';
+            INNER JOIN [PadronGlobal] ON
+                [PadronGlobal].[CLAVEUNICA] = [DetallePromocion].[IdPErsonaPromueve] AND
+                [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
+            INNER JOIN [DetalleEstructuraMovilizacion] ON
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA] AND
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' ';
 
         if ($idNodo != null) {
-            $sqlPromotores .= ' AND [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'';
+            $sqlPromotores .= ' AND [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\' ';
         }
+
+        $sqlPromotores .= ' ORDER BY Responsable ';
 
         $promotores = Yii::$app->db->createCommand($sqlPromotores)->queryAll();
 
@@ -452,14 +488,14 @@ class Reporte extends \yii\db\ActiveRecord
             $reporte = '[';
 
             foreach ($promotores as $promotor) {
-                $reporte .= '{ "Nombre": "<b>'.str_replace('\\', 'Ñ', $promotor['Responsable']).'</b>",'
+                $reporte .= '{ "Nombre": "<b>'.$promotor['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promotor['Responsable']).'</b>",'
                                 .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
                                 .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
                                 .'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" },';
 
                 $sqlPromovidos = 'SELECT
-                        ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
-                            +\' \'+[PadronGlobal].[NOMBRE]) AS Persona,
+                        ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                            +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS Persona,
                         [PadronGlobal].[TELCASA],
                         [PadronGlobal].[TELMOVIL],
                         [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
@@ -470,16 +506,19 @@ class Reporte extends \yii\db\ActiveRecord
                         [PadronGlobal] ON
                         [PadronGlobal].[CLAVEUNICA] = [DetallePromocion].[IdPersonaPromovida] AND
                         [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
-                    WHERE [DetallePromocion].[IdPErsonaPromueve] = \''.$promotor['IdPErsonaPromueve'].'\'';
+                    WHERE [DetallePromocion].[IdPErsonaPromueve] = \''.$promotor['IdPErsonaPromueve'].'\'
+                    ORDER BY Persona';
 
                 $promovidos = Yii::$app->db->createCommand($sqlPromovidos)->queryAll();
 
                 if (count($promovidos)) {
+                    $countPromovidos = 1;
                     foreach ($promovidos as $promovido) {
-                        $reporte .= '{ "Nombre": "'.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
+                        $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
                                 .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
                                 .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
                                 .'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'" },';
+                        $countPromovidos++;
                     }
                 } else {
                     $reporte .= '{ "Nombre": "Sin Promovidos",'

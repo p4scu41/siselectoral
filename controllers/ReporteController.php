@@ -86,7 +86,7 @@ class ReporteController extends \yii\web\Controller
                 $respuesta['titulo'] = 'Estructura Municipal de '.$municipio->DescMunicipio;
             } elseif (Yii::$app->request->post('tipoReporte') == 3) { // Promovidos
                 $omitirCentrado = array(1, 4);
-                $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
+                $nodos = Yii::$app->request->post('IdPuestoDepende') ? array_filter(Yii::$app->request->post('IdPuestoDepende')) : [];
                 $nodo = null;
                 if (count($nodos)) {
                     $nodo = array_pop($nodos);

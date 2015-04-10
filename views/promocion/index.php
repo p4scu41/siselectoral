@@ -14,8 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p><?= Html::a('Registrar', ['create'], ['class' => 'btn btn-success']) ?></p>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         //'filterModel' => $searchModel,
@@ -26,19 +24,13 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'IdPersonaPromueve',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->personaPromueve->nombreCompleto;
+                    return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto;
                 }
             ],
             [
                 'attribute' => 'IdPuesto',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->puesto->Descripcion;
-                }
-            ],
-            [
-                'attribute' => 'IdPersonaPuesto',
-                'value' => function ($model, $key, $index, $column) {
-                    return $model->personaPuesto->nombreCompleto;
+                    return $model->puesto->Descripcion.' '.$model->personaPuesto->nombreCompleto;;
                 }
             ],
             [

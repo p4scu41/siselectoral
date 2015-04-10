@@ -134,7 +134,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
 
     public function getNombreCompleto()
     {
-        return $this->APELLIDO_PATERNO.' '.$this->APELLIDO_MATERNO.' '.$this->NOMBRE;
+        return $this->NOMBRE.' '.$this->APELLIDO_PATERNO.' '.$this->APELLIDO_MATERNO;
     }
 
     /**
@@ -261,5 +261,14 @@ class PadronGlobal extends \yii\db\ActiveRecord
         $uid = Yii::$app->db->createCommand('SELECT NEWID() as newUID')->queryOne();
 
         return $uid['newUID'];
+    }
+
+    /**
+    * @return \yii\db\ActiveQuery
+    */
+    public function getPuesto()
+    {
+        return $this->hasOne(Puestos::className(), ['IdPuesto' => 'IdPuesto'])
+            ->viaTable('DetalleEstructuraMovilizacion', ['IdPersonaPuesto' => 'CLAVEUNICA']);
     }
 }

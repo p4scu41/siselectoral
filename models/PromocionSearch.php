@@ -58,8 +58,9 @@ class PromocionSearch extends Promocion
         $query->andFilterWhere([
             'IdEstructuraMov' => $this->IdEstructuraMov,
             'IdPuesto' => $this->IdPuesto,
-            'FechaPromocion' => $this->FechaPromocion,
         ]);
+
+        $query->andFilterWhere(['>=', 'FechaPromocion', $this->FechaPromocion]);
 
         $query->andFilterWhere(['like', 'IdpersonaPromovida', $this->IdpersonaPromovida])
             ->andFilterWhere(['like', 'IdPersonaPromueve', $this->IdPersonaPromueve])
