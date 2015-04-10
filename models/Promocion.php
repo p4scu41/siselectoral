@@ -30,11 +30,43 @@ class Promocion extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['IdEstructuraMov', 'IdpersonaPromovida'], 'required'],
+            [['IdPuesto', 'IdPersonaPromueve', 'IdpersonaPromovida'], 'required'],
             [['IdEstructuraMov', 'IdPuesto'], 'integer'],
             [['IdpersonaPromovida', 'IdPersonaPromueve', 'IdPersonaPuesto'], 'string'],
             [['FechaPromocion'], 'safe']
         ];
+    }
+
+    /**
+     * return \yii\db\ActiveQuery
+     */
+    public function getPersonaPromueve()
+    {
+        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaPromueve']);
+    }
+
+    /**
+     * return \yii\db\ActiveQuery
+     */
+    public function getPuesto()
+    {
+        return $this->hasOne(DetalleEstructuraMovilizacion::className(), ['IdNodoEstructuraMov' => 'IdPuesto']);
+    }
+
+    /**
+     * return \yii\db\ActiveQuery
+     */
+    public function getPersonaPuesto()
+    {
+        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaPuesto']);
+    }
+
+    /**
+     * return \yii\db\ActiveQuery
+     */
+    public function getPersonaPromovida()
+    {
+        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdpersonaPromovida']);
     }
 
     /**
@@ -44,11 +76,78 @@ class Promocion extends \yii\db\ActiveRecord
     {
         return [
             'IdEstructuraMov' => 'Id Estructura Mov',
-            'IdpersonaPromovida' => 'Idpersona Promovida',
-            'IdPuesto' => 'Id Puesto',
-            'IdPersonaPromueve' => 'Id Persona Promueve',
-            'IdPersonaPuesto' => 'Id Persona Puesto',
-            'FechaPromocion' => 'Fecha Promocion',
+            'IdpersonaPromovida' => 'Persona Promovida',
+            'IdPuesto' => 'Puesto en donde promueve',
+            'IdPersonaPromueve' => 'Persona que promueve',
+            'IdPersonaPuesto' => 'Persona asignada al Puesto',
+            'FechaPromocion' => 'Fecha de Promoción',
         ];
     }
+
+    public static function getListNodos($filtros)
+    {
+        $municipio = $filtros['municipio'];
+        $seccion = $filtros['seccion'];
+        $nombre = $filtros['nombre'];
+        $puesto = $filtros['puesto'];
+        $id = $filtros['id'];
+
+        $sql = 'SELECT
+            [PadronGlobal].[CLAVEUNICA]
+            ,[PadronGlobal].[CLAVEUNICA] AS id
+            ,([PadronGlobal].[NOMBRE] + \' \' + [PadronGlobal].[APELLIDO_PATERNO]+ \' \' +[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto
+            ,([PadronGlobal].[NOMBRE] + \' \' + [PadronGlobal].[APELLIDO_PATERNO]+ \' \' +[PadronGlobal].[APELLIDO_MATERNO]) AS text
+            ,[DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+            ,[DetalleEstructuraMovilizacion].[Descripcion]
+        FROM
+            [DetalleEstructuraMovilizacion]
+        INNER JOIN [PadronGlobal] ON '
+            .($municipio != 0 ? '[PadronGlobal].[MUNICIPIO] = '.$municipio.' AND ' : '').
+            '[PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+        LEFT JOIN [CSeccion] ON
+            [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector] '
+            .($municipio != 0 ? ' AND [CSeccion].[IdMunicipio] = '.$municipio.' ' : '').
+        'WHERE 1 = 1 '
+            .($municipio != 0 ? ' AND [DetalleEstructuraMovilizacion].[Municipio] = '.$municipio.' ' : '');
+
+        if ($seccion) {
+            $sql .= ' AND [CSeccion].[NumSector] = '.$seccion;
+        }
+
+        if ($nombre) {
+            $sql .= ' AND ([PadronGlobal].[NOMBRE] + \' \' + [PadronGlobal].[APELLIDO_PATERNO]+ \' \' +[PadronGlobal].[APELLIDO_MATERNO]) LIKE \'%'.$nombre.'%\'';
+        }
+
+        if ($puesto) {
+            $sql .= ' AND [DetalleEstructuraMovilizacion].[Descripcion] LIKE \'%'.$puesto.'%\'';
+        }
+
+        if ($id) {
+            $sql .= ' AND [PadronGlobal].[CLAVEUNICA] = \''.$id.'\'';
+        }
+
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+
+        return $result;
+    }
+
+    public static function existsPromocion($promovido)
+    {
+        //$puestoPromueve, $personaPuestoPromueve, $promueve
+        /*$sql = 'SELECT COUNT(*) AS TOTAL
+            FROM [Promocion]
+            WHERE
+                [IdpersonaPromovida] = "'.$promovido.'" AND
+                [IdPuesto] = '.$puestoPromueve.' AND
+                [IdPersonaPromueve] = "'.$promueve.'" AND
+                [IdPersonaPuesto] = "'.$personaPuestoPromueve.'"';*/
+        $sql = 'SELECT COUNT(*) AS TOTAL
+                FROM [Promocion]
+                WHERE [IdpersonaPromovida] = \''.$promovido.'\'';
+
+        $result = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return $result['TOTAL'];
+    }
+    
 }

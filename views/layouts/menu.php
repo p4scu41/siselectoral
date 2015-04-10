@@ -37,6 +37,11 @@ use yii\helpers\Url;
             <?php } ?>
         </ul>
     </li>
+    <li class="<?= Yii::$app->request->getPathInfo() == 'promocion/' ? 'active' : '' ?>">
+        <a href="<?= Url::to(['promocion/index']) ?>">
+            <i class="fa fa-child"></i> <span>Promoción</span>
+        </a>
+    </li>
     <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'reporte') !== false ? 'active' : '' ?>">
         <a href="#">
             <i class="fa fa-bar-chart"></i> <span>Reportes</span>

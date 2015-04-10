@@ -132,6 +132,11 @@ class PadronGlobal extends \yii\db\ActiveRecord
         return $this->hasOne(CMunicipio::className(), ['IdMunicipio' => 'MUNICIPIO']);
     }
 
+    public function getNombreCompleto()
+    {
+        return $this->APELLIDO_PATERNO.' '.$this->APELLIDO_MATERNO.' '.$this->NOMBRE;
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

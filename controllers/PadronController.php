@@ -189,7 +189,6 @@ class PadronController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'municipios' => $municipios,
-
         ]);
     }
 

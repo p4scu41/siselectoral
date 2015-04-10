@@ -32,13 +32,21 @@ $(document).ready(function () {
                             'data-nombre="' + response[persona].APELLIDO_PATERNO + ' ' + response[persona].APELLIDO_MATERNO + ' ' + response[persona].NOMBRE + '"' +
                         '></td>' +
                         '<td>' + response[persona].APELLIDO_PATERNO + ' ' + response[persona].APELLIDO_MATERNO + ' ' + response[persona].NOMBRE+ '</td>' +
-                        '<td>' + parseInt(response[persona].SECCION) + '</td>' +
+                        '<td class="seccion_persona">' + parseInt(response[persona].SECCION) + '</td>' +
                         '<td>' + response[persona].CASILLA + '</td>' +
                         '<td>' + response[persona].DOMICILIO + ',' + response[persona].NOM_LOC + '</td>' +
                     '</tr>';
             }
 
             $('#tblResultBuscarPersona tbody').html(trsPersona);
+
+            $('#tblResultBuscarPersona tbody').delegate('input[type="radio"]', 'click', function (event) {
+                if ($(this).prop('cheched') == true) {
+                    var seccion = $(this).parent().parent().find('seccion_persona').text();
+
+                    $('#frmBuscarPersona #seccion option[value='+seccion+']').attr('selected', true);
+                }
+            });
         });
     });
 
