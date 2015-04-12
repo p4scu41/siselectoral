@@ -55,6 +55,11 @@ class OrganizacionesSearch extends Organizaciones
             return $dataProvider;
         }
 
+        // Si no es administrador, solo mostrar lo correspondiente a su municipio
+        if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) != strtolower(Yii::$app->params['idAdmin'])) {
+            $this->IdMunicipio = Yii::$app->user->identity->persona->MUNICIPIO;
+        }
+
         $query->andFilterWhere([
             'IdOrganizacion' => $this->IdOrganizacion,
             'IdMunicipio' => $this->IdMunicipio,

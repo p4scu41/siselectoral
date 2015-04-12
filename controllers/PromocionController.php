@@ -12,6 +12,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
+use app\helpers\MunicipiosUsuario;
 
 /**
  * PromocionController implements the CRUD actions for Promocion model.
@@ -49,11 +50,7 @@ class PromocionController extends Controller
     {
         $searchModel = new PromocionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all();
-        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+        $municipios = MunicipiosUsuario::getMunicipios();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -83,11 +80,7 @@ class PromocionController extends Controller
     public function actionCreate()
     {
         $model = new Promocion();
-        $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all();
-        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+        $municipios = MunicipiosUsuario::getMunicipios();
         $request = Yii::$app->getRequest()->post('Promocion');
 
         if ($request) {
@@ -124,11 +117,7 @@ class PromocionController extends Controller
     public function actionUpdate($IdEstructuraMov, $IdpersonaPromovida)
     {
         $model = $this->findModel($IdEstructuraMov, $IdpersonaPromovida);
-        $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all();
-        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+        $municipios = MunicipiosUsuario::getMunicipios();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'IdEstructuraMov' => $model->IdEstructuraMov, 'IdpersonaPromovida' => $model->IdpersonaPromovida]);

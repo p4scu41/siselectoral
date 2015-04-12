@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use app\helpers\MunicipiosUsuario;
 
 /**
  * This is the model class for table "Organizaciones".
@@ -121,8 +122,14 @@ class Organizaciones extends \yii\db\ActiveRecord
                 [IntegrantesOrganizaciones]
             INNER JOIN
                 [PadronGlobal] ON
-                    [PadronGlobal].[CLAVEUNICA] = [IntegrantesOrganizaciones].[IdPersonaIntegrante]
-            INNER JOIN [CMunicipio] ON
+                    [PadronGlobal].[CLAVEUNICA] = [IntegrantesOrganizaciones].[IdPersonaIntegrante] ';
+
+        // Si no es administrador, solo mostrar lo correspondiente a su municipio
+        if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) != strtolower(Yii::$app->params['idAdmin'])) {
+            $sqlIntegrantes .= ' AND [PadronGlobal].[MUNICIPIO] = '.Yii::$app->user->identity->persona->MUNICIPIO.' ';
+        }
+
+        $sqlIntegrantes .= ' INNER JOIN [CMunicipio] ON
                     [PadronGlobal].[MUNICIPIO] = [CMunicipio].[IdMunicipio]
             WHERE
                 [IdOrganizacion] = '.$idOrganizacion.'
@@ -146,14 +153,7 @@ class Organizaciones extends \yii\db\ActiveRecord
             'tipos' => null
         ];
 
-        $dependencias['municipios'] = ArrayHelper::map(
-            CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all(),
-            'IdMunicipio',
-            'DescMunicipio'
-        );
+        $dependencias['municipios'] = MunicipiosUsuario::getMunicipios();
 
         $dependencias['tipos'] = ArrayHelper::map(
                 ElementoCatalogo::find()->where(['IdTipoCatalogo'=>4])

@@ -1,7 +1,6 @@
 <?php
 namespace app\helpers;
 
-
 class ResizeImage {
 /**
  * easy image resize function

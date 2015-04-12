@@ -15,6 +15,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use app\helpers\ResizeImage;
+use app\helpers\MunicipiosUsuario;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
 
@@ -170,20 +171,7 @@ class PadronController extends Controller
         $searchModel = new PadronGlobalSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all();
-        } else {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->where(['IdMunicipio'=>Yii::$app->user->identity->persona->MUNICIPIO])
-                ->orderBy('DescMunicipio')
-                ->all();
-        }
-
-        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+        $municipios = MunicipiosUsuario::getMunicipios();
 
         return $this->render('buscar', [
             'searchModel' => $searchModel,
@@ -276,14 +264,8 @@ class PadronController extends Controller
     public function actionCreate()
     {
         $model = new PadronGlobal();
-        $municipios = ArrayHelper::map(
-            CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all(),
-            'IdMunicipio',
-            'DescMunicipio'
-        );
+        $municipios = MunicipiosUsuario::getMunicipios();
+        
         $escolaridad = ArrayHelper::map(
                 ElementoCatalogo::find()->where(['IdTipoCatalogo'=>1])
                 ->select(['IdElementoCatalogo', 'Descripcion'])
@@ -346,12 +328,8 @@ class PadronController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $municipios = ArrayHelper::map(
-            CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all(), 'IdMunicipio', 'DescMunicipio'
-        );
+        $municipios = MunicipiosUsuario::getMunicipios();
+        
         $escolaridad = ArrayHelper::map(
                 ElementoCatalogo::find()->where(['IdTipoCatalogo'=>1])
                 ->select(['IdElementoCatalogo', 'Descripcion'])

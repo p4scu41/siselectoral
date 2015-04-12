@@ -23,7 +23,7 @@ $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_
         <?php $numIntegrantes = count($integrantes); ?>
         Total de integrantes: <strong><?= $numIntegrantes ?></strong> &nbsp;
         <a href="#" class="btn btn-success" id="btnAddIntegrante">Agregar nuevo integrante</a> &nbsp; 
-        <a href="<?= Url::toRoute('organizaciones/index', true) ?>" class="btn btn-default">Regrear al listado de organizaciones</a>
+        <a href="<?= Url::toRoute('organizaciones/index', true) ?>" class="btn btn-default">Regresar al listado de organizaciones</a>
         <br><br>
         <div class="row">
             <div class="col-md-1">

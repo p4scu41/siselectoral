@@ -56,4 +56,12 @@ class CMunicipio extends \yii\db\ActiveRecord
             'DistritoLocal' => 'Distrito Local',
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function primaryKey()
+    {
+        return ['IdMunicipio'];
+    }
 }

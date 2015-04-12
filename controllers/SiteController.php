@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
+use app\helpers\MunicipiosUsuario;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\CMunicipio;
@@ -16,7 +17,7 @@ use app\models\DetalleEstructuraMovilizacion;
 use app\models\Organizaciones;
 
 class SiteController extends Controller
- {
+{
     public $defaultAction = 'positiontree';
 
     public function behaviors()
@@ -69,26 +70,7 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all();
-        } elseif (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idDistrito'])) {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->where(['DistritoLocal'=>Yii::$app->user->identity->persona->DISTRITOLOCAL])
-                ->orderBy('DescMunicipio')
-                ->all();
-        } else {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->where(['IdMunicipio'=>Yii::$app->user->identity->persona->MUNICIPIO])
-                ->orderBy('DescMunicipio')
-                ->all();
-        }
-
-        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+        $municipios = MunicipiosUsuario::getMunicipios();
 
         return $this->render('index', [
             'municipios' => $municipios
@@ -136,26 +118,7 @@ class SiteController extends Controller
 
     public function actionPositiontree()
     {
-        if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->orderBy('DescMunicipio')
-                ->all();
-        } elseif (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idDistrito'])) {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->where(['DistritoLocal'=>Yii::$app->user->identity->persona->DISTRITOLOCAL])
-                ->orderBy('DescMunicipio')
-                ->all();
-        } else {
-            $listMunicipios = CMunicipio::find()
-                ->select(['IdMunicipio', 'DescMunicipio'])
-                ->where(['IdMunicipio'=>Yii::$app->user->identity->persona->MUNICIPIO])
-                ->orderBy('DescMunicipio')
-                ->all();
-        }
-
-        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+        $municipios = MunicipiosUsuario::getMunicipios();
         $puestos = ArrayHelper::map(
             Puestos::find()
                 ->select(['IdPuesto', 'Descripcion'])
