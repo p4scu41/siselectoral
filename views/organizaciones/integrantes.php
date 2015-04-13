@@ -16,6 +16,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
 $this->registerJs('var delIntegrante = "'.Url::toRoute('organizaciones/delintegrante', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('var addIntegrante = "'.Url::toRoute('organizaciones/addintegrante', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_HEAD);
+$this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromotorintegrante', true).'";', \yii\web\View::POS_HEAD);
 ?>
 <div class="organizaciones-view">
 
@@ -58,6 +59,7 @@ $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_
                     <th class="text-center">Sección</th>
                     <th class="text-center">Dirección</th>
                     <th class="text-center">Municipio</th>
+                    <th class="text-center">Promovido</th>
                     <th class="text-center">Eliminar</th>
                 </tr>
             </thead>
@@ -69,6 +71,7 @@ $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_
                         . '<td class="seccion"> ' . (int)$integrantes[$count]['SECCION'] . ' </td>'
                         . '<td>' . $integrantes[$count]['Domicilio'] . '</td>'
                         . '<td>' . $integrantes[$count]['DescMunicipio'] . '</td>'
+                        . '<td class="text-center"><a href="#" class="promovidoIntegrante" data-id="'.$integrantes[$count]['CLAVEUNICA'].'" data-promotor="'.$integrantes[$count]['IdPErsonaPromueve'].'"><i class="fa fa-' . ($integrantes[$count]['IdPErsonaPromueve']==null ? '' : 'check-') . 'square-o fa-lg"></i></a></td>'
                         . '<td class="text-center"><button class="btn btn-sm btn-danger btnDelIntegrante" '.
                             'data-id="'.$integrantes[$count]['CLAVEUNICA'].'" '.
                             '><i class="fa fa-user-times"></i></button></td>'
@@ -90,5 +93,7 @@ $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_
     <?php echo $this->render('_frmBuscarPersona', ['municipios'=>$municipios]) ?>
 
     <div id="formExport" style="display: none;"></div>
+
+    <div id="dialog" title="Promoción del integrante seleccionado"></div>
 
 </div>

@@ -326,16 +326,16 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                         <?= Html::dropDownList('MUNICIPIO', $selectMunicipio, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'MUNICIPIO_persona']); ?>
                     </div>
                     <div class="form-group">
+                        <label for="NOMBRE">Nombre(s)</label>
+                        <?= Html::textInput('NOMBRE', NULL, ['class' => 'form-control', 'id' => 'NOMBRE']); ?>
+                    </div>
+                    <div class="form-group">
                         <label for="APELLIDO_PATERNO">Apellido Paterno</label>
                         <?= Html::textInput('APELLIDO_PATERNO', NULL, ['class' => 'form-control', 'id' => 'APELLIDO_PATERNO']); ?>
                     </div>
                     <div class="form-group">
                         <label for="APELLIDO_MATERNO">Apellido Materno</label>
                         <?= Html::textInput('APELLIDO_MATERNO', NULL, ['class' => 'form-control', 'id' => 'APELLIDO_MATERNO']); ?>
-                    </div>
-                    <div class="form-group">
-                        <label for="NOMBRE">Nombre(s)</label>
-                        <?= Html::textInput('NOMBRE', NULL, ['class' => 'form-control', 'id' => 'NOMBRE']); ?>
                     </div>
                     <div class="form-group">
                         <button type="button" class="btn btn-success" id="btnBuscarPersona"><i class="fa fa-search"></i> Buscar</button>

@@ -22,7 +22,7 @@ class Reporte extends \yii\db\ActiveRecord
                     CASE
                         WHEN tblPadron.[CLAVEUNICA] IS NULL
                         THEN \'NO ASIGNADO\'
-                        ELSE (tblPadron.[APELLIDO_PATERNO]+\' \'+tblPadron.[APELLIDO_MATERNO]+\' \'+tblPadron.[NOMBRE])
+                        ELSE (tblPadron.[NOMBRE]+\' \'+tblPadron.[APELLIDO_PATERNO]+\' \'+tblPadron.[APELLIDO_MATERNO])
                     END AS Responsable,
                     [CSeccion].MetaAlcanzar AS Meta,
                     ROUND((
@@ -124,8 +124,8 @@ class Reporte extends \yii\db\ActiveRecord
                     ,CASE
                         WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
                         THEN \'NO ASIGNADO\'
-                        ELSE ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]+\' \'
-                            +[PadronGlobal].[NOMBRE])
+                        ELSE ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'
+                            +[PadronGlobal].[APELLIDO_MATERNO])
                     END AS Responsable
                     ,[PadronGlobal].[TELCASA]
                     ,[PadronGlobal].[TELMOVIL]

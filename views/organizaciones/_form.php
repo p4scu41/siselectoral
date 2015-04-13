@@ -26,8 +26,7 @@ $this->registerJsFile(Url::to('@web/js/organizaciones.js'));
             'inputOptions' => [
                 'readonly' => 'true',
                 'id' => 'org-representante',
-                'value' => $model->representante ?
-                    $model->representante->APELLIDO_PATERNO .' '. $model->representante->APELLIDO_MATERNO .' '. $model->representante->NOMBRE : ''
+                'value' => $model->representante ? $model->representante->nombreCompleto : ''
             ]
         ])->textInput() ?>
 
@@ -36,8 +35,7 @@ $this->registerJsFile(Url::to('@web/js/organizaciones.js'));
             'inputOptions' => [
                 'readonly' => 'true',
                 'id' => 'org-enlace',
-                'value' => $model->enlace ?
-                    $model->enlace->APELLIDO_PATERNO .' '. $model->enlace->APELLIDO_MATERNO .' '. $model->enlace->NOMBRE : ''
+                'value' => $model->enlace ? $model->enlace->nombreCompleto : ''
             ]
         ])->textInput() ?>
 

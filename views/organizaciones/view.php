@@ -31,15 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'Siglas',
             [
                 'attribute' => 'IdPersonaRepresentante',
-                'value' => $model->representante->APELLIDO_PATERNO.' '.
-                    $model->representante->APELLIDO_MATERNO.' '.
-                    $model->representante->NOMBRE
+                'value' => $model->representante->nombreCompleto
             ],
             [
                 'attribute' => 'IdPersonaEnlace',
-                'value' => $model->enlace->APELLIDO_PATERNO.' '.
-                    $model->enlace->APELLIDO_MATERNO.' '.
-                    $model->enlace->NOMBRE
+                'value' => $model->enlace->nombreCompleto
             ],
             [
                 'attribute' => 'IdMunicipio',

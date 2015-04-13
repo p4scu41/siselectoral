@@ -38,9 +38,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            'NOMBRE',
             'APELLIDO_PATERNO',
             'APELLIDO_MATERNO',
-            'NOMBRE',
             [
                 'attribute' => 'MUNICIPIO',
                 'value' => function ($model, $key, $index, $column) {

@@ -20,10 +20,10 @@ class OrganizacionesController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante', 'getpromotorintegrante'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante', 'getpromotorintegrante'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -185,6 +185,19 @@ class OrganizacionesController extends Controller
             $response['integrante'] = $integrante;
         } catch (Exception $ex) {
             $response = ['error'=>true, 'mensaje'=>'Error al agregar el Integrante'];
+        }
+
+        return json_encode($response);
+    }
+
+    public function actionGetpromotorintegrante()
+    {
+        $integrante = Yii::$app->request->post('id');
+        
+        try {
+            $response = Organizaciones::getPromotorByIntegrante($integrante);
+        } catch (Exception $ex) {
+            $response = ['error'=>true, 'mensaje'=>'Error al obtener los promotores'];
         }
 
         return json_encode($response);

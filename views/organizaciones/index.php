@@ -28,17 +28,13 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'IdPersonaRepresentante',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->representante->APELLIDO_PATERNO.' '.
-                        $model->representante->APELLIDO_MATERNO.' '.
-                        $model->representante->NOMBRE;
+                    return $model->representante->nombreCompleto;
                 }
             ],
             [
                 'attribute' => 'IdPersonaEnlace',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->enlace->APELLIDO_PATERNO.' '.
-                        $model->enlace->APELLIDO_MATERNO.' '.
-                        $model->enlace->NOMBRE;
+                    return $model->enlace->nombreCompleto;
                 }
             ],
             [

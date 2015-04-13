@@ -31,11 +31,11 @@ use yii\helpers\Url;
 
                         <?php echo $form->field($model, 'MUNICIPIO')->dropDownList($municipios, ['prompt' => 'Elija una opción', 'required' => 'true']) ?>
 
+                        <?php echo $form->field($model, 'NOMBRE') ?>
+
                         <?php echo $form->field($model, 'APELLIDO_PATERNO') ?>
 
                         <?php echo $form->field($model, 'APELLIDO_MATERNO') ?>
-
-                        <?php echo $form->field($model, 'NOMBRE') ?>
 
                         <?php echo $form->field($model, 'SEXO')->dropDownList(['M'=>'Mujer', 'H'=>'Hombre'], ['prompt' => 'Elija una opción']) ?>
 

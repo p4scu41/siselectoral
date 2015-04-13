@@ -29,9 +29,9 @@ $(document).ready(function () {
             for (persona in response) {
                 trsPersona += '<tr>' +
                         '<td><input type="radio" name="persona" value="' + response[persona].CLAVEUNICA+ '"' +
-                            'data-nombre="' + response[persona].APELLIDO_PATERNO + ' ' + response[persona].APELLIDO_MATERNO + ' ' + response[persona].NOMBRE + '"' +
+                            'data-nombre="' + response[persona].NOMBRE + ' ' + response[persona].APELLIDO_PATERNO + ' ' + response[persona].APELLIDO_MATERNO + '"' +
                         '></td>' +
-                        '<td>' + response[persona].APELLIDO_PATERNO + ' ' + response[persona].APELLIDO_MATERNO + ' ' + response[persona].NOMBRE+ '</td>' +
+                        '<td>' + response[persona].NOMBRE + ' ' + response[persona].APELLIDO_PATERNO + ' ' + response[persona].APELLIDO_MATERNO+ '</td>' +
                         '<td class="seccion_persona">' + parseInt(response[persona].SECCION) + '</td>' +
                         '<td>' + response[persona].CASILLA + '</td>' +
                         '<td>' + response[persona].DOMICILIO + ',' + response[persona].NOM_LOC + '</td>' +

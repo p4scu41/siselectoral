@@ -63,9 +63,9 @@ $(document).ready(function(){
             for(persona in response) {
                 $tabla += '<tr>'+
                     '<td class="text-center"><input type="radio" name="personaSeleccionada" value="'+response[persona].CLAVEUNICA+'"></td>'+
+                    '<td>'+response[persona].NOMBRE+'</td>'+
                     '<td>'+response[persona].APELLIDO_PATERNO+'</td>'+
                     '<td>'+response[persona].APELLIDO_MATERNO+'</td>'+
-                    '<td>'+response[persona].NOMBRE+'</td>'+
                     '<td>'+response[persona].FECHANACIMIENTO+'</td>'+
                     '<td>'+response[persona].SECCION+'</td>'+
                     '<td>'+response[persona].CASILLA+'</td>'+
@@ -140,9 +140,9 @@ $(document).ready(function(){
                 data: {id: node.data.persona},
                 type: "GET",
             }).done(function(response) {
-                $nombreCompleto = response.APELLIDO_PATERNO+' '+
-                                  response.APELLIDO_MATERNO+' '+
-                                  response.NOMBRE;
+                $nombreCompleto = response.NOMBRE+' '+
+                                  response.APELLIDO_PATERNO+' '+
+                                  response.APELLIDO_MATERNO;
                 var sexo = 'U';
 
                 $datos = [
@@ -405,10 +405,14 @@ $(document).ready(function(){
         }).done(function(response) {
             if ( response.length ) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
-                        '<thead><tr><th class="text-center">Nombre</th><th class="text-center">Sexo</th><th class="text-center">Fecha Nacimiento</th><th>Colonia</h></tr></thead><tbody>';
+                        '<thead><tr><th class="text-center">Nombre</th><th class="text-center">Sexo</th>'+
+                            '<th class="text-center">Fecha Nacimiento</th><th>Colonia</th><th>Promovido</th></tr></thead><tbody>';
 
                 for(fila in response) {
-                    $tabla += '<tr><td>'+response[fila].NOMBRE+'</td><td>'+response[fila].SEXO+'</td><td>'+response[fila].FECHANACIMIENTO+'</td><td>'+response[fila].COLONIA+'</td></tr>';
+                    console.log(response[fila]);
+                    $tabla += '<tr><td>'+response[fila].NOMBRE+'</td><td>'+response[fila].SEXO+'</td>'+
+                        '<td>'+response[fila].FECHANACIMIENTO+'</td><td>'+response[fila].COLONIA+'</td>'+
+                        '<td class="text-center"><i class="fa fa-'+(response[fila].IdPErsonaPromueve == null ? '' : 'check-')+'square-o"></i></td></tr>';
                 }
                 $tabla += '</tbody></table>';
                 $('#modalListIntegrantes .modal-body').html($tabla);

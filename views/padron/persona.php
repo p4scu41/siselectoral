@@ -51,7 +51,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                         <div class="col-md-4 text-center">
                             <div>
                                 <img src="<?= $persona ? $persona->getFoto() : ''; ?>" class="img-rounded imgPerson" id="imgPerson">
-                                <h4 id="nombreCompleto"><?= ($persona->APELLIDO_PATERNO.' '.$persona->APELLIDO_MATERNO.' '.$persona->NOMBRE); ?></h4>
+                                <h4 id="nombreCompleto"><?= ($persona->nombreCompleto); ?></h4>
                             </div>
                             <div>
                                 <span class="btn btn-app btn-sm btn-primary" id="meta_proyec">
@@ -225,7 +225,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                     <img class="media-object imgPerson img-rounded" src="'.$jefe['foto'].'">
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading">'.($jefe['APELLIDO_PATERNO'].' '.$jefe['APELLIDO_MATERNO'].' '.$jefe['NOMBRE']).'</h4>
+                    <h4 class="media-heading">'.($jefe['NOMBRE'].' '.$jefe['APELLIDO_PATERNO'].' '.$jefe['APELLIDO_MATERNO']).'</h4>
                     <p><strong>Puesto:</strong> '.$jefe['puesto'].'. <strong>Domicilio:</strong> '.$jefe['CALLE'].
                     '. <strong>E-Mail:</strong> '.$dependiente['CORREOELECTRONICO'].'. <strong>Tel. Móvil:</strong> '.$dependiente['TELMOVIL'].'</p>';
                     $form = ActiveForm::begin([
@@ -252,7 +252,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                     <img class="media-object imgPerson img-rounded" src="'.$dependiente['foto'].'">
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading">'.($dependiente['APELLIDO_PATERNO'].' '.$dependiente['APELLIDO_MATERNO'].' '.$dependiente['NOMBRE']).'</h4>
+                    <h4 class="media-heading">'.($dependiente['NOMBRE'].' '.$dependiente['APELLIDO_PATERNO'].' '.$dependiente['APELLIDO_MATERNO']).'</h4>
                     <p><strong>Puesto:</strong> '.$dependiente['puesto'].'. <strong>Domicilio:</strong> '.$dependiente['CALLE'].
                     '. <strong>E-Mail:</strong> '.$dependiente['CORREOELECTRONICO'].'. <strong>Tel. Móvil:</strong> '.$dependiente['TELMOVIL'].'</p>';
                     $form = ActiveForm::begin([

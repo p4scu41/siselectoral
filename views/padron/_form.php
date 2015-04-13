@@ -42,6 +42,9 @@ $this->registerJs('$("input:not([type=file])").change(function() {
                             'data-msg-invalid-file-extension'=> 'Extensión no permitida en el archivo seleccionado "{name}". Solo se permiten las extensiones "{extensions}"',
                         ]) ?>
 
+                    <?php $disabled = $model->NOMBRE ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'NOMBRE')->textInput($disabled) ?>
+
                     <?php $disabled = $model->APELLIDO_PATERNO ? ['disabled'=>'true'] : [] ?>
                     <?= $form->field($model, 'APELLIDO_PATERNO', [
                             //'template' => "{label}\n<i class='fa fa-user'></i>\n{input}\n{hint}\n{error}"
@@ -50,9 +53,6 @@ $this->registerJs('$("input:not([type=file])").change(function() {
 
                     <?php $disabled = $model->APELLIDO_MATERNO ? ['disabled'=>'true'] : [] ?>
                     <?= $form->field($model, 'APELLIDO_MATERNO')->textInput($disabled) ?>
-
-                    <?php $disabled = $model->NOMBRE ? ['disabled'=>'true'] : [] ?>
-                    <?= $form->field($model, 'NOMBRE')->textInput($disabled) ?>
 
                     <?php $disabled = $model->FECHANACIMIENTO ? ['class'=>'form-control', 'disabled'=>'true', 'required'=>'true'] : ['class'=>'form-control', 'required'=>'true'] ?>
                     <?= $form->field($model, 'FECHANACIMIENTO')->widget(DateControl::classname(), [

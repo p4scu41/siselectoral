@@ -110,14 +110,17 @@ class Organizaciones extends \yii\db\ActiveRecord
     {
         $sqlIntegrantes = 'SELECT
                 [PadronGlobal].[CLAVEUNICA],
-                ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
-                        +\' \'+[PadronGlobal].[NOMBRE]) AS NombreCompleto,
+                ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto,
                 CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION],
                 [PadronGlobal].[TELCASA],
                 [PadronGlobal].[TELMOVIL],
                 [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
                     +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
                 ,[CMunicipio].[DescMunicipio]
+                ,[DetallePromocion].[IdPErsonaPromueve]
+                ,([personaPromueve].[NOMBRE]+\' \'+[personaPromueve].[APELLIDO_PATERNO]
+                    +\' \'+[personaPromueve].[APELLIDO_MATERNO]) AS nombre_promueve
             FROM
                 [IntegrantesOrganizaciones]
             INNER JOIN
@@ -131,6 +134,10 @@ class Organizaciones extends \yii\db\ActiveRecord
 
         $sqlIntegrantes .= ' INNER JOIN [CMunicipio] ON
                     [PadronGlobal].[MUNICIPIO] = [CMunicipio].[IdMunicipio]
+            LEFT JOIN [DetallePromocion] ON
+                [DetallePromocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+            LEFT JOIN [PadronGlobal] AS [personaPromueve] ON
+                [personaPromueve].[CLAVEUNICA] = [DetallePromocion].[IdPErsonaPromueve]
             WHERE
                 [IdOrganizacion] = '.$idOrganizacion.'
             ORDER BY SECCION, NombreCompleto';
@@ -236,12 +243,19 @@ class Organizaciones extends \yii\db\ActiveRecord
                     ,[PadronGlobal].[FECHANACIMIENTO]
                     ,[PadronGlobal].[COLONIA]
                     ,[CMunicipio].[DescMunicipio]
+                    ,[DetallePromocion].[IdPErsonaPromueve]
+                    ,([personaPromueve].[NOMBRE]+\' \'+[personaPromueve].[APELLIDO_PATERNO]
+                        +\' \'+[personaPromueve].[APELLIDO_MATERNO]) AS nombre_promueve
                 FROM
                     [IntegrantesOrganizaciones]
                 INNER JOIN [PadronGlobal] ON
                     [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
                 INNER JOIN [CMunicipio] ON
                     [PadronGlobal].[MUNICIPIO] = [CMunicipio].[IdMunicipio]
+                LEFT JOIN [DetallePromocion] ON
+                    [DetallePromocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+                LEFT JOIN [PadronGlobal] AS [personaPromueve] ON
+                    [personaPromueve].[CLAVEUNICA] = [DetallePromocion].[IdPErsonaPromueve]
                 WHERE
                     [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
                     [PadronGlobal].[SECCION] = '.$idSeccion.'
@@ -279,8 +293,8 @@ class Organizaciones extends \yii\db\ActiveRecord
 
         $sqlIntegrante = 'SELECT
                 [PadronGlobal].[CLAVEUNICA],
-                ([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]
-                        +\' \'+[PadronGlobal].[NOMBRE]) AS NombreCompleto,
+                ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto,
                 CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION],
                 [PadronGlobal].[MUNICIPIO],
                 [PadronGlobal].[TELCASA],
@@ -331,5 +345,22 @@ class Organizaciones extends \yii\db\ActiveRecord
         $orgs = Yii::$app->db->createCommand($sqlOrgs)->queryAll();
 
         return $orgs;
+    }
+
+    public static function getPromotorByIntegrante($idIntegrante)
+    {
+        $sqlPromotores = 'SELECT
+                    [IdPErsonaPromueve]
+                    ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+
+                        [PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto
+                FROM
+                    [DetallePromocion]
+                INNER JOIN [PadronGlobal] ON
+                    [DetallePromocion].[IdPErsonaPromueve] = [PadronGlobal].[CLAVEUNICA]
+                WHERE [IdPersonaPromovida] = \''.$idIntegrante.'\'';
+
+        $promotores = Yii::$app->db->createCommand($sqlPromotores)->queryAll();
+
+        return $promotores;
     }
 }

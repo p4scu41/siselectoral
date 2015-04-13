@@ -2,7 +2,6 @@ $(document).ready(function (){
     'use strict';
 
     $('#tblIntegrantes').delegate('.btnDelIntegrante', 'click', function (){
-    //$('.btnDelIntegrante').on('click', function (){
         if (confirm('¿Esta seguro que desea eliminar el integrante seleccionado?')) {
             var self = this;
 
@@ -58,6 +57,7 @@ $(document).ready(function (){
                         + '<td>' + data.integrante.NombreCompleto + '</td>'
                         + '<td class="seccion">' + parseInt(data.integrante.SECCION) + '</td>'
                         + '<td>' + data.integrante.Domicilio + '</td>'
+                        + '<td class="text-center"><a href="#" class="promovidoIntegrante" data-id="'+data.integrante.CLAVEUNICA+'" data-promotor=""><i class="fa fa-square-o fa-lg"></i></a></td>'
                         + '<td class="text-center"><button class="btn btn-sm btn-danger btnDelIntegrante" '+
                             'data-id="'+data.integrante.CLAVEUNICA+'" '+
                             '><i class="fa fa-user-times"></i></button></td>'
@@ -154,6 +154,38 @@ $(document).ready(function (){
         return false;
     });
     
+    $('#tblIntegrantes tbody').delegate('.promovidoIntegrante', 'click', function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        var id = $(this).data('id');
+        var promotor = $(this).data('promotor');
 
-    //$("#color_1").select2("val");
+        if (promotor == '') {
+            $('#dialog').html('El integrante seleccionado no esta promovido');
+            $('#dialog').dialog('open');
+        } else {
+            $.ajax({
+                url: getPromotores,
+                method: 'POST',
+                dataType: 'json',
+                data: {id: id}
+            }).done(function (response) {
+                var msgDialog = 'El integrante seleccionado esta promovido por: <ul>';
+                var p = 0;
+
+                for (p in response) {
+                    msgDialog += '<li>'+response[p].NombreCompleto+'</li>';
+                }
+
+                msgDialog += '<ul>';
+
+                $('#dialog').html(msgDialog);
+                $('#dialog').dialog('open');
+            });
+
+            
+        }
+    });
+
+    $('#dialog').dialog({autoOpen: false});
 });

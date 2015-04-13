@@ -560,7 +560,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         if ($resultPuestos) {
             foreach ($resultPuestos as $nodo) {
                 if($nodo['IdPersonaPuesto'] != '00000000-0000-0000-0000-000000000000') {
-                    $persona = Yii::$app->db->createCommand("SELECT ([APELLIDO_PATERNO]+ ' ' +[APELLIDO_MATERNO]+ ' ' +[NOMBRE]) AS NOMBRECOMPLETO, SEXO "
+                    $persona = Yii::$app->db->createCommand("SELECT ([NOMBRE]+ ' ' +[APELLIDO_PATERNO]+ ' ' +[APELLIDO_MATERNO]) AS NOMBRECOMPLETO, SEXO "
                                                 ."FROM [PadronGlobal] WHERE [CLAVEUNICA] = '".$nodo['IdPersonaPuesto']."'")->queryOne();
                     $foto = ['foto'=>''];
                     if ($withFoto) {

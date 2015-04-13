@@ -41,7 +41,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                         <div class="col-md-4">
                             <div class="text-center">
                                 <img src="<?= $model->getFoto() ?>" class="img-rounded imgPerson" id="imgPerson">
-                                <h4 id="nombreCompleto"><?= ($model->APELLIDO_PATERNO.' '.$model->APELLIDO_MATERNO.' '.$model->NOMBRE); ?></h4>
+                                <h4 id="nombreCompleto"><?= ($model->nombreCompleto); ?></h4>
                             </div>
                             <form class="form-horizontal" method="POST" id="frmPersonDetails">
                                 <div class="form-group">
