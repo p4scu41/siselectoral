@@ -6,12 +6,12 @@ use yii\helpers\Url;
 ?>
 <!-- header logo: style can be found in header.less -->
 <header class="header">
-    <a href="<?= Url::home(); ?>" class="logo">
+    <a href="<?= Url::home(); ?>" class="logo <?= Yii::$app->params['chiapas_unidos'] ? 'headerBorderBottom' : '' ?>">
         <!-- Add the class icon to your logo image or logo icon to add the margining -->
         SIRECI <br><span>Sistema de Red Ciudadana</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top" role="navigation">
+    <nav class="navbar navbar-static-top <?= Yii::$app->params['chiapas_unidos'] ? 'headerBorderBottom' : '' ?>" role="navigation">
         <!-- Sidebar toggle button-->
         <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
@@ -72,7 +72,7 @@ use yii\helpers\Url;
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header bg-light-blue">
-                            <img src="<?php echo Yii::getAlias('@web'); ?>/img/avatar5.png" class="img-circle" alt="User Image" />
+                            <img src="<?= Yii::$app->params['chiapas_unidos'] ? Url::to("@web/img/chiapas_unidos_logo.png") : Yii::$app->user->identity->persona->getFoto() ?>" class="img-rounded" />
                             <p>
                                 <?= Yii::$app->user->identity->login ?>
                                 <small>&Uacute;ltimo acceso: Hoy</small>

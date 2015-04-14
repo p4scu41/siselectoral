@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div id="container_wrapper">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'tableOptions' => ['class' => 'table table-bordered table-hover'],
         //'filterModel' => $searchModel,
         //'layout' => "{summary}\n{items}\n{pager}",
         //'showHeader' => false,

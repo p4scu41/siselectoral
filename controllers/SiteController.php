@@ -89,7 +89,13 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return Yii::$app->getResponse()->redirect(Url::to(['site/index']));
         } else {
-            return $this->render('login', [
+            $login = 'login';
+
+            if (Yii::$app->params['chiapas_unidos']) {
+                $login = 'login_chiapas_unidos';
+            }
+
+            return $this->render($login, [
                 'model' => $model,
             ]);
         }

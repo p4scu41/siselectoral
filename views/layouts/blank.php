@@ -13,7 +13,7 @@ $this->registerJsFile(\yii\helpers\Url::to('@web/js/AdminLTE/dashboard.js'), ['p
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="lockscreen">
+<html lang="<?= Yii::$app->language ?>" class="<?= Yii::$app->params['chiapas_unidos'] ? '' : 'lockscreen' ?>">
     <head>
         <meta charset="<?= Yii::$app->charset ?>"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -35,7 +35,7 @@ $this->registerJsFile(\yii\helpers\Url::to('@web/js/AdminLTE/dashboard.js'), ['p
           <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
     </head>
-    <body>
+    <body class="<?= Yii::$app->params['chiapas_unidos'] ? 'bg_login_chiapas_solidario' : '' ?>">
         <?= $content ?>
 
         <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>-->

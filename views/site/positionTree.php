@@ -115,7 +115,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
 </p>
 
 <div class="table-responsive">
-    <table id="treeContainer" class="table table-condensed table-striped table-bordered table-hover" style="display: none">
+    <table id="treeContainer" class="table table-condensed table-bordered table-hover" style="display: none">
         <colgroup>
             <col width="*"></col>
             <col width="80px"></col>
@@ -236,7 +236,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                     </div>
 
                                                     <div class="table-responsive">
-                                                        <table id="treeEstrucAlterna" class="table table-condensed table-striped table-bordered table-hover" style="display: none">
+                                                        <table id="treeEstrucAlterna" class="table table-condensed table-bordered table-hover" style="display: none">
                                                             <colgroup>
                                                                 <col width="*"></col>
                                                                 <col width="80px"></col>

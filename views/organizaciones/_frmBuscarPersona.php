@@ -73,7 +73,7 @@ $this->registerJsFile(Url::to('@web/js/frmBuscarPersona.js'));
                 ?>
                 <br>
                 <div class="table-responsive" id="resultBuscarPersona">
-                    <table id="tblResultBuscarPersona" class="table table-condensed table-striped table-bordered table-hover">
+                    <table id="tblResultBuscarPersona" class="table table-condensed table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th></th>

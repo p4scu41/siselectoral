@@ -17,7 +17,7 @@ AppAsset::register($this);
         <meta charset="<?= Yii::$app->charset ?>"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" type="image/png" href="<?= Url::to("@web/img/icon.ico"); ?>">
+        <link rel="icon" type="image/png" href="<?= Yii::$app->params['chiapas_unidos'] ? Url::to("@web/img/chiapas_unidos_favicon.png") : Url::to("@web/img/icon.ico") ?>">
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
 
@@ -46,7 +46,7 @@ AppAsset::register($this);
                     <!-- Sidebar user panel -->
                     <div class="user-panel">
                         <div class="pull-left image">
-                            <img src="<?php echo Yii::getAlias('@web'); ?>/img/avatar5.png" class="img-circle" alt="User Image" />
+                            <img src="<?= Yii::$app->params['chiapas_unidos'] ? Url::to("@web/img/chiapas_unidos_logo.png") : Yii::$app->user->identity->persona->getFoto() ?>" class="img-rounded" />
                         </div>
                         <div class="pull-left info">
                             <p><?= Yii::$app->user->identity->login ?></p>
@@ -74,7 +74,7 @@ AppAsset::register($this);
                 </section>
 
                 <!-- Main content -->
-                <section class="content">
+                <section class="content <?= Yii::$app->params['chiapas_unidos'] ? 'bg_chiapas_solidario' : '' ?>">
 
                     <?= $content ?>
 

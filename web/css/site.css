@@ -525,6 +525,85 @@ modalPerson #tablaResumen tr:last-child {
 #resultTblIntegrantes {
     max-height: 400px;
 }
+.headerBorderBottom {
+    border-bottom: 5px;
+    border-bottom-color: #7FBA75;
+    border-bottom-style: solid;
+}
+.bg_chiapas_solidario {
+    background-image: url('../img/chiapas_unidos_background.png');
+    background-repeat: no-repeat;
+    background-position: center 65px;
+    min-height: 520px;
+}
+.panel {
+    background-color: transparent;
+}
+.bg_login_chiapas_solidario {
+    background-image: -webkit-linear-gradient(top,#FFFFFF 0,#BCBCBC 100%);
+    background-image: -o-linear-gradient(top,#FFFFFF 0,#BCBCBC 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#FFFFFF),to(#BCBCBC));
+    background-image: linear-gradient(to bottom,#FFFFFF 0,#BCBCBC 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#BCBCBC', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+}
+.form-box .header_chiapas_solidario {
+  -webkit-border-top-left-radius: 4px;
+  -webkit-border-top-right-radius: 4px;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -moz-border-radius-topleft: 4px;
+  -moz-border-radius-topright: 4px;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 0;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  background-image: -webkit-linear-gradient(top,#B6DAA1 0,#A0C28E 100%);
+  background-image: -o-linear-gradient(top,#B6DAA1 0,#A0C28E 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#B6DAA1),to(#A0C28E));
+  background-image: linear-gradient(to bottom,#B6DAA1 0,#A0C28E 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B6DAA1', endColorstr='#A0C28E', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  padding: 20px 10px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 300;
+  color: white;
+}
+.form-box .footer_chiapas_solidario {
+  padding: 10px 20px;
+  background: #7BBC6F;
+  color: white;
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.form-box .body_chiapas_solidario {
+  padding: 10px 20px;
+  color: white;
+  background-image: -webkit-linear-gradient(top,#A0C28E 0,#849B72 100%);
+  background-image: -o-linear-gradient(top,#A0C28E 0,#849B72 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#A0C28E),to(#849B72));
+  background-image: linear-gradient(to bottom,#A0C28E 0,#849B72 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#A0C28E', endColorstr='#849B72', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.form-box .body_chiapas_solidario input {
+  border: 2px solid #849B72;
+}
 
 @media print {
     #indicadoresPuesto .btn.btn-app{

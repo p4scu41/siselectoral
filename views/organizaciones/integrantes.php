@@ -52,7 +52,7 @@ $this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromot
     </div>
     <h3 class="text-center" id="titulo">Integrantes de la organización <?= $model->Nombre ?></h3>
     <div class="table-responsive" id="resultTblIntegrantes">
-        <table id="tblIntegrantes" class="table table-condensed table-striped table-bordered table-hover">
+        <table id="tblIntegrantes" class="table table-condensed table-bordered table-hover">
             <thead>
                 <tr>
                     <th class="text-center">Nombre</th>

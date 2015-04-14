@@ -111,7 +111,7 @@ body.fixed .wrapper {
 /* Content */
 .content {
   padding: 20px 15px;
-  background: #f9f9f9;
+  background-color: #f9f9f9;
 }
 /* Utility */
 /* H1 - H6 font */
@@ -994,9 +994,9 @@ body > .header .logo .icon {
   z-index: 5;
   height: 90px;
   width: 90px;
-  border: 8px solid;
+  /*border: 8px solid;
   border-color: transparent;
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);*/
 }
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header > p {
   z-index: 5;
@@ -1375,7 +1375,7 @@ body > .header .logo .icon {
 */
 .box {
   position: relative;
-  background: #ffffff;
+  /*background: #ffffff;*/
   border-top: 2px solid #c1c1c1;
   margin-bottom: 20px;
   -webkit-border-radius: 3px;
