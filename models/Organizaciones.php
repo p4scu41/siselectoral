@@ -301,8 +301,11 @@ class Organizaciones extends \yii\db\ActiveRecord
                 [PadronGlobal].[TELMOVIL],
                 [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
                     +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                ,[CMunicipio].[DescMunicipio]
             FROM
                 [PadronGlobal]
+            INNER JOIN [CMunicipio] ON
+                    [PadronGlobal].[MUNICIPIO] = [CMunicipio].[IdMunicipio]
             WHERE
                 [PadronGlobal].[CLAVEUNICA] = \''.$idInte.'\'';
 

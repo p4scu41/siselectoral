@@ -42,6 +42,13 @@ $this->registerJsFile(Url::to('@web/js/frmBuscarPersona.js'));
                 echo '</div>';
 
                 echo '<div class="form-group">';
+                echo Html::textInput('nombre', null, [
+                        'class' => 'form-control',
+                        'placeholder' => 'Nombre'
+                    ]);
+                echo '</div>';
+
+                echo '<div class="form-group">';
                 echo Html::textInput('apellidoPaterno', null, [
                         'class' => 'form-control',
                         'placeholder' => 'Apellido Paterno'
@@ -52,13 +59,6 @@ $this->registerJsFile(Url::to('@web/js/frmBuscarPersona.js'));
                 echo Html::textInput('apellidoMaterno', null, [
                         'class' => 'form-control',
                         'placeholder' => 'Apellido Materno'
-                    ]);
-                echo '</div>';
-
-                echo '<div class="form-group">';
-                echo Html::textInput('nombre', null, [
-                        'class' => 'form-control',
-                        'placeholder' => 'Nombre'
                     ]);
                 echo '</div>';
 

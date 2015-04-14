@@ -57,6 +57,7 @@ $(document).ready(function (){
                         + '<td>' + data.integrante.NombreCompleto + '</td>'
                         + '<td class="seccion">' + parseInt(data.integrante.SECCION) + '</td>'
                         + '<td>' + data.integrante.Domicilio + '</td>'
+                        + '<td>' + data.integrante.DescMunicipio + '</td>'
                         + '<td class="text-center"><a href="#" class="promovidoIntegrante" data-id="'+data.integrante.CLAVEUNICA+'" data-promotor=""><i class="fa fa-square-o fa-lg"></i></a></td>'
                         + '<td class="text-center"><button class="btn btn-sm btn-danger btnDelIntegrante" '+
                             'data-id="'+data.integrante.CLAVEUNICA+'" '+
@@ -161,7 +162,8 @@ $(document).ready(function (){
         var promotor = $(this).data('promotor');
 
         if (promotor == '') {
-            $('#dialog').html('El integrante seleccionado no esta promovido');
+            $('#dialog').html('<div class="alert alert-danger" role="alert" style="padding-left: 0px; margin-left: 0px;">'+
+                'El integrante seleccionado no esta promovido</div>');
             $('#dialog').dialog('open');
         } else {
             $.ajax({
@@ -170,20 +172,20 @@ $(document).ready(function (){
                 dataType: 'json',
                 data: {id: id}
             }).done(function (response) {
-                var msgDialog = 'El integrante seleccionado esta promovido por: <ul>';
+                var msgDialog = '<div class="alert alert-success" role="alert" style="padding-left: 0px; margin-left: 0px;">'+
+                    'El integrante seleccionado esta promovido por: <ul>';
                 var p = 0;
 
                 for (p in response) {
                     msgDialog += '<li>'+response[p].NombreCompleto+'</li>';
                 }
 
-                msgDialog += '<ul>';
+                msgDialog += '<ul></div>';
 
                 $('#dialog').html(msgDialog);
                 $('#dialog').dialog('open');
             });
 
-            
         }
     });
 
