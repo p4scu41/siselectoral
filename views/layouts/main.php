@@ -46,7 +46,11 @@ AppAsset::register($this);
                     <!-- Sidebar user panel -->
                     <div class="user-panel">
                         <div class="pull-left image">
-                            <img src="<?= Yii::$app->params['chiapas_unidos'] ? Url::to("@web/img/chiapas_unidos_logo.png") : Yii::$app->user->identity->persona->getFoto() ?>" class="img-rounded" />
+                            <img src="<?=
+                                Yii::$app->params['chiapas_unidos'] ?
+                                Url::to("@web/img/chiapas_unidos_logo.png") :
+                                Yii::$app->user->identity ? Yii::$app->user->identity->persona->getFoto() : ''
+                                ?>" class="img-rounded" />
                         </div>
                         <div class="pull-left info">
                             <p><?= Yii::$app->user->identity->login ?></p>
