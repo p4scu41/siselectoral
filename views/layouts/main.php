@@ -47,9 +47,7 @@ AppAsset::register($this);
                     <div class="user-panel">
                         <div class="pull-left image">
                             <img src="<?=
-                                Yii::$app->params['chiapas_unidos'] ?
-                                Url::to("@web/img/chiapas_unidos_logo.png") :
-                                Yii::$app->user->identity ? Yii::$app->user->identity->persona->getFoto() : ''
+                                Yii::$app->params['chiapas_unidos'] == true ? Url::to("@web/img/chiapas_unidos_logo.png") : (Yii::$app->user->identity->persona ? Yii::$app->user->identity->persona->getFoto() : '')
                                 ?>" class="img-rounded" />
                         </div>
                         <div class="pull-left info">

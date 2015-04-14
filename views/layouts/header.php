@@ -73,9 +73,7 @@ use yii\helpers\Url;
                         <!-- User image -->
                         <li class="user-header bg-light-blue">
                             <img src="<?= 
-                                Yii::$app->params['chiapas_unidos'] ?
-                                Url::to("@web/img/chiapas_unidos_logo.png") :
-                                Yii::$app->user->identity ? Yii::$app->user->identity->persona->getFoto() : ''
+                                Yii::$app->params['chiapas_unidos'] ? Url::to("@web/img/chiapas_unidos_logo.png") : (Yii::$app->user->identity->persona ? Yii::$app->user->identity->persona->getFoto() : '')
                                 ?>" class="img-rounded" />
                             <p>
                                 <?= Yii::$app->user->identity->login ?>
