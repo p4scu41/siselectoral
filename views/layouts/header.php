@@ -72,7 +72,11 @@ use yii\helpers\Url;
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header bg-light-blue">
-                            <img src="<?= Yii::$app->params['chiapas_unidos'] ? Url::to("@web/img/chiapas_unidos_logo.png") : Yii::$app->user->identity->persona->getFoto() ?>" class="img-rounded" />
+                            <img src="<?= 
+                                Yii::$app->params['chiapas_unidos'] ?
+                                Url::to("@web/img/chiapas_unidos_logo.png") :
+                                Yii::$app->user->identity ? Yii::$app->user->identity->persona->getFoto() : ''
+                                ?>" class="img-rounded" />
                             <p>
                                 <?= Yii::$app->user->identity->login ?>
                                 <small>&Uacute;ltimo acceso: Hoy</small>
