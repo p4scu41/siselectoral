@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use app\models\SeguimientoCambios;
 
 /**
  * OrganizacionesController implements the CRUD actions for Organizaciones model.
@@ -166,6 +167,17 @@ class OrganizacionesController extends Controller
                 throw new Exception('Error CSRF');
             }
             Organizaciones::delIntegrante($idOrg, $idInte);
+
+            $log = new SeguimientoCambios();
+            $log->usuario = Yii::$app->user->identity->IdUsuario;
+            $log->tabla = 'IntegrantesOrganizaciones';
+            $log->campo = 'IdPersonaIntegrante';
+            $log->valor_anterior = $idInte;
+            $log->accion = SeguimientoCambios::DELETE;
+            $log->fecha = date('Y-m-d H:i:s');
+            $log->detalles = 'IdOrganizacion = '.$idOrg;
+            $log->save();
+
         } catch (Exception $ex) {
             $response = ['error'=>true, 'mensaje'=>'Error al eliminar el Integrante'];
         }
@@ -181,8 +193,17 @@ class OrganizacionesController extends Controller
 
         try {
             $integrante = Organizaciones::AddIntegrante($idOrg, $idInte);
-
             $response['integrante'] = $integrante;
+
+            $log = new SeguimientoCambios();
+            $log->usuario = Yii::$app->user->identity->IdUsuario;
+            $log->tabla = 'IntegrantesOrganizaciones';
+            $log->campo = 'IdPersonaIntegrante';
+            $log->nuevo_valor = $idInte;
+            $log->accion = SeguimientoCambios::INSERT;
+            $log->fecha = date('Y-m-d H:i:s');
+            $log->detalles = 'IdOrganizacion = '.$idOrg;
+            $log->save();
         } catch (Exception $ex) {
             $response = ['error'=>true, 'mensaje'=>'Error al agregar el Integrante'];
         }

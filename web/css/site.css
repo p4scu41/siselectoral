@@ -600,9 +600,12 @@ modalPerson #tablaResumen tr:last-child {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#A0C28E', endColorstr='#849B72', GradientType=0);
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-
 .form-box .body_chiapas_solidario input {
   border: 2px solid #849B72;
+}
+.thumbnail {
+    min-width: 105px;
+    min-height: 260px;
 }
 
 @media print {

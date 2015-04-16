@@ -25,7 +25,7 @@ use yii\bootstrap\ActiveForm;
 
     <div class="form-group">
         <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Cancelar', ['class' => 'btn btn-default']) ?>
+        <?= Html::a('Limpiar', ['index'], ['class' => 'btn btn-danger']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

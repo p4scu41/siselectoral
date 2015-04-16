@@ -15,6 +15,7 @@ use app\models\CMunicipio;
 use app\models\Puestos;
 use app\models\DetalleEstructuraMovilizacion;
 use app\models\Organizaciones;
+use app\models\SeguimientoCambios;
 
 class SiteController extends Controller
 {
@@ -227,8 +228,20 @@ class SiteController extends Controller
             $nodoEstructura = DetalleEstructuraMovilizacion::findOne($nodo);
 
             if ($nodoEstructura) {
+                $log = new SeguimientoCambios();
+                $log->usuario = Yii::$app->user->identity->IdUsuario;
+                $log->tabla = 'DetalleEstructuraMovilizacion';
+                $log->campo = 'IdPersonaPuesto';
+                $log->valor_anterior = $nodoEstructura->IdPersonaPuesto;
+                $log->nuevo_valor = $claveunica;
+                $log->registro =  (String)$nodoEstructura->IdNodoEstructuraMov;
+                $log->accion = SeguimientoCambios::UPDATE;
+                $log->fecha = date('Y-m-d H:i:s');
+                //$log->detalles = ;
+
                 $nodoEstructura->IdPersonaPuesto = $claveunica;
                 $nodoEstructura->save();
+                $log->save();
             } else {
                 $error = true;
             }

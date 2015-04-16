@@ -344,10 +344,12 @@ $(document).ready(function(){
                     '<thead><tr><th>Nombre</th><th>Beneficiarios</th><th>Sección</th></tr></thead><tbody>';
 
                 for(fila in response) {
-                    $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
-                            '<button class="btn btn-default" type="button" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'">'+
-                            '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></td></tr>';
-                    count++;
+                    if (response[fila].Integrantes != 0) {
+                        $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
+                                '<a class="btn btn-default" type="button" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'" title="Desplegar detalles">'+
+                                '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></td></tr>';
+                        count++;
+                    }
                 }
                 $tabla += '</tbody></table>';
 
@@ -377,12 +379,12 @@ $(document).ready(function(){
         }).done(function(response) {
             if ( response.length ) {
                 $tabla = 'Distribución de los beneficiarios por sección<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
-                        '<thead><tr><th class="text-center">Sección</th><th class="text-center">Meta</th><th class="text-center">Ben.</th><th class="text-center">Ver</th></tr></thead><tbody>';
+                        '<thead><tr><th class="text-center">Sección</th><th class="text-center">Meta</th><th class="text-center"># Ben.</th><th class="text-center">Ver Lista</th></tr></thead><tbody>';
 
                 for(fila in response) {
                     $tabla += '<tr class="text-center"><td>'+parseInt(response[fila].SECCION)+'</td><td>'+response[fila].MetaAlcanzar+'</td>'+
-                            '<td>'+response[fila].total+'</td><td><button class="btn btn-default" type="button" data-idorg="'+idorg+'" data-nombreorg="'+$(self).data('nombreorg')+'" '+
-                            'data-seccion="'+parseInt(response[fila].SECCION)+'"><span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></tr>';
+                            '<td>'+response[fila].total+'</td><td><a class="btn btn-default" type="button" data-idorg="'+idorg+'" data-nombreorg="'+$(self).data('nombreorg')+'" '+
+                            'data-seccion="'+parseInt(response[fila].SECCION)+'" title="Ver Beneficiarios"><span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></tr>';
                 }
                 $tabla += '</tbody></table>';
             } else {
@@ -811,6 +813,8 @@ $(document).ready(function(){
             $('#btnResumen').hide();
             $('.btnCollapseTree').hide();
         }
+
+        $('#MUNICIPIO_persona option[value='+idMuni+']').attr('selected', true);
     });
 
     $('#printResumen').click(function(){
@@ -829,7 +833,7 @@ $(document).ready(function(){
                 '<h5 class="text-center">STATUS DE LA ESTRUCTURA Y AVANCE MUNICIPAL DE '+$('#municipio option:selected').text()+'</h5>'+
                 '</div></div></div>');
         $seccion_resumenNodo = $('#seccion_resumenNodo').clone().show();
-        $seccion_resumenNodo.find('#tablaResumen').append( '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADA</strong></td></tr>' );
+        $seccion_resumenNodo.find('#tablaResumen').append( '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADANA</strong></td></tr>' );
         $seccion_resumenNodo.find('#tablaResumen').append( $('#tablaPromocion').find('tr:last').prepend('<td>PROMOCIÓN</td>') );
         $imprimible.find('.panel-body').append( '<div class="text-center col-xs-3">'+$('#imgPerson').parent().html()+'</div>');
         $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone().addClass('col-xs-9') );

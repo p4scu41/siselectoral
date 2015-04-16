@@ -79,12 +79,11 @@ $(document).ready(function(){
             tablaResumenNodo = $(ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
 
             tablaPromocion = $('<div class="table-responsive"><table class="table table-condensed table-bordered table-hover" id="tablaPromocion">'+
-                                '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADA</strong></td></tr>'+
+                                '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADANA</strong></td></tr>'+
                                 '</th><th>Total</th><th>Ocupados</th><th>Vacantes</th><th>Avances %</th></tr></table></div>');
             tablaPromocion.find('#tablaPromocion').append( tablaResumenNodo.find('tr:last') );
             tablaPromocion.find('tr:last td:first').remove();
 
-            tablaResumenNodo.find('tr:last').remove();
             tablaResumenNodo.find('tr:last').remove();
 
             $('#resumenNodo').html(tablaResumenNodo);
@@ -99,7 +98,7 @@ $(document).ready(function(){
     $.ajax({
         url: urlGetProgramas,
         dataType: "json",
-        data: 'idMuni='+municipio,
+        data: 'idMuni='+municipio+'&idNodo='+nodo,
         type: "GET",
     }).done(function(response){
         count = 0;
@@ -109,10 +108,12 @@ $(document).ready(function(){
                 '<thead><tr><th>Nombre</th><th>Beneficiarios</th><th>Sección</th></tr></thead><tbody>';
 
             for(fila in response) {
-                $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
-                        '<button class="btn btn-default" type="button" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'">'+
-                        '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></td></tr>';
-                count++;
+                if (response[fila].Integrantes != 0) {
+                    $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
+                            '<button class="btn btn-default" type="button" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'">'+
+                            '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></button></td></tr>';
+                    count++;
+                }
             }
             $tabla += '</tbody></table>';
 
@@ -135,7 +136,7 @@ $(document).ready(function(){
         $.ajax({
             url: urlGetIntegrantes,
             dataType: "json",
-            data: {idOrg:idorg, idMuni:municipio},
+            data: {idOrg:idorg, idMuni:municipio, idNodo:nodo},
             type: "GET",
         }).done(function(response) {
             if ( response.length ) {

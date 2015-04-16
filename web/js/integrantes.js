@@ -189,5 +189,5 @@ $(document).ready(function (){
         }
     });
 
-    $('#dialog').dialog({autoOpen: false});
+    $('#dialog').dialog({autoOpen: false, minWidth: 400});
 });
