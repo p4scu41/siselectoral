@@ -113,8 +113,7 @@ SCRIPT;
             </div>
             <div class="col-md-12">
                 <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
-                <?= Html::a('Cancelar', ['index'], ['class' => 'btn btn-danger']) ?>
-                <?= Html::a('Registrar', ['create'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a('Limpiar', ['index'], ['class' => 'btn btn-danger']) ?>
             </div>
         </div>
     </div>

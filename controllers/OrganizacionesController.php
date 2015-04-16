@@ -80,6 +80,15 @@ class OrganizacionesController extends Controller
         $dependencias = Organizaciones::getDependencias();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $log = new SeguimientoCambios();
+            $log->usuario = Yii::$app->user->identity->IdUsuario;
+            $log->tabla = 'Organizaciones';
+            $log->campo = 'IdOrganizacion';
+            $log->nuevo_valor = $model->IdOrganizacion;
+            $log->accion = SeguimientoCambios::INSERT;
+            $log->fecha = date('Y-m-d H:i:s');
+            $log->save();
+
             return $this->redirect(['view', 'id' => $model->IdOrganizacion]);
         } else {
             return $this->render('create', [
@@ -100,8 +109,16 @@ class OrganizacionesController extends Controller
     {
         $model = $this->findModel($id);
         $dependencias = Organizaciones::getDependencias();
+        $log = new SeguimientoCambios();
+        $log->detalles = json_encode($model->attributes);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $log->usuario = Yii::$app->user->identity->IdUsuario;
+            $log->tabla = 'Organizaciones';
+            $log->accion = SeguimientoCambios::UPDATE;
+            $log->fecha = date('Y-m-d H:i:s');
+            $log->save();
+
             return $this->redirect(['view', 'id' => $model->IdOrganizacion]);
         } else {
             return $this->render('update', [
@@ -120,7 +137,17 @@ class OrganizacionesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $log = new SeguimientoCambios();
+        $log->usuario = Yii::$app->user->identity->IdUsuario;
+        $log->tabla = 'Organizaciones';
+        $log->accion = SeguimientoCambios::DELETE;
+        $log->fecha = date('Y-m-d H:i:s');
+        $log->detalles = json_encode($model->attributes);
+
+        $model->delete();
+        $log->save();
 
         return $this->redirect(['index']);
     }

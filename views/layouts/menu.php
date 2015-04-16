@@ -37,10 +37,19 @@ use yii\helpers\Url;
             <?php } ?>
         </ul>
     </li>
-    <li class="<?= Yii::$app->request->getPathInfo() == 'promocion/' ? 'active' : '' ?>">
-        <a href="<?= Url::to(['promocion/index']) ?>">
-            <i class="fa fa-child"></i> <span>Promoción</span>
+     <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'promocion') !== false ? 'active' : '' ?>">
+        <a href="#">
+            <i class="fa fa-users"></i> <span>Promoción</span>
+            <i class="fa fa-angle-left pull-right"></i>
         </a>
+        <ul class="treeview-menu" style="display: none;">
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'promocion/') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['promocion/index']) ?>" style="margin-left: 10px;"><i class="fa fa-search"></i> Buscar</a>
+            </li>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'promocion/create') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['promocion/create']) ?>" style="margin-left: 10px;"><i class="fa fa-user-plus"></i> Promover</a>
+            </li>
+        </ul>
     </li>
     <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'reporte') !== false ? 'active' : '' ?>">
         <a href="#">

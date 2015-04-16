@@ -18,6 +18,7 @@ use app\helpers\ResizeImage;
 use app\helpers\MunicipiosUsuario;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
+use app\models\SeguimientoCambios;
 
 /**
  * PadronController implements the CRUD actions for PadronGlobal model.
@@ -307,6 +308,15 @@ class PadronController extends Controller
                 }
             }
 
+            $log = new SeguimientoCambios();
+            $log->usuario = Yii::$app->user->identity->IdUsuario;
+            $log->tabla = 'PadronGlobal';
+            $log->campo = 'CLAVEUNICA';
+            $log->nuevo_valor = $model->CLAVEUNICA;
+            $log->accion = SeguimientoCambios::INSERT;
+            $log->fecha = date('Y-m-d H:i:s');
+            $log->save();
+
             return $this->redirect(['view', 'id' => $model->CLAVEUNICA]);
         } else {
             return $this->render('create', [
@@ -364,6 +374,14 @@ class PadronController extends Controller
                 }
             }
 
+            $log = new SeguimientoCambios();
+            $log->usuario = Yii::$app->user->identity->IdUsuario;
+            $log->tabla = 'PadronGlobal';
+            $log->accion = SeguimientoCambios::UPDATE;
+            $log->fecha = date('Y-m-d H:i:s');
+            $log->detalles = json_encode($model->attributes);
+            $log->save();
+
             return $this->redirect(['view', 'id' => $model->CLAVEUNICA]);
         } else {
             return $this->render('update', [
@@ -384,7 +402,17 @@ class PadronController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+
+        $log = new SeguimientoCambios();
+        $log->usuario = Yii::$app->user->identity->IdUsuario;
+        $log->tabla = 'PadronGlobal';
+        $log->accion = SeguimientoCambios::DELETE;
+        $log->fecha = date('Y-m-d H:i:s');
+        $log->detalles = json_encode($model->attributes);
+
+        $model->delete();
+        $log->save();
 
         return $this->redirect(['index']);
     }

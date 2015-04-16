@@ -237,7 +237,6 @@ class SiteController extends Controller
                 $log->registro =  (String)$nodoEstructura->IdNodoEstructuraMov;
                 $log->accion = SeguimientoCambios::UPDATE;
                 $log->fecha = date('Y-m-d H:i:s');
-                //$log->detalles = ;
 
                 $nodoEstructura->IdPersonaPuesto = $claveunica;
                 $nodoEstructura->save();

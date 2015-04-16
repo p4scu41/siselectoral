@@ -13,6 +13,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use app\helpers\MunicipiosUsuario;
+use app\models\SeguimientoCambios;
 
 /**
  * PromocionController implements the CRUD actions for Promocion model.
@@ -89,6 +90,14 @@ class PromocionController extends Controller
                 $modelDetalle->IdPErsonaPromueve = $request['IdPersonaPromueve'];
                 $modelDetalle->IdPersonaPromovida = $request['IdpersonaPromovida'];
                 $modelDetalle->save();
+
+                $log = new SeguimientoCambios();
+                $log->usuario = Yii::$app->user->identity->IdUsuario;
+                $log->tabla = 'DetallePromocion';
+                $log->detalles = json_encode($modelDetalle->attributes);
+                $log->accion = SeguimientoCambios::INSERT;
+                $log->fecha = date('Y-m-d H:i:s');
+                $log->save();
             }
 
             if (Promocion::existsPromocion($request['IdpersonaPromovida'])) {
@@ -97,6 +106,14 @@ class PromocionController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $log = new SeguimientoCambios();
+            $log->usuario = Yii::$app->user->identity->IdUsuario;
+            $log->tabla = 'Promocion';
+            $log->detalles = json_encode($model->attributes);
+            $log->accion = SeguimientoCambios::INSERT;
+            $log->fecha = date('Y-m-d H:i:s');
+            $log->save();
+
             return $this->redirect(['index']);
             //return $this->redirect(['view', 'IdEstructuraMov' => $model->IdEstructuraMov, 'IdpersonaPromovida' => $model->IdpersonaPromovida]);
         } else {
