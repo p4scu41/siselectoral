@@ -72,7 +72,7 @@ SCRIPT;
             <?PHP
             echo $form->field($model, 'IdPersonaPuesto')->widget(Select2::classname(), [
                 'options' => [
-                    'placeholder' => 'Nombre Persona asignada al Puesto en donde promueve',
+                    'placeholder' => 'Nombre del promotor asignado',
                     'id' => 'persona_puesto'
                 ],
                 'name' => 'persona_puesto',
@@ -106,7 +106,7 @@ SCRIPT;
                             'widgetClass' => 'yii\widgets\MaskedInput',
                             'options' => [
                                 'mask' => '99/99/9999',
-                                'options' => ['class'=>'form-control']
+                                'options' => ['class'=>'form-control', 'placeholder'=>'dd/mm/aaaa']
                             ],
                         ]);
                     ?>

@@ -79,7 +79,7 @@ class Promocion extends \yii\db\ActiveRecord
             'IdpersonaPromovida' => 'Persona Promovida',
             'IdPuesto' => 'Puesto en donde promueve',
             'IdPersonaPromueve' => 'Persona que promueve',
-            'IdPersonaPuesto' => 'Persona asignada al Puesto',
+            'IdPersonaPuesto' => 'Nombre del promotor asignado',
             'FechaPromocion' => 'Fecha de Promoción',
         ];
     }
