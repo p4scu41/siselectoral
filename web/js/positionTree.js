@@ -346,7 +346,7 @@ $(document).ready(function(){
                 for(fila in response) {
                     if (response[fila].Integrantes != 0) {
                         $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
-                                '<a class="btn btn-default" type="button" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'" title="Desplegar detalles">'+
+                                '<a class="btn btn-default" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'" title="Desplegar detalles">'+
                                 '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></td></tr>';
                         count++;
                     }
@@ -360,7 +360,7 @@ $(document).ready(function(){
             }
 
             $('#list_programas').html($tabla);
-            $('#list_programas button').click(getIntegrantesBySeccion);
+            $('#list_programas a').click(getIntegrantesBySeccion);
             $('#no_programas').html(count);
             $('#list_integrantes').html('');
             $('#list_integrantes').hide();
@@ -383,7 +383,7 @@ $(document).ready(function(){
 
                 for(fila in response) {
                     $tabla += '<tr class="text-center"><td>'+parseInt(response[fila].SECCION)+'</td><td>'+response[fila].MetaAlcanzar+'</td>'+
-                            '<td>'+response[fila].total+'</td><td><a class="btn btn-default" type="button" data-idorg="'+idorg+'" data-nombreorg="'+$(self).data('nombreorg')+'" '+
+                            '<td>'+response[fila].total+'</td><td><a class="btn btn-default" data-idorg="'+idorg+'" data-nombreorg="'+$(self).data('nombreorg')+'" '+
                             'data-seccion="'+parseInt(response[fila].SECCION)+'" title="Ver Beneficiarios"><span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></tr>';
                 }
                 $tabla += '</tbody></table>';
@@ -391,7 +391,7 @@ $(document).ready(function(){
                 $tabla = 'Sin beneficiarios'
             }
             $('#list_integrantes').html($tabla);
-            $('#list_integrantes button').click(listIntegratesFromSeccion);
+            $('#list_integrantes a').click(listIntegratesFromSeccion);
             $('#list_integrantes').toggle();
         });
     }
@@ -708,7 +708,7 @@ $(document).ready(function(){
             dataType: "json",
             data: {_csrf: CookieParams._csrf ,idMuni: $('#municipio').val()},
             type: "GET",
-        }).done(function(response){
+        }).done(function(response) {
             $('#loadIndicator').hide();
             if (response.length == 0) {
                 $('#alertResult').html('No se encontraron resultados en la b&uacute;squeda');
@@ -717,9 +717,48 @@ $(document).ready(function(){
                 var fecha = new Date();
                 $('#alertResult').hide();
                 tablaResumen = $(ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
+                $('<th>Detalles</th>').insertAfter(tablaResumen.find('th:last'));
+
+                tablaResumen.find('tr').each(function(index, value) {
+                    td = $(this).find('td:last');
+                    puesto = $(this).find('td:first').text();
+                    if (puesto != 'AVANCE ESTRUCTURA' && puesto != 'PROMOCIÓN') {
+                        $('<td class="center"><a href="#" class="btn btn-default distribucionPuesto" data-puesto="'+puesto+'"><i class="fa fa-list"></i></a></td>').insertAfter(td);
+                    } else {
+                        $('<td class="center"></td>').insertAfter(td);
+                    }
+                });
+
+                tablaResumen.find('.distribucionPuesto').click(function(event){
+                   event.stopPropagation();
+                   event.preventDefault();
+                   self = this;
+
+                   $.ajax({
+                        url: urlGetpuestosfaltantesbyseccion,
+                        type: 'POST',
+                        data: 'muni='+$('#municipio').val()+'&puesto='+$(self).data('puesto'),
+                        dataType: 'json',
+                        beforeSend: function(xhr) {
+                            $(self).append('<i class="fa fa-spinner fa-pulse fa-lg" id="vloading"></i>');
+                        }
+                    }).done(function(response){
+                        $('#vloading').remove();
+
+                        $('#modalFaltantesbBySeccion .modal-title').html('Distribución de faltantes por Sección para el puesto de '+$(self).data('puesto'));
+                        if (response.length == 0) {
+                            $('#modalFaltantesbBySeccion .modal-body').html('<h3>Puestos Completos</h3>');
+                        } else {
+                            $('#modalFaltantesbBySeccion .modal-body').html(ConvertJsonToTable(response, 'tblFaltantes', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
+                        }
+                        $('#modalFaltantesbBySeccion').modal('show');
+                    });
+                   
+                });
+
                 $('#modalResumen .table-responsive').html(tablaResumen);
 
-                $('<tr><td colspan="5">&nbsp;</td></tr>').insertBefore( tablaResumen.find('tr:last'));
+                $('<tr><td colspan="6">&nbsp;</td></tr>').insertBefore(tablaResumen.find('tr:last'));
 
                 $('#tituloResumen').html(' Municipal de '+$('#municipio option:selected').text());
                 $('#fechaResumen').html('Fecha de corte: '+padLeft(fecha.getDate(),2)+'-'+padLeft((fecha.getMonth()+1),2)+'-'+fecha.getFullYear());

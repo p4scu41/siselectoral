@@ -26,10 +26,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta', 'getprogramas', 'getintegrantesprogbyseccion'],
+                'only' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta', 'getprogramas', 'getintegrantesprogbyseccion', 'getpuestosfaltantesbyseccion'],
                 'rules' => [
                     [
-                        'actions' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta', 'getprogramas', 'getintegrantesprogbyseccion'],
+                        'actions' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta', 'getprogramas', 'getintegrantesprogbyseccion', 'getpuestosfaltantesbyseccion'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -314,5 +314,15 @@ class SiteController extends Controller
 
 
         return json_encode($integrantes);
+    }
+
+    public function actionGetpuestosfaltantesbyseccion()
+    {
+        $muni = Yii::$app->getRequest()->post('muni');
+        $puesto = Yii::$app->getRequest()->post('puesto');
+
+        $puestos = DetalleEstructuraMovilizacion::getpuestosfaltantesbyseccion($muni, $puesto);
+
+        return json_encode($puestos);
     }
 }

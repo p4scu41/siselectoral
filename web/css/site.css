@@ -608,6 +608,41 @@ modalPerson #tablaResumen tr:last-child {
     min-height: 260px;
 }
 
+.skin-blue .navbar-chiuni {
+    background-image: -webkit-linear-gradient(top,#009966 0,#009966 100%);
+    background-image: -o-linear-gradient(top,#009966 0,#009966 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#009966),to(#009966));
+    background-image: linear-gradient(to bottom,#009966 0,#009966 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#009966', endColorstr='#009966', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-repeat: repeat-x;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    background-color: #009966;
+}
+/* skin-blue logo */
+.skin-blue .logo-chiuni {
+    background-image: -webkit-linear-gradient(top,#009966 0,#009966 100%);
+    background-image: -o-linear-gradient(top,#009966 0,#009966 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#009966),to(#009966));
+    background-image: linear-gradient(to bottom,#009966 0,#009966 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#009966', endColorstr='#009966', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    background-repeat: repeat-x;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
+    background-color: #009966;
+    color: #f9f9f9;
+}
+#tblFaltantes {
+    max-height: 200px;
+    overflow: auto;
+}
+#tblFaltantes td,
+#tblFaltantes th{
+    text-align: center;
+}
+
 @media print {
     #indicadoresPuesto .btn.btn-app{
         width: 80px;

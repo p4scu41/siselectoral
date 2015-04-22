@@ -847,7 +847,6 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         return $this->hasOne(Puestos::className(), ['IdPuesto' => 'IdPuesto']);
     }
 
-
     public static function getSeccionNodo($idNodo)
     {
         $sqlSeccion = 'SELECT CSeccion.NumSector FROM DetalleEstructuraMovilizacion
@@ -856,5 +855,24 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $seccion = Yii::$app->db->createCommand($sqlSeccion)->queryOne();
 
         return $seccion['NumSector'];
+    }
+
+    public static function getpuestosfaltantesbyseccion($muni, $puesto)
+    {
+        $sqlPuestos = 'SELECT [CSeccion].[NumSector] as Seccion, COUNT(*) Faltantes
+            FROM [DetalleEstructuraMovilizacion]
+            INNER JOIN [CSeccion] ON
+                [CSeccion].[IdMunicipio] = '.$muni.' AND
+                [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector]
+            INNER JOIN [Puestos] ON
+                [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto]
+            WHERE [Municipio] = '.$muni.' AND [IdPersonaPuesto] = \'00000000-0000-0000-0000-000000000000\'
+            AND [Puestos].[Descripcion] = \''.$puesto.'\'
+            GROUP BY [CSeccion].[NumSector]
+            ORDER BY [NumSector]';
+
+        $puestos = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
+
+        return $puestos;
     }
 }

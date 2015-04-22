@@ -6,12 +6,12 @@ use yii\helpers\Url;
 ?>
 <!-- header logo: style can be found in header.less -->
 <header class="header">
-    <a href="<?= Url::home(); ?>" class="logo <?= Yii::$app->params['chiapas_unidos'] ? 'headerBorderBottom' : '' ?>">
+    <a href="<?= Url::home(); ?>" class="logo <?= Yii::$app->params['chiapas_unidos'] ? 'headerBorderBottom logo-chiuni' : '' ?>">
         <!-- Add the class icon to your logo image or logo icon to add the margining -->
         SIRECI <br><span>Sistema de Red Ciudadana</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top <?= Yii::$app->params['chiapas_unidos'] ? 'headerBorderBottom' : '' ?>" role="navigation">
+    <nav class="navbar <?= Yii::$app->params['chiapas_unidos'] ? 'navbar-chiuni' : '' ?> navbar-static-top <?= Yii::$app->params['chiapas_unidos'] ? 'headerBorderBottom' : '' ?>" role="navigation">
         <!-- Sidebar toggle button-->
         <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>

@@ -45,7 +45,10 @@ $config = [
             'bundles' => [
                 'yii\web\JqueryAsset' => [
                     'sourcePath' => null,
-                    'js' => ['//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'],
+                    'basePath' => '@webroot',
+                    'baseUrl' => '@web',
+                    //'js' => ['//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'],
+                    'js' => ['/js/plugins/jquery.min.js'],
                     'jsOptions' => ['position' => \yii\web\View::POS_HEAD],
                 ],
                 'yii\web\BootstrapAsset' => [

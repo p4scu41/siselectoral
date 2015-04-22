@@ -12,7 +12,6 @@ $this->title = 'Iniciar Sesión';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="form-box" id="login-box">
-    <h1 class="text-center" style="color: #356437">Inicio de Sesión</h1>
     <div class="header_chiapas_solidario">
         <div class="row">
             <div class="col-xs-6 text-right">
