@@ -11,16 +11,20 @@ $(document).ready(function(){
             type: "GET",
         }).done(function(response){
             if (response.error) {
-                alert('Ocurrió un error al realizar la asignación del puesto.');
+                $.alert('No se puede realizar la asignación del puesto. <br/>'+response.puesto, {
+                    title: 'Asignación del puest.',
+                    buttons: [{
+                            title: 'Ok',
+                            callback: function() { $('#btnBuscar').click(); $(this).dialog("close"); },
+                        }]
+                });
             } else {
                 $.alert('Persona asignada al puesto exitosamente.', {
                     title: 'Asignación Exitosa',
-                    buttons: [
-                        {
+                    buttons: [{
                             title: 'Ok',
                             callback: function() { $('#btnBuscar').click(); $(this).dialog("close"); },
-                        }
-                    ]
+                        }]
                 });
             }
         });

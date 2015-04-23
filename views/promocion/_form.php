@@ -37,7 +37,7 @@ SCRIPT;
 
 <div class="promocion-form">
 
-    <?php $form = ActiveForm::begin();
+    <?php $form = ActiveForm::begin(['id'=>'frmPromocion']);
 
         echo $form->errorSummary($model, ['class'=>'alert alert-danger']);
 
@@ -95,7 +95,8 @@ SCRIPT;
                     'pluginEvents' => [
                         'change' => 'function(event) { '
                             . 'if(event.added != undefined) { '
-                            . '$("#persona_promueve").select2("val", event.added.CLAVEUNICA); } }',
+                            . '$("#persona_promueve").select2("val", event.added.CLAVEUNICA); } '
+                            . '$("#resultValidacion").html(""); }',
                         'select2-removed' => 'function() { $("#promocion-idpersonapromueve").val(""); $("#persona_promueve").select2("val", ""); }',
                         'select2-loaded' => 'function() { $("#desc_puesto_persona_promueve").select2("val", $("#promocion-idpersonapromueve").val()); }',
                     ]
@@ -134,7 +135,8 @@ SCRIPT;
                     'pluginEvents' => [
                         'change' => 'function(event) { '
                             . 'if(event.added != undefined) { '
-                            . '$("#desc_puesto_promueve").select2("val", event.added.CLAVEUNICA); } }',
+                            . '$("#desc_puesto_promueve").select2("val", event.added.CLAVEUNICA); } '
+                            . '$("#resultValidacion").html(""); }',
                         'select2-removed' => 'function(event) { $("#promocion-idpersonapromueve").val(""); $("#desc_puesto_promueve").select2("val", ""); }',
                         'select2-loaded' => 'function() { $("#persona_promueve").select2("val", $("#promocion-idpersonapromueve").val()); }',
                     ]
@@ -182,7 +184,8 @@ SCRIPT;
                     'pluginEvents' => [
                         'change' => 'function(event) { '
                             . 'if(event.added != undefined) { '
-                            . '$("#persona_puesto").select2("val", event.added.CLAVEUNICA); } }',
+                            . '$("#persona_puesto").select2("val", event.added.CLAVEUNICA); } '
+                            . '$("#resultValidacion").html(""); }',
                         'select2-removed' => 'function() { $("#promocion-idpuesto, #promocion-idpersonapuesto").val(""); $("#persona_puesto").select2("val", ""); }',
                         'select2-loaded' => 'function() { $("#puesto").select2("val", $("#promocion-idpuesto").val()); }',
                     ]
@@ -222,7 +225,8 @@ SCRIPT;
                     'pluginEvents' => [
                         'change' => 'function(event) { '
                             . 'if(event.added != undefined) { '
-                            . '$("#puesto").select2("val", event.added.CLAVEUNICA); } }',
+                            . '$("#puesto").select2("val", event.added.CLAVEUNICA); } '
+                            . '$("#resultValidacion").html(""); }',
                         'select2-removed' => 'function(event) { $("#promocion-idpuesto, #promocion-idpersonapuesto").val(""); $("#puesto").select2("val", ""); }',
                         'select2-loaded' => 'function() { $("#persona_puesto").select2("val", $("#promocion-idpuesto").val()); }',
                     ]
@@ -239,7 +243,11 @@ SCRIPT;
     <?= Html::activeHiddenInput($model, 'FechaPromocion', ['value' => date('Y-m-d H:i:s')]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <div id="resultValidacion"></div>
+    </div>
+
+    <div class="form-group">
+        <?= Html::button($model->isNewRecord ? 'Guardar' : 'Actualizar', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'id'=>'btnSendForm']) ?>
         <?= Html::a('Cancelar', ['index'], ['class' => 'btn btn-danger']) ?>
     </div>
 

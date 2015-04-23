@@ -875,4 +875,20 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         return $puestos;
     }
+
+    public static function existsPersonaOnEstructura($claveunica)
+    {
+        $sql = 'SELECT
+                [Puestos].[Descripcion] as puesto,
+                [DetalleEstructuraMovilizacion].[Descripcion] as estructura
+            FROM [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos] ON
+            [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto]
+            WHERE [IdPersonaPuesto] = \''.$claveunica.'\'
+            AND [IdPersonaPuesto] != \'00000000-0000-0000-0000-000000000000\'';
+
+        $persona = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return $persona;
+    }
 }

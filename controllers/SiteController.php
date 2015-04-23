@@ -225,6 +225,14 @@ class SiteController extends Controller
         $error = false;
 
         try {
+            $persona = DetalleEstructuraMovilizacion::existsPersonaOnEstructura($claveunica);
+
+            if ($persona != false) {
+                return json_encode(['error'=>true,
+                    'puesto'=>'La persona seleccionada ya esta asignada al puesto '.
+                    $persona['puesto'].' ('.$persona['estructura'].')']);
+            }
+
             $nodoEstructura = DetalleEstructuraMovilizacion::findOne($nodo);
 
             if ($nodoEstructura) {
@@ -248,7 +256,7 @@ class SiteController extends Controller
             $error = true;
         }
 
-        return json_encode(['error'=>$error]);
+        return json_encode(['error'=>$error, 'puesto'=>'']);
     }
 
     public function actionGetmetabypromotor($id)

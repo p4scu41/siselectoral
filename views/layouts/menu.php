@@ -30,11 +30,11 @@ use yii\helpers\Url;
             <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron/buscar') !== false ? 'active' : '' ?>">
                 <a href="<?= Url::to(['padron/buscar']) ?>" style="margin-left: 10px;"><i class="fa fa-search"></i> Buscar</a>
             </li>
-            <?php if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) { ?>
+            <?php //if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) { ?>
             <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'padron/create') !== false ? 'active' : '' ?>">
                 <a href="<?= Url::to(['padron/create']) ?>" style="margin-left: 10px;"><i class="fa fa-user-plus"></i> Registrar</a>
             </li>
-            <?php } ?>
+            <?php //} ?>
         </ul>
     </li>
      <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'promocion') !== false ? 'active' : '' ?>">

@@ -115,10 +115,11 @@ $(document).ready(function(){
             return false;
         }
 
-        if ($('#tipo_promovido').val() == '') {
+        if ($('[name=tipo_promovido]:checked').val() == undefined) {
             $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                '<span aria-hidden="true">&times;</span></button>Debe seleccionar el tipo de reporte</div>');
+                '<span aria-hidden="true">&times;</span></button>Debe seleccionar el tipo de reporte: '+
+                'Promovidos efectivos o Listado de Promoción</div>');
             return false;
         }
 
