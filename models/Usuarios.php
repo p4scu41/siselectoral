@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\helpers\generarPassword;
 
 /**
  * This is the model class for table "Usuarios".
@@ -50,11 +51,11 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
         return [
             'IdUsuario' => 'Id Usuario',
             'IdEstructuraMov' => 'Id Estructura Mov',
-            'IdPersona' => 'Id Persona',
-            'IdPerfil' => 'Id Perfil',
+            'IdPersona' => 'Persona',
+            'IdPerfil' => 'Perfil',
             'login' => 'Usuario',
             'password' => 'Contraseña',
-            'Estado' => 'Estado',
+            'Estado' => 'Status',
             'usrActualiza' => 'Usr Actualiza',
         ];
     }
@@ -165,6 +166,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
      */
     public function validatePassword($password)
     {
-        return strtolower($this->password) === strtolower(md5($password));
+        return generarPassword::checkPassword($password, $this->password);
+        //return strtolower($this->password) === strtolower(md5($password));
     }
 }
