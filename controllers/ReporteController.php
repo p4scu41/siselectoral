@@ -35,9 +35,7 @@ class ReporteController extends \yii\web\Controller
         $municipios = MunicipiosUsuario::getMunicipios();
 
         return $this->render('index', [
-            'municipios' => $municipios,
-            //'reporte' => $reporteHTML,
-            //'titulo' => $titulo,
+            'municipios' => $municipios
         ]);
     }
 
@@ -77,7 +75,7 @@ class ReporteController extends \yii\web\Controller
                     $nodo = array_pop($nodos);
                 }
 
-                $respuesta['titulo'] = 'Listado de Promotores con sus respectivos Promovidos';
+                $respuesta['titulo'] = 'Listado Promotores - Promovidos';
                 $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('tipo_promovido'));
             }
 
@@ -89,8 +87,8 @@ class ReporteController extends \yii\web\Controller
 
     public function actionPdf()
     {
-        $content = Yii::$app->request->post('content');
         $titulo = Yii::$app->request->post('title');
+        $content = str_replace('<h3 class="text-center" id="titulo">'.$titulo.'</h3>', '', Yii::$app->request->post('content'));
 
         $pdf = new Pdf([
             'mode' => Pdf::MODE_CORE,
@@ -102,6 +100,7 @@ class ReporteController extends \yii\web\Controller
                 'title' => $titulo,
                 'subject' => 'SIRECI - Sistema de Red Ciudadana '.date("d-m-Y h:i:s A")
             ],
+            'defaultFontSize' => 10,
             'methods' => [
                 'SetHeader' => ['|'.$titulo.'|'],
                 'SetFooter' => ['SIRECI - Sistema de Red Ciudadana|Pagina {PAGENO}|'.date("d-m-Y h:i:s A")],
@@ -111,6 +110,9 @@ class ReporteController extends \yii\web\Controller
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'application/pdf');
+
+        $pdfApi = $pdf->getApi();
+        $pdfApi->SetProtection(['print']);
 
         return $pdf->render();
     }

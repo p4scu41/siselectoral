@@ -4,6 +4,8 @@ $(document).ready(function () {
     $('#personaPromovida').css('cursor', 'pointer');
 
     $('#personaPromovida').on('click, focus', function () {
+       $('#municipio option[value='+$('#municipio_promocion').val()+']').attr('selected', true);
+       $('#municipio').trigger('change');
        $('#modalBuscarPersona').modal('show');
     });
 

@@ -152,11 +152,11 @@ class PadronController extends Controller
             'dependientes' => $dependientes,
             'jefe' => $jefe,
             'numDepend' => $numDepend,
-            'secciones' => $secciones,
+            'secciones' => isset($secciones) ? $secciones : '',
             'no_meta_estruc' => $no_meta_estruc,
             'no_meta_proyec' => $no_meta_proyec,
             'no_meta_promocion' => $no_meta_promocion,
-            'actionPersona' => $actionPersona,
+            'actionPersona' => isset($actionPersona) ? $actionPersona : '',
             'idPuesto' => $IdPuesto,
             'nodo' => $IdNodo,
         ]);
@@ -296,7 +296,7 @@ class PadronController extends Controller
         }
         
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $pathFoto = Url::to('@app/fotos', true).'/'.$model->CLAVEUNICA.'.jpg';
+            $pathFoto = Url::to('@app/fotos', true).'/'.strtolower($model->CLAVEUNICA).'.jpg';
             $model->foto = UploadedFile::getInstance($model, 'foto');
             if ($model->foto && $model->validate()) {
                 $model->foto->saveAs($pathFoto);
@@ -360,7 +360,7 @@ class PadronController extends Controller
         );
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $pathFoto = Url::to('@app/fotos', true).'/'.$model->CLAVEUNICA.'.jpg';
+            $pathFoto = Url::to('@app/fotos', true).'/'.strtolower($model->CLAVEUNICA).'.jpg';
             $model->foto = UploadedFile::getInstance($model, 'foto');
 
             if ($model->foto && $model->validate()) {

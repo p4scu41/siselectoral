@@ -67,7 +67,7 @@ use yii\helpers\Url;
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="glyphicon glyphicon-user"></i>
-                        <span><?= Yii::$app->user->identity->login ?> <i class="caret"></i></span>
+                        <span><?= isset(Yii::$app->user->identity) ? Yii::$app->user->identity->login : '' ?> <i class="caret"></i></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->

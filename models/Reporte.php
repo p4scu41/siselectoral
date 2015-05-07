@@ -114,8 +114,9 @@ class Reporte extends \yii\db\ActiveRecord
      * @param type $idNodo
      * @return type
      */
-    public static function nodoEstructuraJSON($idNodo, $puestos)
+    public static function nodoEstructuraJSON($idNodo, $puestos, $espacios = '')
     {
+        $agregarEspacios = $espacios;
         $sqlNodo = 'SELECT
                     [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
                     ,[Puestos].[Descripcion] AS DescripcionPuesto
@@ -218,34 +219,41 @@ class Reporte extends \yii\db\ActiveRecord
 
         if (count($datosPromocion)) {
             $metaPromocion['meta'] = $datosPromocion[1]['MetaPromocion'];
-            $metaPromocion['avance'] = ($datosPromocion['meta'] != 0 ?
-                                            round($datosPromocion[0]['MetaPromocion']/$datosPromocion['meta']*100) : 0);
+            $metaPromocion['avance'] = ($datosPromocion[1]['MetaPromocion'] != 0 ?
+                                            round($datosPromocion[0]['MetaPromocion']/$datosPromocion[1]['MetaPromocion']*100) : 0);
         }
 
-        $estructura .= '{ "Puesto": "'.$nodo['DescripcionPuesto'].'", '
-                        .'"Descripción": "'.$nodo['DescripcionNodo'].'",'
+        $agregarEspacios .= $espacios;
+
+        $estructura .= '{ "Puesto": "'.$agregarEspacios.$nodo['DescripcionPuesto'].'", '
+                        //.'"Descripción": "'.$nodo['DescripcionNodo'].'",'
                         .'"Nombre": "'.str_replace('\\', 'Ñ', $nodo['Responsable']).'",'
                         .'"Sección": "'.$nodo['Seccion'].'",'
                         .'"Meta Estruc": "'.$metaEstructura['meta'].'",'
+                        .'"Vacantes": "'.$datosEstructura[1]['MetaEstructura'].'",'
                         .'"% Avance Estruc": "'.$metaEstructura['avance'].'",'
                         .'"Meta Promo": "'.$metaPromocion['meta'].'",'
                         .'"% Avance Promo": "'.$metaPromocion['avance'].'",'
                         .'"Tel. Celular": "'.$nodo['TELMOVIL'].'", '
-                        .'"Tel. Casa": "'.$nodo['TELCASA'].'", '
-                        .'"Domicilio": "'.str_replace('\\', 'Ñ', $nodo['Domicilio']).'" },';
+                        .'"Tel. Casa": "'.$nodo['TELCASA'].'" },';
+                        //.'"Domicilio": "'.str_replace('\\', 'Ñ', $nodo['Domicilio']).'" },';
 
         $sqlNodosDependientes = 'SELECT
                         [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
                     FROM
                         [DetalleEstructuraMovilizacion]
+                    LEFT JOIN
+                        [PadronGlobal] ON
+                        [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
                     WHERE
-                        [DetalleEstructuraMovilizacion].[IdPuestoDepende] = '.$nodo['IdNodoEstructuraMov'];
+                        [DetalleEstructuraMovilizacion].[IdPuestoDepende] = '.$nodo['IdNodoEstructuraMov'].'
+                     ORDER BY [PadronGlobal].[NOMBRE], [PadronGlobal].[APELLIDO_PATERNO], [PadronGlobal].[APELLIDO_MATERNO]';
 
         $child = Yii::$app->db->createCommand($sqlNodosDependientes)->queryAll();
 
         if (count($child) > 0) {
             foreach ($child as $row) {
-                $estructura .= self::nodoEstructuraJSON($row['IdNodoEstructuraMov'], $puestos);
+                $estructura .= self::nodoEstructuraJSON($row['IdNodoEstructuraMov'], $puestos, $agregarEspacios);
             }
         }
 
@@ -289,7 +297,7 @@ class Reporte extends \yii\db\ActiveRecord
 
         if (count($nodos)) {
             foreach ($nodos as $nodo) {
-                $estructura .= self::nodoEstructuraJSON($nodo['IdNodoEstructuraMov'], $puestos);
+                $estructura .= self::nodoEstructuraJSON($nodo['IdNodoEstructuraMov'], $puestos, '&nbsp');
             }
         }
 
@@ -334,7 +342,7 @@ class Reporte extends \yii\db\ActiveRecord
             FROM
                 [Promocion]
             INNER JOIN [PadronGlobal] ON
-                [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdPersonaPromueve] AND
+                [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdPersonaPuesto] AND
                 [PadronGlobal].[MUNICIPIO] = '.$idMuni.'
             INNER JOIN [DetalleEstructuraMovilizacion] ON
                 [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA] AND
@@ -357,7 +365,7 @@ class Reporte extends \yii\db\ActiveRecord
                 $reporte .= '{ "Nombre": "<b>'.$promotor['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promotor['nombrePersonaPromueve']).'</b>",'
                                 .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
                                 .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
-                                .'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" ,'
+                                //.'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" ,'
                                 .'"Promovido Por": "" },';
 
                 $sqlPromovidos = 'SELECT
@@ -384,7 +392,7 @@ class Reporte extends \yii\db\ActiveRecord
                         $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
                                 .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
                                 .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
-                                .'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",'
+                                //.'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",'
                                 .'"Promovido Por": " --- " },';
                         $countPromovidos++;
                     }
@@ -392,7 +400,7 @@ class Reporte extends \yii\db\ActiveRecord
                     $reporte .= '{ "Nombre": "Sin Promovidos",'
                                 .'"Tel. Celular": "", '
                                 .'"Tel. Casa": "", '
-                                .'"Domicilio": "", '
+                                //.'"Domicilio": "", '
                                 .'"Promovido Por": "" },';
                 }
 
@@ -432,7 +440,7 @@ class Reporte extends \yii\db\ActiveRecord
                         $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
                                 .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
                                 .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
-                                .'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",'
+                                //.'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",'
                                 .'"Promovido Por": "'.$promovido['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promovido['nombrePersonaPromueve']).'" },';
                         $countPromovidos++;
                     }
@@ -441,7 +449,7 @@ class Reporte extends \yii\db\ActiveRecord
                 $reporte .= '{ "Nombre": " &nbsp; ",'
                             .'"Tel. Celular": " &nbsp; ", '
                             .'"Tel. Casa": " &nbsp; ", '
-                            .'"Domicilio": " &nbsp; ", '
+                            //.'"Domicilio": " &nbsp; ", '
                             .'"Promovido Por": " &nbsp; " },';
             }
 
@@ -496,8 +504,8 @@ class Reporte extends \yii\db\ActiveRecord
             foreach ($promotores as $promotor) {
                 $reporte .= '{ "Nombre": "<b>'.$promotor['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promotor['Responsable']).'</b>",'
                                 .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
-                                .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
-                                .'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" },';
+                                .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>" },';
+                                //.'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" },';
 
                 $sqlPromovidos = 'SELECT
                         ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
@@ -522,22 +530,22 @@ class Reporte extends \yii\db\ActiveRecord
                     foreach ($promovidos as $promovido) {
                         $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
                                 .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
-                                .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
-                                .'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'" },';
+                                .'"Tel. Casa": "'.$promovido['TELCASA'].'" },';
+                                //.'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'" },';
                         $countPromovidos++;
                     }
                 } else {
                     $reporte .= '{ "Nombre": "Sin Promovidos",'
                                 .'"Tel. Celular": "", '
-                                .'"Tel. Casa": "", '
-                                .'"Domicilio": "" },';
+                                .'"Tel. Casa": "" },';
+                                //.'"Domicilio": "" },';
                 }
                 
                 $reporte .= '{ "Nombre": " &nbsp; ",'
                             .'"Tel. Celular": " &nbsp; ", '
-                            .'"Tel. Casa": " &nbsp; ", '
-                            .'"Domicilio": " &nbsp; ", '
-                            .'"Promovido Por": " &nbsp; " },';
+                            .'"Tel. Casa": " &nbsp; " },';
+                            //.'"Domicilio": " &nbsp; ", '
+                            //.'"Promovido Por": " &nbsp; " },';
             }
 
             $reporte .= ']';

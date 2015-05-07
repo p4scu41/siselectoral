@@ -778,8 +778,15 @@ $(document).ready(function(){
                 '<option value="0">Todos</option>';
 
             for (var i=0; i<result.length; i++) {
+                text = result[i].DescripcionEstructura;
+
+                // Para el caso de promotores, agregar el nombre
+                if (result[i].Nivel == 7) {
+                    text += ' ' + result[i].NOMBRECOMPLETO;
+                }
+
                 filtro += '<option value="'+result[i].IdNodoEstructuraMov+'" data-nivel="'+
-                    result[i].Nivel+'">'+result[i].DescripcionEstructura+'</option>';
+                    result[i].Nivel+'">'+text+'</option>';
             }
 
             filtro += '</select></div>';

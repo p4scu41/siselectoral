@@ -16,9 +16,9 @@ echo $this->render('_filtros', ['municipios' => $municipios]);
     <a href="#" data-url="<?= Url::to(['reporte/pdf'], true) ?>" class="btn btn-default btnExportPdf">
         <i class="fa fa-file-pdf-o"></i> Exportar a pdf
     </a>
-    <a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
+    <!--<a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
         <i class="fa fa-file-excel-o"></i> Exportar a Excel
-    </a>
+    </a>-->
 </div>
 
 <div class="alert alert-danger" id="alertResult" style="display: none">
@@ -27,8 +27,8 @@ echo $this->render('_filtros', ['municipios' => $municipios]);
 
 <?PHP
 echo '<div id="reporteContainer">';
-echo '<h3 class="text-center" id="titulo">'.$titulo.'</h3>';
-echo '<div id="tabla_reporte">'.$reporte.'</div>';
+echo '<h3 class="text-center" id="titulo"></h3>';
+echo '<div id="tabla_reporte"></div>';
 echo '</div>';
 ?>
 
@@ -36,9 +36,9 @@ echo '</div>';
     <a href="#" data-url="<?= Url::to(['reporte/pdf'], true) ?>" class="btn btn-default btnExportPdf">
         <i class="fa fa-file-pdf-o"></i> Exportar a pdf
     </a>
-    <a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
+    <!--<a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
         <i class="fa fa-file-excel-o"></i> Exportar a Excel
-    </a>
+    </a>-->
 </div>
 
 <div class="modal fade" id="modalResumen" tabindex='-1'>
@@ -64,4 +64,4 @@ echo '</div>';
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="formExport"></div>
+<div id="formExport" style="display:none"></div>

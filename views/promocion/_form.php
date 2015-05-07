@@ -42,7 +42,13 @@ SCRIPT;
         echo $form->errorSummary($model, ['class'=>'alert alert-danger']);
 
         echo '<div class="form-group"><label class="control-label" for="municipio_promocion">Municipio</label>';
-        echo Html::dropDownList('municipio_promocion', null, ([0=>'Seleccione una opción']+$municipios), [
+        $muniSelected = null;
+
+        if (strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idCapturista'])) {
+            $muniSelected = Yii::$app->user->identity->persona->MUNICIPIO;
+        }
+
+        echo Html::dropDownList('municipio_promocion', $muniSelected, ([0=>'Seleccione una opción']+$municipios), [
                 'class' => 'form-control',
                 'id' => 'municipio_promocion',
             ]);
@@ -67,7 +73,7 @@ SCRIPT;
                 <?PHP
                 echo Select2::widget([
                     'options' => [
-                        'placeholder' => 'Descripcion del Puesto que promueve',
+                        'placeholder' => 'Puesto que promueve (CM, CZ, CS, JS, CP, PR)',
                         'id' => 'desc_puesto_promueve'
                     ],
                     'name' => 'desc_puesto_persona_promueve',
@@ -151,11 +157,11 @@ SCRIPT;
     <div class="form-group">
         <label>Puesto en donde promueve</label>
         <div class="row">
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
                 <?PHP
-                echo Select2::widget([
+                /*echo Select2::widget([
                     'options' => [
-                        'placeholder' => 'Descripcion del Puesto en donde promueve',
+                        'placeholder' => 'Puesto en donde promueve (CM, CZ, CS, JS, CP, PR)',
                         'id' => 'puesto'
                     ],
                     'name' => 'puesto',
@@ -189,14 +195,15 @@ SCRIPT;
                         'select2-removed' => 'function() { $("#promocion-idpuesto, #promocion-idpersonapuesto").val(""); $("#persona_puesto").select2("val", ""); }',
                         'select2-loaded' => 'function() { $("#puesto").select2("val", $("#promocion-idpuesto").val()); }',
                     ]
-                ]);
+                ]);*/
                 ?>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8">-->
+            <div class="col-md-12">
                 <?PHP
                 echo Select2::widget([
                     'options' => [
-                        'placeholder' => 'Nombre Persona asignada al Puesto en donde promueve',
+                        'placeholder' => 'Nombre del Promotor', //Persona asignada al Puesto en donde promueve
                         'id' => 'persona_puesto'
                     ],
                     'name' => 'persona_puesto',
@@ -210,6 +217,7 @@ SCRIPT;
                             'data' => new JsExpression('function(term,page) { '
                                 . 'return { nombre:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
+                                . 'puesto: "PR", '
                                 . 'seccion: $("#seccion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
@@ -227,7 +235,7 @@ SCRIPT;
                             . 'if(event.added != undefined) { '
                             . '$("#puesto").select2("val", event.added.CLAVEUNICA); } '
                             . '$("#resultValidacion").html(""); }',
-                        'select2-removed' => 'function(event) { $("#promocion-idpuesto, #promocion-idpersonapuesto").val(""); $("#puesto").select2("val", ""); }',
+                        'select2-removed' => 'function(event) { $("#promocion-idpuesto, #promocion-idpersonapuesto").val(""); /*$("#puesto").select2("val", "");*/ }',
                         'select2-loaded' => 'function() { $("#persona_puesto").select2("val", $("#promocion-idpuesto").val()); }',
                     ]
                 ]);

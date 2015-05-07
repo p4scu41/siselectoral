@@ -13,6 +13,7 @@ $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";
 $this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlReporte="'.Url::toRoute('reporte/generar', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlResumen="'.Url::toRoute('site/getresumen', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('getSeccionesMuni="'.Url::toRoute('seccion/getjsmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 ?>
 
@@ -40,12 +41,13 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
                                 ?>
                                 <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
                             </div>
-                            <label class="radio-inline">
+                            <!--<label class="radio-inline">
                                 <input type="radio" name="tipo_promovido" value="1"> Promovidos Efectivos
                             </label>
                             <label class="radio-inline">
                                 <input type="radio" name="tipo_promovido" value="2"> Listado de Promoción
-                            </label><br>
+                            </label>--><br>
+                            <input type="hidden" name="tipo_promovido" value="1"/>
                         </div>
                         <p>
                             <button type="button" class="btn btn-success" id="btnGenerarReporte">
@@ -66,9 +68,9 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
     <a href="#" data-url="<?= Url::to(['reporte/pdf'], true) ?>" class="btn btn-default btnExportPdf">
         <i class="fa fa-file-pdf-o"></i> Exportar a pdf
     </a>
-    <a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
+    <!--<a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
         <i class="fa fa-file-excel-o"></i> Exportar a Excel
-    </a>
+    </a>-->
 </div>
 
 <div class="alert alert-danger" id="alertResult" style="display: none">
@@ -77,8 +79,8 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 
 <?PHP
 echo '<div id="reporteContainer">';
-echo '<h3 class="text-center" id="titulo">'.$titulo.'</h3>';
-echo '<div id="tabla_reporte">'.$reporte.'</div>';
+echo '<h3 class="text-center" id="titulo"></h3>';
+echo '<div id="tabla_reporte"></div>';
 echo '</div>';
 ?>
 
@@ -86,7 +88,7 @@ echo '</div>';
     <a href="#" data-url="<?= Url::to(['reporte/pdf'], true) ?>" class="btn btn-default btnExportPdf">
         <i class="fa fa-file-pdf-o"></i> Exportar a pdf
     </a>
-    <a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
+    <!--<a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
         <i class="fa fa-file-excel-o"></i> Exportar a Excel
-    </a>
+    </a>-->
 </div>

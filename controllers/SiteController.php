@@ -106,7 +106,7 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->render('logout');
+        return Yii::$app->getResponse()->redirect(Url::to(['site/index']));
     }
 
     public function actionContact()
@@ -289,18 +289,21 @@ class SiteController extends Controller
     {
         //$programas = Organizaciones::find()->where(['IdMunicipio'=>$idMuni, 'idTipoOrganizacion'=>22])->asArray()->all();
         $programas = Organizaciones::getOrgsOnMuni($idMuni);
-        $nodo = DetalleEstructuraMovilizacion::find()->where('IdNodoEstructuraMov='.$idNodo)->one();
+        /*$nodo = DetalleEstructuraMovilizacion::find()->where('IdNodoEstructuraMov='.$idNodo)->one();
         $seccion = null;
         // Puesto = Jefe de Seccion
         if ($nodo->puesto->Nivel == 5) {
             $seccion = DetalleEstructuraMovilizacion::getSeccionNodo($idNodo);
-        }
+        }*/
+
+        $secciones = DetalleEstructuraMovilizacion::getSeccionesNodo($idNodo);
 
         foreach ($programas as $key => $value) {
             $prog = Organizaciones::find()->where(['IdOrganizacion'=>$value['IdOrganizacion']])->one();
             $count = 0;
             if ($prog) {
-                $count = Organizaciones::getCountIntegrantes($value['IdOrganizacion'], $idMuni, $seccion);
+                //$count = Organizaciones::getCountIntegrantes($value['IdOrganizacion'], $idMuni, $seccion);
+                $count = Organizaciones::getCountIntegrantes($value['IdOrganizacion'], $idMuni, $secciones);
             }
 
             $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count]);
@@ -311,15 +314,17 @@ class SiteController extends Controller
 
     public function actionGetintegrantesprogbyseccion($idOrg, $idMuni, $idNodo)
     {
-        $nodo = DetalleEstructuraMovilizacion::find()->where('IdNodoEstructuraMov='.$idNodo)->one();
+        /*$nodo = DetalleEstructuraMovilizacion::find()->where('IdNodoEstructuraMov='.$idNodo)->one();
         $seccion = null;
         // Puesto = Jefe de Seccion
         if ($nodo->puesto->Nivel == 5) {
             $seccion = DetalleEstructuraMovilizacion::getSeccionNodo($idNodo);
         }
 
-        $integrantes = Organizaciones::getCountIntegrantesBySeccion($idOrg, $idMuni, $seccion);
+        $integrantes = Organizaciones::getCountIntegrantesBySeccion($idOrg, $idMuni, $seccion);*/
 
+        $secciones = DetalleEstructuraMovilizacion::getSeccionesNodo($idNodo);
+        $integrantes = Organizaciones::getCountIntegrantesBySeccion($idOrg, $idMuni, $secciones);
 
         return json_encode($integrantes);
     }

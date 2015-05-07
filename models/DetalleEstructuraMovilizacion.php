@@ -472,7 +472,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         for($i=0; $i<count($totales); $i++) {
             $totales[$i]['Ocupados'] = (int) $ocupados[$totales[$i]['IdPuesto']];
-            $totales[$i]['Vacantes'] = (int) $vacantes[$totales[$i]['IdPuesto']];
+            $totales[$i]['Vacantes'] = (int) (isset($vacantes[$totales[$i]['IdPuesto']]) ? $vacantes[$totales[$i]['IdPuesto']] : 0);
             unset($totales[$i]['IdPuesto']);
 
             $totales[$i]['Avances %'] = round(((int)$totales[$i]['Ocupados'] / (int)$totales[$i]['Total'])*100);
@@ -855,6 +855,51 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $seccion = Yii::$app->db->createCommand($sqlSeccion)->queryOne();
 
         return $seccion['NumSector'];
+    }
+    
+    public static function getSeccionesNodo($idNodo)
+    {
+        $sqlSecciones = 'SELECT DISTINCT [CSeccion].[NumSector]
+            FROM [DetalleEstructuraMovilizacion]
+            INNER JOIN [CSeccion] ON
+                [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
+            WHERE [Dependencias] LIKE  \'%|'.$idNodo.'|%\' OR [IdNodoEstructuraMov] = '.$idNodo.'
+            ORDER BY [NumSector]';
+        
+        $secciones = Yii::$app->db->createCommand($sqlSecciones)->queryAll();
+        $secciones = ArrayHelper::map($secciones, 'NumSector', 'NumSector');
+
+        return $secciones;
+    }
+
+    public static function getSeccionesMuni($idMuni)
+    {
+        $sqlSecciones = 'SELECT DISTINCT [CSeccion].[NumSector]
+            FROM [DetalleEstructuraMovilizacion]
+            INNER JOIN [CSeccion] ON
+                [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
+            WHERE [Municipio] = '.$idMuni.'
+            ORDER BY [NumSector]';
+
+        $secciones = Yii::$app->db->createCommand($sqlSecciones)->queryAll();
+
+        return $secciones;
+    }
+
+    public static function getJsmuni($idMuni)
+    {
+        $sqlSecciones = 'SELECT
+                [IdNodoEstructuraMov]
+                ,[NumSector]
+            FROM [DetalleEstructuraMovilizacion]
+            INNER JOIN [CSeccion] ON
+                [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
+            WHERE [IdPuesto] = 5 AND [Municipio] = '.$idMuni.'
+            ORDER BY [NumSector]';
+
+        $secciones = Yii::$app->db->createCommand($sqlSecciones)->queryAll();
+
+        return $secciones;
     }
 
     public static function getpuestosfaltantesbyseccion($muni, $puesto)

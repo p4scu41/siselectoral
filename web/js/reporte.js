@@ -5,8 +5,15 @@ function buildSelect(id, result) {
             '<option value="0">Todos</option>';
 
         for (var i=0; i<result.length; i++) {
+            text = result[i].DescripcionEstructura;
+
+            // Para el caso de promotores, agregar el nombre
+            if (result[i].Nivel == 7) {
+                text += ' ' + result[i].NOMBRECOMPLETO;
+            }
+
             filtro += '<option value="'+result[i].IdNodoEstructuraMov+'" data-nivel="'+
-                result[i].Nivel+'">'+result[i].DescripcionEstructura+'</option>';
+                result[i].Nivel+'">'+text+'</option>';
         }
 
         filtro += '</select></div>';
@@ -57,7 +64,7 @@ function agregaPuestoDepende() {
 }
 
 $(document).ready(function(){
-    $form = $('<form action="" method="post" target="_blank">'+
+    $form = $('<form action="" method="post" target="_blank" style="display:none">'+
             '<input type="text" name="title" id="title">'+
             '<textarea name="content" id="content"></textarea>'+
             '<input type="hidden" name="_csrf" value="'+$('[name=_csrf]').val()+'"></form>');
@@ -84,7 +91,7 @@ $(document).ready(function(){
         $('#loadIndicator').show();
         $('.filtroEstructura').remove();
 
-        var options = '<br /><div class="form-group"><label>Seleccione el detalle del reporte: </label> <br/>&nbsp; ';
+        var options = '<br class="filtroEstructura"/><div class="form-group filtroEstructura"><label>Seleccione el detalle del reporte: </label> <br class="filtroEstructura"/>&nbsp; ';
 
         var idMuni = $(this).val();
 
@@ -92,18 +99,18 @@ $(document).ready(function(){
             $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
                 for (var i=0; i<result.length; i++) {
                     //options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
-                    options += '<div class="checkbox"> &nbsp; <label>'+
+                    options += '<div class="checkbox filtroEstructura"> &nbsp; <label>'+
                             '<input type="checkbox" name="puestos[]" value="'+result[i].IdPuesto+'" '+
                             'data-nivel="'+result[i].Nivel+'" class="chkPuesto" checked> '+
                             result[i].Descripcion+' </label> &nbsp; </div>';
                 }
-                options += '</div><br>';
+                options += '</div><br class="filtroEstructura"/>';
                 $("#bodyForm").append(options);
                 $('.chkPuesto').iCheck({
                     checkboxClass: 'icheckbox_minimal-green',
                     radioClass: 'iradio_minimal-green',
                 });
-                $("#bodyForm").append('<div class="form-group"><label>Seleccione el nivel de estructura: </label></div><br>');
+                $("#bodyForm").append('<div class="form-group filtroEstructura"><label>Seleccione el nivel de estructura: </label></div><br class="filtroEstructura"/>');
             }).done(function(result) {
                 if (result.length>0) {
                     id = doId(result[0].Descripcion);
@@ -166,6 +173,7 @@ $(document).ready(function(){
         }
 
         $('#loadIndicator').show();
+        $('#modalResumen .table-responsive').html('<i class="fa fa-refresh fa-spin text-center" style="font-size: x-large; display: inline-block;"></i>');
         $.ajax({
             url: urlResumen,
             dataType: "json",

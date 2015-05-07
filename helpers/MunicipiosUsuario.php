@@ -9,23 +9,27 @@ class MunicipiosUsuario
 {
     public static function getMunicipios()
     {
-        $findMuni = CMunicipio::find()
+        $municipios = [];
+
+        if (isset(Yii::$app->user->identity)) {
+            $findMuni = CMunicipio::find()
                 ->select(['IdMunicipio', 'DescMunicipio'])
                 ->orderBy('DescMunicipio');
 
-        if (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
-            $listMunicipios = $findMuni->all();
-        } elseif (strtolower(Yii::$app->user->identity->perfil->IdPerfil) == strtolower(Yii::$app->params['idDistrito'])) {
-            $listMunicipios = $findMuni
-                ->where(['DistritoLocal'=>Yii::$app->user->identity->persona->DISTRITOLOCAL])
-                ->all();
-        } else {
-            $listMunicipios = $findMuni
-                ->where(['IdMunicipio'=>Yii::$app->user->identity->persona->MUNICIPIO])
-                ->all();
-        }
+            if (strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idAdmin'])) {
+                $listMunicipios = $findMuni->all();
+            } elseif (strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idDistrito'])) {
+                $listMunicipios = $findMuni
+                    ->where(['DistritoLocal'=>Yii::$app->user->identity->persona->DISTRITOLOCAL])
+                    ->all();
+            } else {
+                $listMunicipios = $findMuni
+                    ->where(['IdMunicipio'=>Yii::$app->user->identity->persona->MUNICIPIO])
+                    ->all();
+            }
 
-        $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+            $municipios = ArrayHelper::map($listMunicipios, 'IdMunicipio', 'DescMunicipio');
+        }
 
         return $municipios;
     }

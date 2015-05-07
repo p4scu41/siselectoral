@@ -231,13 +231,13 @@ class PadronGlobal extends \yii\db\ActiveRecord
      */
     public static function getFotoByUID($uid, $sexo)
     {
-        $pathFoto = Url::to('@app/fotos/'.$uid.'.jpg', true);
+        $pathFoto = Url::to('@app/fotos/'.strtolower($uid).'.jpg');
 
         if (!file_exists($pathFoto)) {
-            $pathFoto = Url::to('@app/web/img/avatar/'.$sexo.'.jpg', true);
+            $pathFoto = Url::to('@app/web/img/avatar/'.$sexo.'.jpg');
 
             if (!file_exists($pathFoto)) {
-                $pathFoto = Url::to('@app/web/img/avatar/U.jpg', true);
+                $pathFoto = Url::to('@app/web/img/avatar/U.jpg');
             }
         }
 

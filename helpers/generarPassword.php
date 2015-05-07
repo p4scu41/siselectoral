@@ -7,21 +7,20 @@ use yii\helpers\ArrayHelper;
 
 class generarPassword
 {
-    public static $cost = 11;
+    public static $prefix = '$2y$10$';
 
     public static function getPassword($clave)
     {
-        $opciones = [
-            'cost' => 11,
-            'salt' => Yii::$app->params['salt'],
-        ];
+        $salt = base64_encode(Yii::$app->params['salt']);
+        $salt = str_replace('+', '.', $salt);
+        $hash = crypt($clave, self::$prefix.$salt.'$');
 
-        return password_hash($clave, PASSWORD_BCRYPT, ['cost' => self::$cost, 'salt' => Yii::$app->params['salt']]);
+        return $hash;
     }
 
     public static function checkPassword($clave, $hash)
     {
-        $new_hash = password_hash($clave, PASSWORD_BCRYPT, ['cost' => self::$cost, 'salt' => Yii::$app->params['salt']]);
+        $new_hash = self::getPassword($clave);
 
         return $hash == $new_hash;
     }

@@ -49,7 +49,7 @@ class Organizaciones extends \yii\db\ActiveRecord
             'IdOrganizacion' => 'Id Organizacion',
             'Nombre' => 'Nombre',
             'Siglas' => 'Siglas',
-            'IdPersonaRepresentante' => 'Representante',
+            'IdPersonaRepresentante' => 'Responsable',
             'IdPersonaEnlace' => 'Enlace',
             'IdMunicipio' => 'Municipio',
             'Observaciones' => 'Observaciones',
@@ -182,16 +182,26 @@ class Organizaciones extends \yii\db\ActiveRecord
      */
     public static function getCountIntegrantes($idOrganicacion, $idMuni, $seccion = null)
     {
-        $count = Yii::$app->db->createCommand('SELECT
+        $sqlCount = 'SELECT
                     COUNT([PadronGlobal].[CLAVEUNICA]) AS total
                     FROM
                         [IntegrantesOrganizaciones]
                     INNER JOIN [PadronGlobal] ON
                         [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
                     WHERE
-                        [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND '.
-                        ($seccion!=null ? '[PadronGlobal].[SECCION] = '.$seccion.' AND ' : '')
-                        .'[PadronGlobal].[MUNICIPIO] = '.$idMuni)->queryOne();
+                        [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND ';
+
+        if ($seccion!=null) {
+            if (is_array($seccion)) {
+                $sqlCount .= ' [PadronGlobal].[SECCION] IN ('.implode(',',$seccion).') AND ';
+            } else {
+                $sqlCount .= ' [PadronGlobal].[SECCION] = '.$seccion.' AND ';
+            }
+        }
+
+        $sqlCount .= ' [PadronGlobal].[MUNICIPIO] = '.$idMuni;
+
+        $count = Yii::$app->db->createCommand($sqlCount)->queryOne();
 
         return $count['total'];
     }
@@ -204,7 +214,7 @@ class Organizaciones extends \yii\db\ActiveRecord
      */
     public static function getCountIntegrantesBySeccion($idOrganicacion, $idMuni, $idSeccion = null)
     {
-        $count = Yii::$app->db->createCommand('SELECT
+        $sqlCount = 'SELECT
                     CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION]
                     ,[CSeccion].[MetaAlcanzar]
                     ,COUNT([PadronGlobal].[CLAVEUNICA]) AS total
@@ -217,12 +227,22 @@ class Organizaciones extends \yii\db\ActiveRecord
                     [CSeccion].[IdMunicipio] = [PadronGlobal].[MUNICIPIO]
                 WHERE
                     [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
-                    [PadronGlobal].[MUNICIPIO] = '.$idMuni.
-                    ($idSeccion!=null ? ' AND  [PadronGlobal].[SECCION] = '.$idSeccion : '')
-                .'GROUP BY
+                    [PadronGlobal].[MUNICIPIO] = '.$idMuni;
+
+        if ($idSeccion!=null) {
+            if (is_array($idSeccion)) {
+                $sqlCount .= ' AND [PadronGlobal].[SECCION] IN ('.implode(',',$idSeccion).') ';
+            } else {
+                $sqlCount .= ' AND [PadronGlobal].[SECCION] = '.$idSeccion.' ';
+            }
+        }
+
+        $sqlCount .= ' GROUP BY
                     [PadronGlobal].[SECCION], [CSeccion].[MetaAlcanzar]
                 ORDER BY
-                    [SECCION]')->queryAll();
+                    [SECCION]';
+        
+        $count = Yii::$app->db->createCommand($sqlCount)->queryAll();
 
         return $count;
     }

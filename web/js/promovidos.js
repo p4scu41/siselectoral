@@ -5,8 +5,15 @@ function buildSelect(id, result) {
             '<option value="0">Todos</option>';
 
     for (var i=0; i<result.length; i++) {
+        text = result[i].DescripcionEstructura;
+
+        // Para el caso de promotores, agregar el nombre
+        if (result[i].Nivel == 7) {
+            text += ' ' + result[i].NOMBRECOMPLETO;
+        }
+
         filtro += '<option value="'+result[i].IdNodoEstructuraMov+'" data-nivel="'+
-            result[i].Nivel+'">'+result[i].DescripcionEstructura+'</option>';
+            result[i].Nivel+'">'+text+'</option>';
     }
 
     filtro += '</select></div>';
@@ -56,7 +63,7 @@ function agregaPuestoDepende() {
 }
 
 $(document).ready(function(){
-    $form = $('<form action="" method="post" target="_blank">'+
+    $form = $('<form action="" method="post" target="_blank" style="display:none">'+
             '<input type="text" name="title" id="title">'+
             '<textarea name="content" id="content"></textarea>'+
             '<input type="hidden" name="_csrf" value="'+$('[name=_csrf]').val()+'"></form>');
@@ -88,7 +95,29 @@ $(document).ready(function(){
         $("#bodyForm .nivelEstructura, #bodyForm .filtroEstructura").remove();
 
         if (idMuni != '') {
-            $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
+            $.ajax({
+                url: getSeccionesMuni,
+                type: 'POST',
+                data: '?_csrf='+$('[name=_csrf]').val()+'&municipio=' + $('#municipio').val(),
+                dataType: 'json',
+            }).done(function(response){
+                var secciones = '<div class="form-group filtroEstructura">'+
+                    '<label for="jefe-de-secion">Secciones: </label>'+
+                    '<select id="jefe-de-secion" class="form-control" name="IdPuestoDepende[]" data-nivel="5">'+
+                        '<option value="0">Todos</option>';
+
+                for (seccion in response) {
+                    secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5">' + response[seccion].NumSector+ '</option>';
+                }
+
+                secciones += '</select></div>';
+
+                $("#bodyForm").append(secciones);
+                $("#jefe-de-secion").change(agregaPuestoDepende);
+                $('#loadIndicator').hide();
+            });
+            // Inicia la construccion dinamica de los selects de la estructura
+            /*$.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
                 if (result.length>0) {
                     $("#bodyForm").append('<div class="form-group nivelEstructura"><label>Seleccione el nivel de estructura: </label><br></div>');
 
@@ -99,7 +128,7 @@ $(document).ready(function(){
                 } else {
                     $('#loadIndicator').hide();
                 }
-            });
+            });*/
         } else {
             $('#loadIndicator').hide();
         }
@@ -115,13 +144,13 @@ $(document).ready(function(){
             return false;
         }
 
-        if ($('[name=tipo_promovido]:checked').val() == undefined) {
+        /*if ($('[name=tipo_promovido]:checked').val() == undefined) {
             $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
                 '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
                 '<span aria-hidden="true">&times;</span></button>Debe seleccionar el tipo de reporte: '+
                 'Promovidos efectivos o Listado de Promoción</div>');
             return false;
-        }
+        }*/
 
         $('#loadIndicator').show();
         $('#div_loading').show();

@@ -29,13 +29,21 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'IdPersonaRepresentante',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->representante->nombreCompleto;
+                    if (isset($model->representante)) {
+                        return $model->representante->nombreCompleto;
+                    }
+
+                    return '';
                 }
             ],
             [
                 'attribute' => 'IdPersonaEnlace',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->enlace->nombreCompleto;
+                    if (isset($model->enlace)) {
+                        return $model->enlace->nombreCompleto;
+                    }
+
+                    return '';
                 }
             ],
             [

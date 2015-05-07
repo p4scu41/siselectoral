@@ -74,9 +74,9 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                             <div class="form-group">
                                 <label for="Municipio">Municipio</label>
                                 <?php
-                                    $selectMunicipio = Yii::$app->user->identity->persona->MUNICIPIO ? Yii::$app->user->identity->persona->MUNICIPIO : Yii::$app->request->post('Municipio');
+                                    //$selectMunicipio = Yii::$app->user->identity->persona->MUNICIPIO ? Yii::$app->user->identity->persona->MUNICIPIO : Yii::$app->request->post('Municipio');
                                 ?>
-                                <?= Html::dropDownList('Municipio', $selectMunicipio, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio']); ?>
+                                <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio']); ?>
                             </div>
                             <!--<div class="form-group">
                                 <label for="IdPuesto">Puesto</label>

@@ -179,7 +179,7 @@ class PromocionController extends Controller
 
     public function actionGetlistnodos()
     {
-        $filtros['municipio'] = (int) Yii::$app->getRequest()->post('municipio');
+        $filtros['municipio'] = Yii::$app->getRequest()->post('municipio');
         $filtros['seccion'] = (int) Yii::$app->getRequest()->post('seccion');
         $filtros['nombre'] = Yii::$app->getRequest()->post('nombre');
         $filtros['puesto'] = Yii::$app->getRequest()->post('puesto');
@@ -188,5 +188,14 @@ class PromocionController extends Controller
         $result = Promocion::getListNodos($filtros);
 
         return json_encode($result);
+    }
+
+    public function actionGetorganizaciones()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $result = Promocion::getOrganizaciones(Yii::$app->getRequest()->post('id'));
+
+        return $result;
     }
 }

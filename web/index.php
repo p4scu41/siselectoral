@@ -10,3 +10,8 @@ require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 $config = require(__DIR__ . '/../config/web.php');
 
 (new yii\web\Application($config))->run();
+
+//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+//ini_set('error_reporting', 22519); // E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE
+//ini_set('error_reporting', E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
+ini_set('date.timezone', 'America/Mexico_City');

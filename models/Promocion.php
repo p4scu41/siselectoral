@@ -102,13 +102,13 @@ class Promocion extends \yii\db\ActiveRecord
         FROM
             [DetalleEstructuraMovilizacion]
         INNER JOIN [PadronGlobal] ON '
-            .($municipio != 0 ? '[PadronGlobal].[MUNICIPIO] = '.$municipio.' AND ' : '').
+            .($municipio != null ? '[PadronGlobal].[MUNICIPIO] = '.$municipio.' AND ' : '').
             '[PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
         LEFT JOIN [CSeccion] ON
             [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector] '
-            .($municipio != 0 ? ' AND [CSeccion].[IdMunicipio] = '.$municipio.' ' : '').
+            .($municipio != null ? ' AND [CSeccion].[IdMunicipio] = '.$municipio.' ' : '').
         'WHERE 1 = 1 '
-            .($municipio != 0 ? ' AND [DetalleEstructuraMovilizacion].[Municipio] = '.$municipio.' ' : '');
+            .($municipio != null ? ' AND [DetalleEstructuraMovilizacion].[Municipio] = '.$municipio.' ' : '');
 
         if ($seccion) {
             $sql .= ' AND [CSeccion].[NumSector] = '.$seccion;
@@ -125,6 +125,8 @@ class Promocion extends \yii\db\ActiveRecord
         if ($id) {
             $sql .= ' AND [PadronGlobal].[CLAVEUNICA] = \''.$id.'\'';
         }
+
+        $sql .= ' ORDER BY NombreCompleto';
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();
 
@@ -148,6 +150,37 @@ class Promocion extends \yii\db\ActiveRecord
         $result = Yii::$app->db->createCommand($sql)->queryOne();
 
         return $result['TOTAL'];
+    }
+
+    public function getCountOrganizaciones()
+    {
+        $sql = 'SELECT count(DISTINCT [IdOrganizacion]) AS TOTAL '
+            . 'FROM [IntegrantesOrganizaciones] '
+            . 'WHERE [IdPersonaIntegrante] = \''.$this->IdpersonaPromovida.'\'';
+
+        $result = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return $result['TOTAL'];
+    }
+
+    public static function getOrganizaciones($IdpersonaPromovida)
+    {
+        $sql = 'SELECT [Organizaciones].[Nombre]
+                ,(PadronEnlace.NOMBRE+\' \'+PadronEnlace.APELLIDO_PATERNO+\' \'+PadronEnlace.APELLIDO_MATERNO) AS Enlace
+                ,(PadronRepresentante.NOMBRE+\' \'+PadronRepresentante.APELLIDO_PATERNO+\' \'+PadronRepresentante.APELLIDO_MATERNO) AS Representante
+            FROM [Organizaciones]
+            LEFT JOIN [PadronGlobal] AS PadronEnlace ON
+                [Organizaciones].[IdPersonaEnlace] = [PadronEnlace].[CLAVEUNICA]
+            LEFT JOIN [PadronGlobal] AS PadronRepresentante ON
+                [Organizaciones].[IdPersonaEnlace] = [PadronRepresentante].[CLAVEUNICA]
+          WHERE IdOrganizacion IN ('
+            . 'SELECT [IdOrganizacion] '
+            . 'FROM [IntegrantesOrganizaciones] '
+            . 'WHERE [IdPersonaIntegrante] = \''.$IdpersonaPromovida.'\')';
+
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+
+        return $result;
     }
     
 }

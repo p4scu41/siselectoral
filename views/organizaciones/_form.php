@@ -28,7 +28,7 @@ $this->registerJsFile(Url::to('@web/js/organizaciones.js'));
                 'id' => 'org-representante',
                 'value' => $model->representante ? $model->representante->nombreCompleto : ''
             ]
-        ])->textInput() ?>
+        ])->label('Responsable')->textInput() ?>
 
     <?= Html::activeHiddenInput($model, 'IdPersonaEnlace') ?>
     <?= $form->field($model, 'enlace', [

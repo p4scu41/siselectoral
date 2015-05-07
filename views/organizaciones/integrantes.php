@@ -46,18 +46,18 @@ $this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromot
         <a href="#" data-url="<?= Url::to(['reporte/pdf'], true) ?>" class="btn btn-default btnExportPdf">
             <i class="fa fa-file-pdf-o"></i> Exportar a pdf
         </a>
-        <a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
+        <!--<a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
             <i class="fa fa-file-excel-o"></i> Exportar a Excel
-        </a>
+        </a>-->
     </div>
-    <h3 class="text-center" id="titulo">Integrantes de la organización <?= $model->Nombre ?></h3>
+    <h3 class="text-center" id="titulo">Integrantes de la organización</h3>
     <div class="table-responsive" id="resultTblIntegrantes">
         <table id="tblIntegrantes" class="table table-condensed table-bordered table-hover">
             <thead>
                 <tr>
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Sección</th>
-                    <th class="text-center">Dirección</th>
+                    <!--<th class="text-center">Dirección</th>-->
                     <th class="text-center">Municipio</th>
                     <th class="text-center">Promovido</th>
                     <th class="text-center">Eliminar</th>
@@ -69,7 +69,7 @@ $this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromot
                     echo '<tr>'
                         . '<td>' . $integrantes[$count]['NombreCompleto'] . '</td>'
                         . '<td class="seccion"> ' . (int)$integrantes[$count]['SECCION'] . ' </td>'
-                        . '<td>' . $integrantes[$count]['Domicilio'] . '</td>'
+                        //. '<td>' . $integrantes[$count]['Domicilio'] . '</td>'
                         . '<td>' . $integrantes[$count]['DescMunicipio'] . '</td>'
                         . '<td class="text-center"><a href="#" class="promovidoIntegrante" data-id="'.$integrantes[$count]['CLAVEUNICA'].'" data-promotor="'.$integrantes[$count]['IdPErsonaPromueve'].'"><i class="fa fa-' . ($integrantes[$count]['IdPErsonaPromueve']==null ? '' : 'check-') . 'square-o fa-lg"></i></a></td>'
                         . '<td class="text-center"><button class="btn btn-sm btn-danger btnDelIntegrante" '.
@@ -85,9 +85,9 @@ $this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromot
         <a href="#" data-url="<?= Url::to(['reporte/pdf'], true) ?>" class="btn btn-default btnExportPdf">
             <i class="fa fa-file-pdf-o"></i> Exportar a pdf
         </a>
-        <a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
+        <!--<a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
             <i class="fa fa-file-excel-o"></i> Exportar a Excel
-        </a>
+        </a>-->
     </div>
 
     <?php echo $this->render('_frmBuscarPersona', ['municipios'=>$municipios]) ?>
