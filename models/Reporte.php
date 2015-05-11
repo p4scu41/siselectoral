@@ -230,7 +230,7 @@ class Reporte extends \yii\db\ActiveRecord
                         .'"Nombre": "'.str_replace('\\', 'Ñ', $nodo['Responsable']).'",'
                         .'"Sección": "'.$nodo['Seccion'].'",'
                         .'"Meta Estruc": "'.$metaEstructura['meta'].'",'
-                        .'"Vacantes": "'.$datosEstructura[1]['MetaEstructura'].'",'
+                        .'"Vacantes": "'.($datosEstructura[0]['MetaEstructura']-$datosEstructura[1]['MetaEstructura']).'",'
                         .'"% Avance Estruc": "'.$metaEstructura['avance'].'",'
                         .'"Meta Promo": "'.$metaPromocion['meta'].'",'
                         .'"% Avance Promo": "'.$metaPromocion['avance'].'",'
