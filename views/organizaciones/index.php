@@ -18,9 +18,16 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Crear nueva organización', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+    <div class="text-center">
+        <div class="btn btn-default">
+            Total de Organizaciones: <strong><?= $countOrganizaciones?></strong>, Total de Beneficiarios: <strong> <?= $totalBeneficiarios ?> </strong>
+        </div>
+    </div>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered table-hover'],
+        'layout' => '{items} {summary} {pager}',
         //'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
@@ -46,16 +53,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     return '';
                 }
             ],
-            [
+            /*[
                 'attribute' => 'IdMunicipio',
                 'value' => function ($model, $key, $index, $column) {
                     return $model->municipio->DescMunicipio;
                 }
-            ],
+            ],*/
             [
                 'attribute' => 'idTipoOrganizacion',
                 'value' => function ($model, $key, $index, $column) {
                     return $model->tipoOrganizacion->Descripcion;
+                }
+            ],
+            [
+                'header' => 'No. de Beneficiarios',
+                'format' => 'html',
+                'value' => function ($model, $key, $index, $column) {
+                    return '<div class="text-center">'.$model->getTotalIntegrantes().'</div>';
                 }
             ],
             [

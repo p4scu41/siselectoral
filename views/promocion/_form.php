@@ -57,6 +57,11 @@ SCRIPT;
 
     <?= Html::activeHiddenInput($model, 'IdEstructuraMov', ['value' => 1]) ?>
 
+    <div class="form-group"><label class="control-label" for="seccion_promocion">Sección</label>
+        <?= Html::dropDownList('seccion_promocion', null, [], 
+            ['prompt' => 'Seleccione la sección', 'class' => 'form-control', 'id' => 'seccion_promocion']) ?>
+    </div>
+
     <?= Html::activeHiddenInput($model, 'IdpersonaPromovida') ?>
     <?= $form->field($model, 'personaPromovida', [
             'inputOptions' => [
@@ -87,7 +92,7 @@ SCRIPT;
                             'data' => new JsExpression('function(term,page) { '
                                 . 'return { puesto:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
-                                . 'seccion: $("#seccion").val() }; '
+                                . 'seccion: $("#seccion_promocion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],
@@ -127,7 +132,7 @@ SCRIPT;
                             'data' => new JsExpression('function(term,page) { '
                                 . 'return { nombre:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
-                                . 'seccion: $("#seccion").val() }; '
+                                . 'seccion: $("#seccion_promocion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],
@@ -175,7 +180,7 @@ SCRIPT;
                             'data' => new JsExpression('function(term,page) { '
                                 . 'return { puesto:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
-                                . 'seccion: $("#seccion").val() }; '
+                                . 'seccion: $("#seccion_promocion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],
@@ -218,7 +223,7 @@ SCRIPT;
                                 . 'return { nombre:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
                                 . 'puesto: "PR", '
-                                . 'seccion: $("#seccion").val() }; '
+                                . 'seccion: $("#seccion_promocion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],

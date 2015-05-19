@@ -206,6 +206,20 @@ class Organizaciones extends \yii\db\ActiveRecord
         return $count['total'];
     }
 
+    public function getTotalIntegrantes()
+    {
+        $sqlCount = 'SELECT
+                COUNT(*) AS total
+            FROM
+                [IntegrantesOrganizaciones]
+            WHERE
+                [IdOrganizacion] = '.$this->IdOrganizacion;
+
+        $count = Yii::$app->db->createCommand($sqlCount)->queryOne();
+
+        return $count['total'];
+    }
+
     /**
      * Obtiene el número de integrantes de la organización divididos por sección
      *

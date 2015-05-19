@@ -89,6 +89,11 @@ class ReporteController extends \yii\web\Controller
     {
         $titulo = Yii::$app->request->post('title');
         $content = str_replace('<h3 class="text-center" id="titulo">'.$titulo.'</h3>', '', Yii::$app->request->post('content'));
+        $orientation = Pdf::ORIENT_PORTRAIT;
+
+        if (strpos($titulo, 'Estructura Municipal') !== false) {
+            $orientation = Pdf::ORIENT_LANDSCAPE;
+        }
 
         $pdf = new Pdf([
             'mode' => Pdf::MODE_CORE,
@@ -96,6 +101,10 @@ class ReporteController extends \yii\web\Controller
             'content' => $content,
             'filename' => $titulo.'.pdf',
             'destination' => Pdf::DEST_DOWNLOAD,
+            'orientation' => $orientation,
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
+            //'cssFile' => '@web/css/kv-mpdf-bootstrap.css',
+            'cssInline' => 'body { font-size: 10px !important; }',
             'options' => [
                 'title' => $titulo,
                 'subject' => 'SIRECI - Sistema de Red Ciudadana '.date("d-m-Y h:i:s A")

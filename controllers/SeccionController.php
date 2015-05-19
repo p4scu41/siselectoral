@@ -43,8 +43,11 @@ class SeccionController extends \yii\web\Controller
     public function actionGetseccionesonmuni()
     {
         $idMuni = Yii::$app->request->post('municipio');
+        $secciones = null;
 
-        $secciones = DetalleEstructuraMovilizacion::getSeccionesMuni($idMuni);
+        if ($idMuni != null) {
+            $secciones = DetalleEstructuraMovilizacion::getSeccionesMuni($idMuni);
+        }
 
         return json_encode($secciones);
     }
@@ -52,8 +55,11 @@ class SeccionController extends \yii\web\Controller
     public function actionGetjsmuni()
     {
         $idMuni = Yii::$app->request->post('municipio');
+        $secciones = null;
 
-        $secciones = DetalleEstructuraMovilizacion::getJsmuni($idMuni);
+        if ($idMuni != null) {
+            $secciones = DetalleEstructuraMovilizacion::getJsmuni($idMuni);
+        }
 
         return json_encode($secciones);
     }

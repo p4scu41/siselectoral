@@ -42,7 +42,8 @@ class Reporte extends \yii\db\ActiveRecord
                     [CSeccion].[IdMunicipio] = [DetalleEstructuraMovilizacion].[Municipio] AND
                     [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector]
                 WHERE
-                    [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
+                    [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' AND 
+                    [DetalleEstructuraMovilizacion].[IdPuesto] = 5
                 ORDER BY
                     [CSeccion].[NumSector] ASC';
 
@@ -56,6 +57,8 @@ class Reporte extends \yii\db\ActiveRecord
      *
      * @param Array $arrayDatos Arreglo asociativo con los datos
      * @param Array $omitirCentrado Columnas que no deben centrarse
+     * @param Array $omitirColumnas Columnas que no se deben mostrar
+     * @param Array $metadatos Metadatos que se deben agregar a las columnas
      * @param String $class clase css
      * @param String $options optiones html
      * @return String Tabla HTML
@@ -63,6 +66,8 @@ class Reporte extends \yii\db\ActiveRecord
     public function arrayToHtml(
         $arrayDatos,
         $omitirCentrado = [],
+        $omitirColumnas = [],
+        $metadatos = [],
         $class = 'table table-condensed table-bordered table-hover',
         $options = 'border="1" cellpadding="1" cellspacing="1"'
     ) {
@@ -225,8 +230,9 @@ class Reporte extends \yii\db\ActiveRecord
 
         $agregarEspacios .= $espacios;
 
-        $estructura .= '{ "Puesto": "'.$agregarEspacios.$nodo['DescripcionPuesto'].'", '
-                        //.'"Descripción": "'.$nodo['DescripcionNodo'].'",'
+        $estructura .= '{ "id": "'.$nodo['IdNodoEstructuraMov'].'",'
+                        . '"Puesto": "'.$agregarEspacios.$nodo['DescripcionPuesto'].'", '
+                        .'"Descripción": "'.$nodo['DescripcionNodo'].'",'
                         .'"Nombre": "'.str_replace('\\', 'Ñ', $nodo['Responsable']).'",'
                         .'"Sección": "'.$nodo['Seccion'].'",'
                         .'"Meta Estruc": "'.$metaEstructura['meta'].'",'

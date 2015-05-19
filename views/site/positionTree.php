@@ -26,6 +26,9 @@ $this->registerJs('urlGetProgramas="'.Url::toRoute('site/getprogramas', true).'"
 $this->registerJs('urlGetIntegrantes="'.Url::toRoute('site/getintegrantesprogbyseccion', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlGetpuestosfaltantesbyseccion="'.Url::toRoute('site/getpuestosfaltantesbyseccion', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('pl="'.Yii::$app->user->identity->nodoestructura->IdPuesto.'";', \yii\web\View::POS_HEAD);
+$this->registerJs('main = 3;', \yii\web\View::POS_HEAD); // ID de Usuario Administrador
+$this->registerJs('logIDUsr = "'.Yii::$app->user->identity->IdUsuario.'";', \yii\web\View::POS_HEAD);
+$this->registerJs('logIDSA = 6;', \yii\web\View::POS_HEAD);
 $this->registerJs('urlListInte="'.Url::toRoute('organizacion/listintegrantesfromseccion').'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};

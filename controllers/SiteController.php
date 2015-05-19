@@ -106,7 +106,8 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return Yii::$app->getResponse()->redirect(Url::to(['site/index']));
+        // Elimina todas las coockies y sessionStorage al cerrar sesion
+        return $this->render('logout');
     }
 
     public function actionContact()

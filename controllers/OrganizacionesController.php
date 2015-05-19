@@ -49,11 +49,25 @@ class OrganizacionesController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dependencias = Organizaciones::getDependencias();
 
+        $totalBeneficiarios = 0;
+        $dataProvider->setPagination(false);
+        $allOrganizaciones = $dataProvider->getModels();
+        $countOrganizaciones = 0;
+
+        foreach ($allOrganizaciones as $org) {
+            $totalBeneficiarios += $org->getTotalIntegrantes();
+            $countOrganizaciones++;
+        }
+
+        $dataProvider->setPagination(['pageSize' => 10]);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'municipios' => $dependencias['municipios'],
             'tipos' => $dependencias['tipos'],
+            'totalBeneficiarios' => $totalBeneficiarios,
+            'countOrganizaciones' => $countOrganizaciones,
         ]);
     }
 

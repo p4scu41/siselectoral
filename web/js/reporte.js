@@ -155,6 +155,12 @@ $(document).ready(function(){
             success: function(result) {
                 $('#titulo').html(result.titulo);
                 $('#tabla_reporte').html(result.reporteHTML);
+
+                $('#tabla_reporte tr td:nth-child(3)').css('cursor', 'pointer');
+                $('#tabla_reporte tr td:nth-child(3)').on('click', function(event){
+                    console.log($(this).text());
+                });
+
                 $('#loadIndicator').hide();
                 $('.opcionesExportar').show();
                 $('#div_loading').fadeOut('slow');

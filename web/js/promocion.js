@@ -13,6 +13,32 @@ $(document).ready(function () {
        $('#municipio option[value='+$(this).val()+']').attr('selected', true);
        $('#municipio').trigger('change');
        $('#resultValidacion').html('');
+
+       $.ajax({
+            url: getSeccionesMuni,
+            type: 'POST',
+            data: 'municipio=' + $('#municipio').val(),
+            dataType: 'json',
+            beforeSend: function (xhr) {
+                $('#seccion_promocion').html('<option>Secciones...</option>');
+                $('#seccion_promocion').after('<i class="fa fa-spinner fa-pulse fa-lg" id="loading"></i>');
+            }
+        }).done(function(response){
+            var secciones = '<option value="">Secciones</option>';
+            var seccion = 0;
+
+            $('#loading').remove();
+
+            for (seccion in response) {
+                secciones += '<option value="' + response[seccion].NumSector+ '">' + response[seccion].NumSector+ '</option>';
+            }
+
+            $('#seccion_promocion').html(secciones);
+        });
+    });
+
+    $('#seccion_promocion').change(function(event){
+        $('#seccion option[value='+$(this).val()+']').attr('selected', true);
     });
 
     $('#btnAsignarPersona').on('click', function () {
