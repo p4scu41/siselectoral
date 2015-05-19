@@ -264,4 +264,18 @@ class OrganizacionesController extends Controller
 
         return json_encode($response);
     }
+
+    public function actionGetotrasorgs()
+    {
+        $integrante   = Yii::$app->request->post('id');
+        $organizacion = Yii::$app->request->post('org');
+
+        try {
+            $response = Organizaciones::getOtrasOrganizaciones($integrante, $organizacion);
+        } catch (Exception $ex) {
+            $response = ['error'=>true, 'mensaje'=>'Error al obtener los datos'];
+        }
+
+        return json_encode($response);
+    }
 }

@@ -190,4 +190,29 @@ $(document).ready(function (){
     });
 
     $('#dialog').dialog({autoOpen: false, minWidth: 400});
+
+    $('.btnVerOtrasOrganizacion').click(function(event) {
+        $.ajax({
+            url: getOtrasOrgs,
+            method: 'POST',
+            dataType: 'json',
+            data: {id: $(this).data('id'), org: $(this).data('org')}
+        }).done(function (response) {
+            var listaOrganicaciones = '<ol>';
+
+            if (response.length == 0) {
+                listaOrganicaciones = 'Ninguna Organización';
+            } else {
+                for (var org in response) {
+                    listaOrganicaciones += '<li>'+response[org].Nombre+'</li>';
+                }
+
+                listaOrganicaciones += '</ol>';
+            }
+
+            $('#modalOtrasOrganizaciones .modal-body').html(listaOrganicaciones);
+        });
+
+        $('#modalOtrasOrganizaciones').modal('show');
+    });
 });

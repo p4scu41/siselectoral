@@ -17,6 +17,7 @@ $this->registerJs('var delIntegrante = "'.Url::toRoute('organizaciones/delintegr
 $this->registerJs('var addIntegrante = "'.Url::toRoute('organizaciones/addintegrante', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('var idOrg = '.$model->IdOrganizacion.';', \yii\web\View::POS_HEAD);
 $this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromotorintegrante', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('var getOtrasOrgs = "'.Url::toRoute('organizaciones/getotrasorgs', true).'";', \yii\web\View::POS_HEAD);
 ?>
 <div class="organizaciones-view">
 
@@ -60,6 +61,7 @@ $this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromot
                     <!--<th class="text-center">Dirección</th>-->
                     <th class="text-center">Municipio</th>
                     <th class="text-center">Promovido</th>
+                    <th class="text-center">Otras Organizaciones</th>
                     <th class="text-center">Eliminar</th>
                 </tr>
             </thead>
@@ -72,6 +74,9 @@ $this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromot
                         //. '<td>' . $integrantes[$count]['Domicilio'] . '</td>'
                         . '<td>' . $integrantes[$count]['DescMunicipio'] . '</td>'
                         . '<td class="text-center"><a href="#" class="promovidoIntegrante" data-id="'.$integrantes[$count]['CLAVEUNICA'].'" data-promotor="'.$integrantes[$count]['IdPErsonaPromueve'].'"><i class="fa fa-' . ($integrantes[$count]['IdPErsonaPromueve']==null ? '' : 'check-') . 'square-o fa-lg"></i></a></td>'
+                        . '<td class="text-center"><a class="btn btn-default btnVerOtrasOrganizacion" href="#" '.
+                            'role="button" data-id="'.$integrantes[$count]['CLAVEUNICA'].'" data-org="'.((int)$_GET['idOrg']).'" title="Ver Otras Organizaciones"> '.$integrantes[$count]['otrasOrganizaciones'].' </i> '
+                        . '</a></td>'
                         . '<td class="text-center"><button class="btn btn-sm btn-danger btnDelIntegrante" '.
                             'data-id="'.$integrantes[$count]['CLAVEUNICA'].'" '.
                             '><i class="fa fa-user-times"></i></button></td>'
@@ -96,4 +101,20 @@ $this->registerJs('var getPromotores = "'.Url::toRoute('organizaciones/getpromot
 
     <div id="dialog" title="Promoción del integrante seleccionado"></div>
 
+</div>
+
+<div class="modal fade" id="modalOtrasOrganizaciones" tabindex='-1'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Otras Organizaciones</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>

@@ -104,7 +104,7 @@ class ReporteController extends \yii\web\Controller
             'orientation' => $orientation,
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
             //'cssFile' => '@web/css/kv-mpdf-bootstrap.css',
-            'cssInline' => 'body { font-size: 10px !important; }',
+            'cssInline' => 'body { font-size: 10px !important; } a { font-size: 8px !important; text-decoration: none; } ',
             'options' => [
                 'title' => $titulo,
                 'subject' => 'SIRECI - Sistema de Red Ciudadana '.date("d-m-Y h:i:s A")

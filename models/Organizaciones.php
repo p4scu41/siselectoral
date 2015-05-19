@@ -121,6 +121,13 @@ class Organizaciones extends \yii\db\ActiveRecord
                 ,[DetallePromocion].[IdPErsonaPromueve]
                 ,([personaPromueve].[NOMBRE]+\' \'+[personaPromueve].[APELLIDO_PATERNO]
                     +\' \'+[personaPromueve].[APELLIDO_MATERNO]) AS nombre_promueve
+                ,(SELECT
+                    COUNT(*)
+                FROM
+                    [IntegrantesOrganizaciones]
+                WHERE
+                    [IdOrganizacion] != '.$idOrganizacion.' AND
+                    [IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA] ) AS otrasOrganizaciones
             FROM
                 [IntegrantesOrganizaciones]
             INNER JOIN
@@ -399,5 +406,21 @@ class Organizaciones extends \yii\db\ActiveRecord
         $promotores = Yii::$app->db->createCommand($sqlPromotores)->queryAll();
 
         return $promotores;
+    }
+
+    public static function getOtrasOrganizaciones($integrante, $organizacion)
+    {
+        $sql = 'SELECT
+            [Organizaciones].[Nombre]
+        FROM [IntegrantesOrganizaciones]
+        INNER JOIN [Organizaciones] On
+            [Organizaciones].[IdOrganizacion] = [IntegrantesOrganizaciones].[IdOrganizacion]
+        WHERE
+            [IntegrantesOrganizaciones].[IdOrganizacion] != '.$organizacion.' AND
+            [IntegrantesOrganizaciones].[IdPersonaIntegrante] = \''.$integrante.'\'';
+
+        $organizaciones = Yii::$app->db->createCommand($sql)->queryAll();
+
+        return $organizaciones;
     }
 }
