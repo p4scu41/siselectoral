@@ -132,7 +132,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Observaciones</label>
                                     <div class="col-sm-10">
-                                        <div class="well well-sm">&nbsp;</div>
+                                        <div class="well well-sm"><?= $observacion ?> </div>
                                     </div>
                                 </div>
                             </form>

@@ -30,6 +30,7 @@ $this->registerJs('main = 3;', \yii\web\View::POS_HEAD); // ID de Usuario Admini
 $this->registerJs('logIDUsr = "'.Yii::$app->user->identity->IdUsuario.'";', \yii\web\View::POS_HEAD);
 $this->registerJs('logIDSA = 6;', \yii\web\View::POS_HEAD);
 $this->registerJs('urlListInte="'.Url::toRoute('organizacion/listintegrantesfromseccion').'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlUpdatePersona="'.Url::toRoute('padron/update').'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {

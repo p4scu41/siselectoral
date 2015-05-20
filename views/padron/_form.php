@@ -128,6 +128,13 @@ $this->registerJs('$("input:not([type=file])").change(function() {
                     <?= $form->field($model, 'SECCION')->textInput($disabled) ?>
 
                     <div class="form-group">
+                        <label class="control-label col-sm-3" for="observacion">Observaciones</label>
+                        <div class="col-sm-6">
+                            <textarea id="observacion" class="form-control" name="observacion"><?= $observacion ?></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-md-12 text-center">
                         <?= Html::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar', ['class' => 'btn btn-success']) ?>
                         <?= Html::a('Cancelar', Url::toRoute('padron/buscar', true), ['class' => 'btn btn-danger']) ?>

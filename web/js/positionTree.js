@@ -1,6 +1,9 @@
 $(document).ready(function(){
     var CookieParams = null;
-    var btnAsignarPersona = $('<div class="text-center"><button type="button" class="btn btn-success" id="btnAsignarPersona"><i class="fa fa-user-plus"></i> Asignar persona</button></div>')
+    var btnAsignarPersona = $('<div class="text-center">'+
+        '<button type="button" class="btn btn-success" id="btnAsignarPersona"><i class="fa fa-user-plus"></i> Asignar persona</button>'+
+        ' &nbsp; <a href="" class="btn btn-default" id="btnEditarPersona"><i class="fa fa-edit"></i> Editar Datos</a>'+
+        '</div>');
 
     $('#btnSaveAsignaPersona').click(function(event){
         //Asignar persona al puesto
@@ -119,6 +122,10 @@ $(document).ready(function(){
             // El usuario logueado solo puede asignar puestos a sus estructura inferior
             if( $('#divAsignarPersona #btnAsignarPersona').length == 0) {
                 $('#divAsignarPersona').append(btnAsignarPersona);
+            }
+
+            if (node.data.persona != '00000000-0000-0000-0000-000000000000') {
+                btnAsignarPersona.find('a').attr('href', urlUpdatePersona+ '?id='+ node.data.persona);
             }
 
             btnAsignarPersona.find('button').data('idNodo', node.key);

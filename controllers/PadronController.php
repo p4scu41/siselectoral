@@ -10,6 +10,7 @@ use app\models\DetalleEstructuraMovilizacion;
 use app\models\Puestos;
 use app\models\CMunicipio;
 use app\models\ElementoCatalogo;
+use app\models\Cardex;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -252,8 +253,16 @@ class PadronController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $observacion = Cardex::find()->where('CLAVEUNICA = \''.$model->CLAVEUNICA.'\'')->one();
+
+        if ($observacion) {
+            $observacion = $observacion->Nota;
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'observacion' => $observacion
         ]);
     }
 
@@ -306,6 +315,17 @@ class PadronController extends Controller
                      // Redimensionar
                     ResizeImage::smart_resize_image($pathFoto, null, 200, 250, false , $pathFoto, false, false, 100);
                 }
+            }
+            
+            if (Yii::$app->request->post('observacion') != null) {
+                $observacion = new Cardex();
+                
+                $observacion->CLAVEUNICA = $model->CLAVEUNICA;
+                $observacion->Nota = Yii::$app->request->post('observacion');
+                $observacion->FechaInsercion = date('Y-m-d H:i:s');
+                $observacion->FechaActualizacion = date('Y-m-d H:i:s');
+                $observacion->usuarioactualiza = Yii::$app->user->identity->persona->CLAVEUNICA;
+                $observacion->save();
             }
 
             $log = new SeguimientoCambios();
@@ -374,6 +394,23 @@ class PadronController extends Controller
                 }
             }
 
+            // Guarda la observacion
+            if (Yii::$app->request->post('observacion') != null) {
+                $observacion = Cardex::find()->where('CLAVEUNICA = \''.$model->CLAVEUNICA.'\'')->one();
+
+                if ($observacion == null) {
+                    $observacion = new Cardex();
+                }
+                
+                $observacion->CLAVEUNICA = $model->CLAVEUNICA;
+                $observacion->Nota = Yii::$app->request->post('observacion');
+                $observacion->FechaInsercion = date('Y-m-d H:i:s');
+                $observacion->FechaActualizacion = date('Y-m-d H:i:s');
+                $observacion->usuarioactualiza = Yii::$app->user->identity->persona->CLAVEUNICA;
+                $observacion->save();
+            }
+
+
             $log = new SeguimientoCambios();
             $log->usuario = Yii::$app->user->identity->IdUsuario;
             $log->tabla = 'PadronGlobal';
@@ -384,12 +421,18 @@ class PadronController extends Controller
 
             return $this->redirect(['view', 'id' => $model->CLAVEUNICA]);
         } else {
+        $observacion = Cardex::find()->where('CLAVEUNICA = \''.$model->CLAVEUNICA.'\'')->one();
+
+        if ($observacion) {
+            $observacion = $observacion->Nota;
+        }
             return $this->render('update', [
                 'model' => $model,
                 'municipios' => $municipios,
                 'escolaridad' => $escolaridad,
                 'ocupacion' => $ocupacion,
-                'estado_civil' => $estado_civil
+                'estado_civil' => $estado_civil,
+                'observacion' => $observacion,
             ]);
         }
     }
