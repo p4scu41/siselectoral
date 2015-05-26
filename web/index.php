@@ -5,6 +5,9 @@
 ini_set('error_reporting', E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
 ini_set('date.timezone', 'America/Mexico_City');
 
+// Establece la sesion a 30 minutos
+session_cache_expire(30);
+
 // comment out the following two lines when deployed to production
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');

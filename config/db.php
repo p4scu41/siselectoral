@@ -7,4 +7,7 @@ return [
     'username' => 'admin',
     'password' => '123',
     'charset' => 'utf8',
+    'attributes' => [
+        'LANGUAGE' => 'us_english'
+    ]
 ];

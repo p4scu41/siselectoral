@@ -355,10 +355,11 @@ class Reporte extends \yii\db\ActiveRecord
                 [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.' ';
 
         if ($idNodo != null) {
-            $sqlPromotores .= ' AND [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'';
+            $sqlPromotores .= ' AND ([DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\' '.
+                                ' OR [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo.')';
         }
 
-        //$sqlPromotores .= ' ORDER BY nombrePersonaPromueve';
+        $sqlPromotores .= ' ORDER BY descripcionPuesto, nombrePersonaPromueve';
         
         $promotores = Yii::$app->db->createCommand($sqlPromotores)->queryAll();
 

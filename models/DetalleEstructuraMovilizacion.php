@@ -98,9 +98,9 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         }
 
         if ($alterna == false) {
-            $child = $this->find()->where($filtros)->andWhere('(IdOrganizacion = -1 OR IdPuesto=5)')->all();
+            $child = $this->find()->where($filtros)->andWhere('(IdOrganizacion = -1 OR IdPuesto=5)')->orderBy('Descripcion')->all();
         } else {
-            $child = $this->find()->where($filtros)->andWhere('(IdOrganizacion != -1 AND IdPuesto!=5)')->all();
+            $child = $this->find()->where($filtros)->andWhere('(IdOrganizacion != -1 AND IdPuesto!=5)')->orderBy('Descripcion')->all();
         }
 
         foreach ($child as $row) {
@@ -152,7 +152,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $count = $this->find()->where($where)->count();
 
         if ($count > 0) {
-            $child = $this->find()->where($where)->all();
+            $child = $this->find()->where($where)->orderBy('Descripcion')->all();
 
             foreach ($child as $row) {
                 $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
@@ -814,7 +814,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 WHERE
                     [PadronGlobal].[MUNICIPIO] = '.$idMuni
             . ')  AND IdPuesto!=5) AND Municipio = '.$idMuni.
-                ' AND Dependencias LIKE \'%|'.$idNodo.'|%\'';
+                ' AND Dependencias LIKE \'%|'.$idNodo.'|%\' '.
+            ' ORDER BY Descripcion';
 
         $alternas = Yii::$app->db->createCommand($sql)->queryAll();
 

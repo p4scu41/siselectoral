@@ -475,4 +475,24 @@ class PadronController extends Controller
             throw new NotFoundHttpException('La página solicitada no existe');
         }
     }
+
+    /**
+     * Lists all PadronGlobal models.
+     *
+     * @return mixed
+     */
+    public function actionFindbyclaveelectoral()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        
+        $clave = Yii::$app->request->post('clave');
+
+        $personas = PadronGlobal::find()
+            ->select('*')
+            ->where('ALFA_CLAVE_ELECTORAL = \''.$clave.'\'')
+            ->asArray()
+            ->all();
+
+        return $personas;
+    }
 }

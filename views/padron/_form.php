@@ -12,6 +12,10 @@ use kartik\datecontrol\DateControl;
 $this->registerJs('$("input:not([type=file])").change(function() {
 		$(this).val( normalize($(this).val()).toUpperCase() );
 	});');
+
+$this->registerJsFile(Url::to('@web/js/formPadron.js'));
+$this->registerJs('var getByClaveElectoral = "'.Url::toRoute('padron/findbyclaveelectoral').'";', \yii\web\View::POS_HEAD);
+$this->registerJs('var viewPersona = "'.Url::toRoute('padron/view').'";', \yii\web\View::POS_HEAD);
 ?>
 
 <div class="padron-global-form">
@@ -42,6 +46,9 @@ $this->registerJs('$("input:not([type=file])").change(function() {
                             'data-msg-invalid-file-extension'=> 'Extensión no permitida en el archivo seleccionado "{name}". Solo se permiten las extensiones "{extensions}"',
                         ]) ?>
 
+                    <?php $disabled = ($model->ALFA_CLAVE_ELECTORAL && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?= $form->field($model, 'ALFA_CLAVE_ELECTORAL')->textInput($disabled) ?>
+
                     <?php $disabled = ($model->NOMBRE && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
                     <?= $form->field($model, 'NOMBRE')->textInput($disabled) ?>
 
@@ -54,7 +61,7 @@ $this->registerJs('$("input:not([type=file])").change(function() {
                     <?php $disabled = ($model->APELLIDO_MATERNO && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
                     <?= $form->field($model, 'APELLIDO_MATERNO')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->FECHANACIMIENTO && !$model->isNewRecord) ? ['class'=>'form-control', 'disabled'=>'true', 'required'=>'true'] : ['class'=>'form-control', 'required'=>'true'] ?>
+                    <?php $disabled = ((!empty($model->FECHANACIMIENTO) && $model->FECHANACIMIENTO!='1991-01-01') && !$model->isNewRecord) ? ['class'=>'form-control', 'disabled'=>'true', 'required'=>'true'] : ['class'=>'form-control', 'required'=>'true'] ?>
                     <?= $form->field($model, 'FECHANACIMIENTO')->widget(DateControl::classname(), [
                             'displayFormat' => 'dd/MM/yyyy',
                             'saveFormat' => 'yyyy-MM-dd',
@@ -145,6 +152,24 @@ $this->registerJs('$("input:not([type=file])").change(function() {
 
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalPersonaRegistrada" tabindex="-1" role="dialog" aria-labelledby="modalMapLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Persona registrada</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
