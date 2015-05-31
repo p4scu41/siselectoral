@@ -16,6 +16,7 @@ use app\helpers\generarPassword;
  * @property string $password
  * @property string $Estado
  * @property string $usrActualiza
+ * @property integer $distrito
  */
 class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
@@ -57,6 +58,7 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
             'password' => 'Contraseña',
             'Estado' => 'Status',
             'usrActualiza' => 'Usr Actualiza',
+            'distrito' => 'Distrito',
         ];
     }
 

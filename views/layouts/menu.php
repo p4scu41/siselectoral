@@ -43,7 +43,7 @@ use yii\helpers\Url;
             <i class="fa fa-angle-left pull-right"></i>
         </a>
         <ul class="treeview-menu" style="display: none;">
-            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'promocion/') !== false ? 'active' : '' ?>">
+            <li class="<?= Yii::$app->request->getPathInfo() == 'promocion/' ? 'active' : '' ?>">
                 <a href="<?= Url::to(['promocion/index']) ?>" style="margin-left: 10px;"><i class="fa fa-search"></i> Buscar</a>
             </li>
             <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'promocion/create') !== false ? 'active' : '' ?>">

@@ -113,12 +113,10 @@ $(document).ready(function(){
         // pl = Puesto Login
         // Solo puede asignar puesto de promotor
         // Permiso para asignar puestos
-        console.log('main: '+main);
-        console.log('logIDUsr: '+logIDUsr);
-        console.log('logIDSA: '+logIDSA);
         // (logIDUsr == main) Compara si el ID del usuario logueado corresponde al Administrador
         // (logIDUsr == logIDSA) Compara si el ID del usuario logueado es de San Cristobal
-        if ((node.data.IdPuesto == 6 || node.data.IdPuesto == 7) || (logIDUsr == main) || (logIDUsr == logIDSA)) {
+        //if ((node.data.IdPuesto == 6 || node.data.IdPuesto == 7) || (logIDUsr == main) || (logIDUsr == logIDSA)) {
+        if ((node.data.IdPuesto == 6 || node.data.IdPuesto == 7) || (logIDPerfUsr == IDPerfAdm) || (logIDPerfUsr == IDPerfAdmMuni)) {
             // El usuario logueado solo puede asignar puestos a sus estructura inferior
             if( $('#divAsignarPersona #btnAsignarPersona').length == 0) {
                 $('#divAsignarPersona').append(btnAsignarPersona);

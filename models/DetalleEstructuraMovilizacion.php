@@ -97,11 +97,43 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             $filtros['IdPuesto'] = $this->getMaxPuestoOnMuni($filtros['Municipio']);
         }
 
+        $find = $this->find()->where($filtros);
+
         if ($alterna == false) {
-            $child = $this->find()->where($filtros)->andWhere('(IdOrganizacion = -1 OR IdPuesto=5)')->orderBy('Descripcion')->all();
+            $find = $find->andWhere('(IdOrganizacion = -1 OR IdPuesto=5)');
         } else {
-            $child = $this->find()->where($filtros)->andWhere('(IdOrganizacion != -1 AND IdPuesto!=5)')->orderBy('Descripcion')->all();
+            $find = $find->andWhere('(IdOrganizacion != -1 AND IdPuesto!=5)');
         }
+
+        if ( strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idDistrito']) ) {
+            $find = $find->innerJoin('CSeccion', 'DetalleEstructuraMovilizacion.Municipio = CSeccion.IdMunicipio AND
+                        DetalleEstructuraMovilizacion.IdSector = CSeccion.IdSector AND
+                        CSeccion.DistritoLocal = '.Yii::$app->user->identity->distrito);
+                /*$find->joinWith([
+                'cSeccion' => function ($query) {
+                    $query->onCondition([
+                        'DetalleEstructuraMovilizacion.Municipio' => 'CSeccion.IdMunicipio',
+                        'DetalleEstructuraMovilizacion.IdSector' => 'CSeccion.IdSector',
+                        'CSeccion.DistritoLocal' => 1,
+                    ]);
+                },
+            ]);*/
+        } else if ( strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idDistritoFederal']) ) {
+            $find = $find->innerJoin('CSeccion', 'DetalleEstructuraMovilizacion.Municipio = CSeccion.IdMunicipio AND
+                        DetalleEstructuraMovilizacion.IdSector = CSeccion.IdSector AND
+                        CSeccion.DistritoFederal = '.Yii::$app->user->identity->distrito);
+            /*$find = $find->joinWith([
+                'cSeccion' => function ($query) {
+                    $query->onCondition([
+                        'DetalleEstructuraMovilizacion.Municipio' => 'CSeccion.IdMunicipio',
+                        'DetalleEstructuraMovilizacion.IdSector' => 'CSeccion.IdSector',
+                        'CSeccion.DistritoFederal' => 1,
+                    ]);
+                },
+            ]);*/
+        }
+
+        $child = $find->orderBy('Descripcion')->all();
 
         foreach ($child as $row) {
             $puesto = Puestos::findOne(['IdPuesto' => $row->IdPuesto]);
@@ -229,10 +261,23 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             FROM
                 [DetalleEstructuraMovilizacion]
             INNER JOIN
-                [Puestos] ON [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto]
-            WHERE
-                [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
-            ORDER BY [Nivel] ASC';
+                [Puestos] ON [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto] ';
+        
+        if ( strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idDistrito']) ) {
+            $sql .= 'INNER JOIN [CSeccion] ON
+                [DetalleEstructuraMovilizacion].[Municipio] = [CSeccion].[IdMunicipio] AND
+                [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector] AND
+                [CSeccion].[DistritoLocal] = '.Yii::$app->user->identity->distrito;
+        } else if ( strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idDistritoFederal']) ) {
+            $sql .= 'INNER JOIN [CSeccion] ON
+                [DetalleEstructuraMovilizacion].[Municipio] = [CSeccion].[IdMunicipio] AND
+                [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector] AND
+                [CSeccion].[DistritoFederal] = '.Yii::$app->user->identity->distrito;
+        }
+        
+        $sql .= ' WHERE
+            [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.
+            ' ORDER BY [Nivel] ASC';
 
         $Puesto = $this->findBySql($sql)->one();
 
@@ -937,4 +982,13 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         return $persona;
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCSeccion()
+    {
+        return $this->hasMany(CSeccion::className(), ['IdMunicipio' => 'Municipio']);
+    }
+
 }
