@@ -44,9 +44,9 @@ SCRIPT;
         echo '<div class="form-group"><label class="control-label" for="municipio_promocion">Municipio</label>';
         $muniSelected = null;
 
-        if (strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idCapturista'])) {
+        /*if (strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idCapturista'])) {
             $muniSelected = Yii::$app->user->identity->persona->MUNICIPIO;
-        }
+        }*/
 
         echo Html::dropDownList('municipio_promocion', $muniSelected, ([0=>'Seleccione una opción']+$municipios), [
                 'class' => 'form-control',

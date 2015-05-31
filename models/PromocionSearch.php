@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Promocion;
+use app\helpers\MunicipiosUsuario;
 
 /**
  * PromocionSearch represents the model behind the search form about `app\models\Promocion`.
@@ -41,7 +42,17 @@ class PromocionSearch extends Promocion
      */
     public function search($params)
     {
-        $query = Promocion::find();
+        $query = Promocion::findBySql('SELECT
+                [Promocion].[IdEstructuraMov]
+                ,[Promocion].[IdpersonaPromovida]
+                ,[Promocion].[IdPuesto]
+                ,[Promocion].[IdPersonaPromueve]
+                ,[Promocion].[IdPersonaPuesto]
+                ,[Promocion].[FechaPromocion]
+            FROM [Promocion] 
+            INNER JOIN [PadronGlobal] ON
+            [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdpersonaPromovida]
+            AND [PadronGlobal].[MUNICIPIO] IN ('.implode(',',array_keys(MunicipiosUsuario::getMunicipios())).')');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
