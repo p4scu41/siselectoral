@@ -230,8 +230,7 @@ class Reporte extends \yii\db\ActiveRecord
 
         $agregarEspacios .= $espacios;
 
-        $estructura .= '{ "id": "'.$nodo['IdNodoEstructuraMov'].'",'
-                        . '"Puesto": "'.$agregarEspacios.$nodo['DescripcionPuesto'].'", '
+        $estructura .= '{ "Puesto": "'.$agregarEspacios.$nodo['DescripcionPuesto'].'", '
                         .'"Descripción": "'.$nodo['DescripcionNodo'].'",'
                         .'"Nombre": "'.str_replace('\\', 'Ñ', $nodo['Responsable']).'",'
                         .'"Sección": "'.$nodo['Seccion'].'",'
@@ -344,7 +343,8 @@ class Reporte extends \yii\db\ActiveRecord
                 ,[PadronGlobal].[TELCASA]
                 ,[PadronGlobal].[TELMOVIL]
                 ,[PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
-                    +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                    +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio,
+                [CSeccion].[NumSector]
             FROM
                 [Promocion]
             INNER JOIN [PadronGlobal] ON
@@ -359,7 +359,10 @@ class Reporte extends \yii\db\ActiveRecord
                                 ' OR [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo.')';
         }
 
-        $sqlPromotores .= ' ORDER BY descripcionPuesto, nombrePersonaPromueve';
+        $sqlPromotores .= ' INNER JOIN [CSeccion] ON
+                [CSeccion].[IdMunicipio] = [DetalleEstructuraMovilizacion].[Municipio] AND
+                [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector]
+            ORDER BY descripcionPuesto, nombrePersonaPromueve';
         
         $promotores = Yii::$app->db->createCommand($sqlPromotores)->queryAll();
 
@@ -369,7 +372,7 @@ class Reporte extends \yii\db\ActiveRecord
             $reporte = '[';
 
             foreach ($promotores as $promotor) {
-                $reporte .= '{ "Nombre": "<b>'.$promotor['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promotor['nombrePersonaPromueve']).'</b>",'
+                $reporte .= '{ "Nombre": "<b>'.$promotor['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promotor['nombrePersonaPromueve']).' - Sección '.$promotor['NumSector'].'</b>",'
                                 .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
                                 .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
                                 //.'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" ,'

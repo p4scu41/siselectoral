@@ -116,7 +116,7 @@ $(document).ready(function(){
         // (logIDUsr == main) Compara si el ID del usuario logueado corresponde al Administrador
         // (logIDUsr == logIDSA) Compara si el ID del usuario logueado es de San Cristobal
         //if ((node.data.IdPuesto == 6 || node.data.IdPuesto == 7) || (logIDUsr == main) || (logIDUsr == logIDSA)) {
-        if ((node.data.IdPuesto == 6 || node.data.IdPuesto == 7) || (logIDPerfUsr == IDPerfAdm) || (logIDPerfUsr == IDPerfAdmMuni)) {
+        if ((node.data.IdPuesto == 6 || node.data.IdPuesto == 7) || (logIDPerfUsr == IDPerfAdm) || (logIDPerfUsr == IDPerfAdmMuni) || (node.data.IdPuesto < pl)) {
             // El usuario logueado solo puede asignar puestos a sus estructura inferior
             if( $('#divAsignarPersona #btnAsignarPersona').length == 0) {
                 $('#divAsignarPersona').append(btnAsignarPersona);
@@ -353,6 +353,7 @@ $(document).ready(function(){
             type: "GET",
         }).done(function(response){
             count = 0;
+            total_benefi_progra = 0;
 
             if (response.length) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
@@ -360,7 +361,8 @@ $(document).ready(function(){
 
                 for(fila in response) {
                     if (response[fila].Integrantes != 0) {
-                        $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes+'</td><td class="text-center">'+
+                    total_benefi_progra += parseInt(response[fila].Integrantes);
+                        $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes.format(0, 3, ',')+'</td><td class="text-center">'+
                                 '<a class="btn btn-default" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'" title="Desplegar detalles">'+
                                 '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></td></tr>';
                         count++;
@@ -377,6 +379,7 @@ $(document).ready(function(){
             $('#list_programas').html($tabla);
             $('#list_programas a').click(getIntegrantesBySeccion);
             $('#no_programas').html(count);
+            $('#total_benefi_progra').html('Total de beneficiarios de los programas: '+total_benefi_progra.format(0, 3, ','));
             $('#list_integrantes').html('');
             $('#list_integrantes').hide();
         });

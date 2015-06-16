@@ -115,7 +115,7 @@ class Organizaciones extends \yii\db\ActiveRecord
                 CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION],
                 [PadronGlobal].[TELCASA],
                 [PadronGlobal].[TELMOVIL],
-                [PadronGlobal].[DOMICILIO]+\', \'+[PadronGlobal].[DES_LOC]
+                [PadronGlobal].[DES_LOC]
                     +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
                 ,[CMunicipio].[DescMunicipio]
                 ,[DetallePromocion].[IdPErsonaPromueve]

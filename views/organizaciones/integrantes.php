@@ -58,8 +58,7 @@ $this->registerJs('var getOtrasOrgs = "'.Url::toRoute('organizaciones/getotrasor
                 <tr>
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Sección</th>
-                    <!--<th class="text-center">Dirección</th>-->
-                    <th class="text-center">Municipio</th>
+                    <th class="text-center">Dirección</th>
                     <th class="text-center">Promovido</th>
                     <th class="text-center">Otras Organizaciones</th>
                     <th class="text-center">Eliminar</th>
@@ -71,8 +70,7 @@ $this->registerJs('var getOtrasOrgs = "'.Url::toRoute('organizaciones/getotrasor
                     echo '<tr>'
                         . '<td>' . $integrantes[$count]['NombreCompleto'] . '</td>'
                         . '<td class="seccion"> ' . (int)$integrantes[$count]['SECCION'] . ' </td>'
-                        //. '<td>' . $integrantes[$count]['Domicilio'] . '</td>'
-                        . '<td>' . $integrantes[$count]['DescMunicipio'] . '</td>'
+                        . '<td>' . $integrantes[$count]['Domicilio'] . '</td>'
                         . '<td class="text-center"><a href="#" class="promovidoIntegrante" data-id="'.$integrantes[$count]['CLAVEUNICA'].'" data-promotor="'.$integrantes[$count]['IdPErsonaPromueve'].'"><i class="fa fa-' . ($integrantes[$count]['IdPErsonaPromueve']==null ? '' : 'check-') . 'square-o fa-lg"></i></a></td>'
                         . '<td class="text-center"><a class="btn btn-default btnVerOtrasOrganizacion" href="#" '.
                             'role="button" data-id="'.$integrantes[$count]['CLAVEUNICA'].'" data-org="'.((int)$_GET['idOrg']).'" title="Ver Otras Organizaciones"> '.$integrantes[$count]['otrasOrganizaciones'].' </i> '

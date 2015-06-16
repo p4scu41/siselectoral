@@ -490,6 +490,7 @@ class PadronController extends Controller
         $personas = PadronGlobal::find()
             ->select('*')
             ->where('ALFA_CLAVE_ELECTORAL = \''.$clave.'\'')
+            ->andWhere('[MUNICIPIO] IN ('.implode(',', MunicipiosUsuario::getMunicipios()).')')
             ->asArray()
             ->all();
 

@@ -96,6 +96,30 @@ class Usuarios extends \yii\db\ActiveRecord implements \yii\web\IdentityInterfac
         return $nodo;
     }
 
+    public function getPuesto()
+    {
+        $result = Yii::$app->db->createCommand('SELECT [IdPuesto] FROM [DetalleEstructuraMovilizacion] WHERE '.
+            '[IdPersonaPuesto] = \''.$this->IdPersona.'\'')->queryOne();
+
+        if ($result != null) {
+            return $result['IdPuesto'];
+        }
+
+        return null;
+    }
+
+    public function getIdNodoEstructura()
+    {
+        $result = Yii::$app->db->createCommand('SELECT [IdNodoEstructuraMov] FROM [DetalleEstructuraMovilizacion] WHERE '.
+            '[IdPersonaPuesto] = \''.$this->IdPersona.'\'')->queryOne();
+
+        if ($result != null) {
+            return $result['IdNodoEstructuraMov'];
+        }
+
+        return null;
+    }
+
     /**
      * @inheritdoc
      */

@@ -634,7 +634,7 @@ modalPerson #tablaResumen tr:last-child {
     background-color: #009966;
     color: #f9f9f9;
 }
-#tblFaltantes {
+#tblFaltantes, #list_programas {
     max-height: 200px;
     overflow: auto;
 }

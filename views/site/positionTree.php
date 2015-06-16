@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use app\helpers\PerfilUsuario;
 
 /* @var $this yii\web\View */
 $this->title = 'Estrategia Municipal';
@@ -32,6 +33,7 @@ $this->registerJs('main = 3;', \yii\web\View::POS_HEAD); // ID de Usuario Admini
 $this->registerJs('logIDPerfUsr = "'.strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('IDPerfAdm = "'.strtolower(Yii::$app->params['idAdmin']).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('IDPerfAdmMuni = "'.strtolower(Yii::$app->params['idAdminMuni']).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('IDPerfCaptu = "'.strtolower(Yii::$app->params['idCapturista']).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlListInte="'.Url::toRoute('organizacion/listintegrantesfromseccion').'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlUpdatePersona="'.Url::toRoute('padron/update').'";', \yii\web\View::POS_HEAD);
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
@@ -94,9 +96,11 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                         <p><button type="button" class="btn btn-success" id="btnBuscar">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Buscar
                             </button> &nbsp;
+                            <?php if (!PerfilUsuario::isCapturista()) { ?>
                             <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal" style="display: none;">
                                 <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Status
                             </button> &nbsp;
+                            <?php } ?>
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
                     <?php ActiveForm::end(); ?>
@@ -227,6 +231,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
 
                                                     <div id="seccion_programas" style="display: none;">
                                                         Programas disponibles en el municipio:
+                                                        <div id="total_benefi_progra"></div>
                                                         <div id="list_programas"></div>
                                                         <div id="list_integrantes" class="tblListIntegrantesBySeccion" style="display: none;"></div>
                                                     </div>

@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use app\models\Puestos;
 use app\models\PadronGlobal;
+use app\helpers\PerfilUsuario;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -93,7 +94,13 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         $tree = '[';
 
-        if(empty($filtros['IdPuesto']) && empty($filtros['IdPuestoDepende'])) {
+        if (PerfilUsuario::isCapturista()) {
+            if (empty($filtros['IdPuestoDepende'])) {
+                $filtros['IdNodoEstructuraMov'] = Yii::$app->user->identity->getIdNodoEstructura();
+            }
+        }
+
+        if(empty($filtros['IdPuesto']) && empty($filtros['IdPuestoDepende']) && !isset($filtros['IdNodoEstructuraMov'])) {
             $filtros['IdPuesto'] = $this->getMaxPuestoOnMuni($filtros['Municipio']);
         }
 
@@ -196,7 +203,15 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
                 $count = $this->find()->where($where)->count();
 
-                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.
+                $nombrePromotor = '';
+                if ($puesto->IdPuesto == 7 && $row->IdPersonaPuesto!='00000000-0000-0000-0000-000000000000') {
+                    $persona = PadronGlobal::find()->where('[CLAVEUNICA] = \''.$row->IdPersonaPuesto.'\'')->one();
+                    if ($persona != null) {
+                        $nombrePromotor = $persona->getNombreCompleto();
+                    }
+                }
+
+                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.$nombrePromotor.
                             ($count > 0 ? '['.$count.']' : '').'", '.
                             '"data": { "IdPuesto": "'.$puesto->IdPuesto.'", "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
 

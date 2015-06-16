@@ -42,18 +42,8 @@ class PromocionSearch extends Promocion
      */
     public function search($params)
     {
-        $query = Promocion::findBySql('SELECT
-                [Promocion].[IdEstructuraMov]
-                ,[Promocion].[IdpersonaPromovida]
-                ,[Promocion].[IdPuesto]
-                ,[Promocion].[IdPersonaPromueve]
-                ,[Promocion].[IdPersonaPuesto]
-                ,[Promocion].[FechaPromocion]
-            FROM [Promocion] 
-            INNER JOIN [PadronGlobal] ON
-            [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdpersonaPromovida]
-            AND [PadronGlobal].[MUNICIPIO] IN ('.implode(',',array_keys(MunicipiosUsuario::getMunicipios())).')');
-
+        $query = Promocion::find();
+        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -66,15 +56,17 @@ class PromocionSearch extends Promocion
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'IdEstructuraMov' => $this->IdEstructuraMov,
-            'IdPuesto' => $this->IdPuesto,
-        ]);
+        if (empty($params)) {
+            $query->where('0=1');
+            return $dataProvider;
+        }
+
+        $query->innerJoin('PadronGlobal', '[PadronGlobal].[CLAVEUNICA] = [Promocion].[IdpersonaPromovida] AND '
+            . '[PadronGlobal].[MUNICIPIO] IN ('.implode(',',array_keys(MunicipiosUsuario::getMunicipios())).')');
 
         $query->andFilterWhere(['>=', 'FechaPromocion', $this->FechaPromocion]);
 
-        $query->andFilterWhere(['like', 'IdpersonaPromovida', $this->IdpersonaPromovida])
-            ->andFilterWhere(['like', 'IdPersonaPromueve', $this->IdPersonaPromueve])
+        $query->andFilterWhere(['like', 'IdPersonaPromueve', $this->IdPersonaPromueve])
             ->andFilterWhere(['like', 'IdPersonaPuesto', $this->IdPersonaPuesto]);
 
         $query->orderBy('FechaPromocion DESC');

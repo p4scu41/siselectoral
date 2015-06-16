@@ -22,6 +22,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered table-hover'],
+        'emptyText' => 'Realice una búsqueda para visualizar los registros',
         //'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],

@@ -92,3 +92,5 @@ echo '</div>';
         <i class="fa fa-file-excel-o"></i> Exportar a Excel
     </a>-->
 </div>
+
+<div id="formExport"></div>

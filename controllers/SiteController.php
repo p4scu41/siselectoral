@@ -270,7 +270,8 @@ class SiteController extends Controller
     public function actionGetmetabyseccion($id, $puesto)
     {
         $meta = 0;
-        if ($puesto <= 5) {
+        // Hack para permitir que el 8 COORD. ZONA
+        if ($puesto <= 5 || $puesto==8) {
             $meta = DetalleEstructuraMovilizacion::getMetaBySeccion($id);
         } else {
             $meta = DetalleEstructuraMovilizacion::getMetaByPromotor($id);
