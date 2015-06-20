@@ -36,6 +36,9 @@ $this->registerJs('IDPerfAdmMuni = "'.strtolower(Yii::$app->params['idAdminMuni'
 $this->registerJs('IDPerfCaptu = "'.strtolower(Yii::$app->params['idCapturista']).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlListInte="'.Url::toRoute('organizacion/listintegrantesfromseccion').'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlUpdatePersona="'.Url::toRoute('padron/update').'";', \yii\web\View::POS_HEAD);
+$this->registerJs('getSeccionesMuni="'.Url::toRoute('seccion/getjsmuni', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('getParents="'.Url::toRoute('site/getparents', true).'";', \yii\web\View::POS_HEAD);
+
 // http://stackoverflow.com/questions/14923301/uncaught-typeerror-cannot-read-property-msie-of-undefined-jquery-tools
 $this->registerJs('jQuery.browser = {};
 (function () {
@@ -53,7 +56,6 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
 $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'));
 ?>
-
 
 <div class="row">
     <!-- left column -->
@@ -93,16 +95,19 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                             </div>-->
                             <input type="hidden" name="IdPuesto" id="puesto" value="0">
                         </div>
+                        <div id="listJefeSeccion"></div>
                         <p><button type="button" class="btn btn-success" id="btnBuscar">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Buscar
                             </button> &nbsp;
-                            <?php if (!PerfilUsuario::isCapturista()) { ?>
+                            <?php //if (!PerfilUsuario::isCapturista()) { ?>
                             <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal" style="display: none;">
                                 <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Status
                             </button> &nbsp;
-                            <?php } ?>
+                            <?php //} ?>
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
+                        
+                        <div id="ubicacionSeccion"></div>
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>
@@ -175,7 +180,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                         <div role="tabpanel" class="tab-pane active" id="tabPuesto">
                                             <div class="panel panel-success">
                                                 <div class="panel-body">
-                                                    <div id="indicadoresPuesto" class="text-center" class="col-xs-12 col-sm-12 col-md-12">
+                                                    <div id="indicadoresPuesto" class="text-center col-xs-12 col-sm-12 col-md-12">
                                                         <span class="btn btn-app btn-sm btn-primary" id="meta_proyec">
                                                             <span class="line-height-1 bigger-170" id="no_meta_proyec"> 0 </span>
                                                             <br>
@@ -394,6 +399,24 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
             </div>
             <div class="modal-body">
                 Hola mundo
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDetallesBeneficiario" tabindex='-1'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Datos del Beneficiario</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="POST">
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>

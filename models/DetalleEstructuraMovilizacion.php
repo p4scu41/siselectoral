@@ -204,7 +204,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 $count = $this->find()->where($where)->count();
 
                 $nombrePromotor = '';
-                if ($puesto->IdPuesto == 7 && $row->IdPersonaPuesto!='00000000-0000-0000-0000-000000000000') {
+                // Para promotor y coordinador de promotores agregar el nombre
+                if (($puesto->IdPuesto == 7 || $puesto->IdPuesto == 6) && $row->IdPersonaPuesto!='00000000-0000-0000-0000-000000000000') {
                     $persona = PadronGlobal::find()->where('[CLAVEUNICA] = \''.$row->IdPersonaPuesto.'\'')->one();
                     if ($persona != null) {
                         $nombrePromotor = $persona->getNombreCompleto();
@@ -533,7 +534,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         for($i=0; $i<count($totales); $i++) {
             $totales[$i]['Ocupados'] = (int) $ocupados[$totales[$i]['IdPuesto']];
             $totales[$i]['Vacantes'] = (int) (isset($vacantes[$totales[$i]['IdPuesto']]) ? $vacantes[$totales[$i]['IdPuesto']] : 0);
-            unset($totales[$i]['IdPuesto']);
+            //unset($totales[$i]['IdPuesto']);
 
             $totales[$i]['Avances %'] = round(((int)$totales[$i]['Ocupados'] / (int)$totales[$i]['Total'])*100);
 
@@ -965,19 +966,62 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
     public static function getpuestosfaltantesbyseccion($muni, $puesto)
     {
-        $sqlPuestos = 'SELECT [CSeccion].[NumSector] as Seccion, COUNT(*) Faltantes
-            FROM [DetalleEstructuraMovilizacion]
-            INNER JOIN [CSeccion] ON
-                [CSeccion].[IdMunicipio] = '.$muni.' AND
-                [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector]
-            INNER JOIN [Puestos] ON
-                [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto]
-            WHERE [Municipio] = '.$muni.' AND [IdPersonaPuesto] = \'00000000-0000-0000-0000-000000000000\'
-            AND [Puestos].[Descripcion] = \''.$puesto.'\'
-            GROUP BY [CSeccion].[NumSector]
-            ORDER BY [NumSector]';
+        if ($puesto == 2 || $puesto == 4 || $puesto == 8) {
+            $sqlPuestos = 'SELECT
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] AS idNodo,
+                [Puestos].[Descripcion]+\' - \'+
+                [DetalleEstructuraMovilizacion].[Descripcion] AS Puesto
+            FROM
+                [DetalleEstructuraMovilizacion]
+            INNER JOIN [Puestos]
+                ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
+            WHERE
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$muni.' AND
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = \'00000000-0000-0000-0000-000000000000\' AND
+                [DetalleEstructuraMovilizacion].[IdPuesto] = \''.$puesto.'\'
+            ORDER BY [DetalleEstructuraMovilizacion].[Descripcion]';
 
-        $puestos = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
+            $puestos = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
+        } else {
+            $sqlPuestos = 'SELECT [DetalleEstructuraMovilizacion].[IdSector],
+                [CSeccion].[NumSector] as Seccion, COUNT(*) Faltantes
+                FROM [DetalleEstructuraMovilizacion]
+                INNER JOIN [CSeccion] ON
+                    [CSeccion].[IdMunicipio] = '.$muni.' AND
+                    [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector]
+                INNER JOIN [Puestos] ON
+                    [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto]
+                WHERE [Municipio] = '.$muni.' AND [IdPersonaPuesto] = \'00000000-0000-0000-0000-000000000000\'
+                AND [DetalleEstructuraMovilizacion].[IdPuesto] = \''.$puesto.'\'
+                GROUP BY [DetalleEstructuraMovilizacion].[IdSector],[CSeccion].[NumSector]
+                ORDER BY [NumSector]';
+
+            $result = Yii::$app->db->createCommand($sqlPuestos)->queryAll();
+
+            $puestos = [];
+
+            if ($result != null) {
+                foreach ($result as $nodo) {
+                    $js =  Yii::$app->db->createCommand('SELECT [IdNodoEstructuraMov]
+                        FROM [DetalleEstructuraMovilizacion]
+                        WHERE [Municipio] = '.$muni.' AND [IdPuesto] = 5 AND [IdSector] = '.$nodo['IdSector'])->queryOne();
+
+                    if ($js != null) {
+                        $puestos[] = [
+                            'idNodo' => $js['IdNodoEstructuraMov'],
+                            'Seccion' => $nodo['Seccion'],
+                            'Faltantes' => $nodo['Faltantes']
+                        ];
+                    } else {
+                        $puestos[] = [
+                            'idNodo' => 0,
+                            'Seccion' => $nodo['Seccion'],
+                            'Faltantes' => $nodo['Faltantes']
+                        ];
+                    }
+                }
+            }
+        }
 
         return $puestos;
     }
@@ -1004,6 +1048,77 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     public function getCSeccion()
     {
         return $this->hasMany(CSeccion::className(), ['IdMunicipio' => 'Municipio']);
+    }
+
+    /**
+     * Obtiene los nodos padres de un nodo especifico
+     *
+     * @param type $idNodo
+     * @return type
+     */
+    public static function getParents($idNodo, $tipo)
+    {
+        $parents = [];
+        $nodosPadres = [];
+
+        $query = 'SELECT [IdNodoEstructuraMov]
+                ,[IdPuesto]
+                ,[IdPuestoDepende]
+                ,[IdPersonaPuesto]
+                ,[Dependencias]
+                ,[Descripcion]
+            FROM [DetalleEstructuraMovilizacion]
+            WHERE IdNodoEstructuraMov = ';
+
+        $nodo = Yii::$app->db->createCommand($query.$idNodo)->queryOne();
+        $parents[] = $nodo['IdPuestoDepende'];
+        $ids = '';
+
+        do {
+            $idNodoPadre = array_pop($parents);
+
+            if ($idNodoPadre != null) {
+                $padre = Yii::$app->db->createCommand($query.$idNodoPadre)->queryOne();
+
+                if ($padre != null) {
+                    $nodosPadres[] = ['IdNodoEstructuraMov' => $padre['IdNodoEstructuraMov'], 'Descripcion' => $padre['Descripcion']];
+                    $ids .= $padre['IdNodoEstructuraMov'].'~';
+                    $parents[] = $padre['IdPuestoDepende'];
+                }
+            }
+        } while (count($parents) != 0);
+
+        if ($tipo) {
+            $nodosPadres = substr($ids, 0, -1);  
+        }
+
+        return $nodosPadres;
+    }
+
+    public static function getPromotoresByNodo($idNodo) {
+        $query = 'SELECT
+            [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] AS idNodo,
+            ([NOMBRE]+ \' \' +[APELLIDO_PATERNO]+ \' \' +[APELLIDO_MATERNO]) AS NOMBRECOMPLETO,
+            COUNT([Promocion].[IdpersonaPromovida]) AS faltantes
+        FROM
+            [DetalleEstructuraMovilizacion]
+        INNER JOIN [PadronGlobal] ON
+            [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA]
+        INNER JOIN [Promocion] ON
+            [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = [Promocion].[IdPuesto] AND
+            [Promocion].[Participacion] IS NULL
+        WHERE
+            [DetalleEstructuraMovilizacion].[IdPersonaPuesto] != \'00000000-0000-0000-0000-000000000000\' AND
+            [DetalleEstructuraMovilizacion].[IdPuesto] = 7 AND
+            [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'
+        GROUP BY
+            [IdNodoEstructuraMov], [NOMBRE],[APELLIDO_PATERNO],[APELLIDO_MATERNO]
+        ORDER BY
+            [NOMBRE],[APELLIDO_PATERNO],[APELLIDO_MATERNO]';
+
+        $promotores = Yii::$app->db->createCommand($query)->queryAll();
+
+        return $promotores;
     }
 
 }

@@ -311,14 +311,14 @@ class Reporte extends \yii\db\ActiveRecord
         return json_decode(str_replace('},]', '}]', $estructura), true);
     }
 
-    public function promovidos($idMuni, $idNodo = null, $tipoPromovido)
+    public function promovidos($idMuni, $idNodo = null, $tipoPromovido, $incluir_domicilio)
     {
         $reporte = '';
 
         if ($tipoPromovido == 1) {
-            $reporte = self::promovidosEfectivos($idMuni, $idNodo);
+            $reporte = self::promovidosEfectivos($idMuni, $idNodo, $incluir_domicilio);
         } else {
-            $reporte = self::promovidosIntentos($idMuni, $idNodo);
+            $reporte = self::promovidosIntentos($idMuni, $idNodo, $incluir_domicilio);
         }
 
         return $reporte;
@@ -331,7 +331,7 @@ class Reporte extends \yii\db\ActiveRecord
      * @param Int|Null $idNodo
      * @return JSON
      */
-    public static function promovidosEfectivos($idMuni, $idNodo = null)
+    public static function promovidosEfectivos($idMuni, $idNodo = null, $incluir_domicilio)
     {
         $sqlPromotores = 'SELECT
                 DISTINCT([Promocion].[IdPersonaPromueve])
@@ -375,7 +375,7 @@ class Reporte extends \yii\db\ActiveRecord
                 $reporte .= '{ "Nombre": "<b>'.$promotor['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promotor['nombrePersonaPromueve']).' - Sección '.$promotor['NumSector'].'</b>",'
                                 .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
                                 .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
-                                //.'"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" ,'
+                                .($incluir_domicilio ? '"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" ,' : '')
                                 .'"Promovido Por": "" },';
 
                 $sqlPromovidos = 'SELECT
@@ -402,7 +402,7 @@ class Reporte extends \yii\db\ActiveRecord
                         $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
                                 .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
                                 .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
-                                //.'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",'
+                                .($incluir_domicilio ? '"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",' : '')
                                 .'"Promovido Por": " --- " },';
                         $countPromovidos++;
                     }
@@ -410,7 +410,7 @@ class Reporte extends \yii\db\ActiveRecord
                     $reporte .= '{ "Nombre": "Sin Promovidos",'
                                 .'"Tel. Celular": "", '
                                 .'"Tel. Casa": "", '
-                                //.'"Domicilio": "", '
+                                .($incluir_domicilio ? '"Domicilio": "", ' : '')
                                 .'"Promovido Por": "" },';
                 }
 
@@ -450,7 +450,7 @@ class Reporte extends \yii\db\ActiveRecord
                         $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promovido['Persona']).'",'
                                 .'"Tel. Celular": "'.$promovido['TELMOVIL'].'", '
                                 .'"Tel. Casa": "'.$promovido['TELCASA'].'", '
-                                //.'"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",'
+                                .($incluir_domicilio ? '"Domicilio": "'.str_replace('\\', 'Ñ', $promovido['Domicilio']).'",' : '')
                                 .'"Promovido Por": "'.$promovido['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promovido['nombrePersonaPromueve']).'" },';
                         $countPromovidos++;
                     }
@@ -459,7 +459,7 @@ class Reporte extends \yii\db\ActiveRecord
                 $reporte .= '{ "Nombre": " &nbsp; ",'
                             .'"Tel. Celular": " &nbsp; ", '
                             .'"Tel. Casa": " &nbsp; ", '
-                            //.'"Domicilio": " &nbsp; ", '
+                            .($incluir_domicilio ? '"Domicilio": " &nbsp; ", ' : '')
                             .'"Promovido Por": " &nbsp; " },';
             }
 
@@ -476,7 +476,7 @@ class Reporte extends \yii\db\ActiveRecord
      * @param Int|Null $idNodo
      * @return JSON
      */
-    public static function promovidosIntentos($idMuni, $idNodo = null)
+    public static function promovidosIntentos($idMuni, $idNodo = null, $incluir_domicilio)
     {
         $sqlPromotores = 'SELECT
                 [DetalleEstructuraMovilizacion].[Descripcion] AS descripcionPuesto

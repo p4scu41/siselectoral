@@ -340,4 +340,16 @@ class SiteController extends Controller
 
         return json_encode($puestos);
     }
+
+    public function actionGetparents()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $idNodo = Yii::$app->getRequest()->post('nodo');
+        $tipo = Yii::$app->getRequest()->post('tipo');
+
+        $padres = DetalleEstructuraMovilizacion::getParents($idNodo, $tipo);
+
+        return $padres;
+    }
 }

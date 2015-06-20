@@ -76,7 +76,7 @@ class ReporteController extends \yii\web\Controller
                 }
 
                 $respuesta['titulo'] = 'Listado Promotores - Promovidos';
-                $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('tipo_promovido'));
+                $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('tipo_promovido'), Yii::$app->request->post('incluir_domicilio'));
             }
 
             $respuesta['reporteHTML'] = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);

@@ -1,7 +1,6 @@
 <?php
 use yii\helpers\Url;
 
-$this->registerJsFile(Url::to('@web/js/selectPuestos.js'));
 $this->registerJsFile(Url::to('@web/js/reporte.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
 $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";', \yii\web\View::POS_HEAD);

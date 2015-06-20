@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ?>
                                 <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group no-delete">
                                 <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal">
                                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Resumen
                                 </button> &nbsp;

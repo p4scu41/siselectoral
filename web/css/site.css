@@ -642,6 +642,17 @@ modalPerson #tablaResumen tr:last-child {
 #tblFaltantes th{
     text-align: center;
 }
+.breadcrumb > li + li:before {
+  content: "\2192";
+  color: black;
+}
+#modalFaltantesbBySeccion .modal-body {
+    max-height: 300px;
+    overflow: auto;
+}
+.modal-body .form-group {
+    margin-bottom: auto !important;
+}
 
 @media print {
     #indicadoresPuesto .btn.btn-app{

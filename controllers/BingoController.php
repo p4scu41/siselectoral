@@ -64,18 +64,4 @@ class SeccionController extends \yii\web\Controller
         return json_encode($secciones);
     }
 
-    public function actionGetpromotores()
-    {
-        Yii::$app->getResponse()->format = \yii\web\Response::FORMAT_JSON;
-
-        $idNodo = Yii::$app->request->post('nodo');
-        $promotores = null;
-
-        if ($idNodo != null) {
-            $promotores = DetalleEstructuraMovilizacion::getPromotoresByNodo($idNodo);
-        }
-
-        return $promotores;
-    }
-
 }

@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use app\helpers\PerfilUsuario;
 
 /* @var $this yii\web\View */
 $this->title = 'Reporte de Promoción';
@@ -41,6 +42,15 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
                                 ?>
                                 <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
                             </div>
+                            <?php //if (PerfilUsuario::isAdminGeneral() || PerfilUsuario::isAdminMunicipal()) { ?>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="incluir_domicilio" id="incluir_domicilio" value="1"> Incluir domicilio en el reporte
+                                    </label>
+                                </div>
+                            </div>
+                            <?php //} ?>
                             <!--<label class="radio-inline">
                                 <input type="radio" name="tipo_promovido" value="1"> Promovidos Efectivos
                             </label>

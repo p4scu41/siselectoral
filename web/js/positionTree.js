@@ -426,18 +426,80 @@ $(document).ready(function(){
             if ( response.length ) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
                         '<thead><tr><th class="text-center">Nombre</th><th class="text-center">Sexo</th>'+
-                            '<th class="text-center">Fecha Nacimiento</th><th>Colonia</th><th>Promovido</th></tr></thead><tbody>';
+                            '<th class="text-center">Fecha Nacimiento</th><th>Colonia</th><th>Promovido</th><th>Detalles</th></tr></thead><tbody>';
 
                 for(fila in response) {
-                    console.log(response[fila]);
                     $tabla += '<tr><td>'+response[fila].NOMBRE+'</td><td>'+response[fila].SEXO+'</td>'+
                         '<td>'+response[fila].FECHANACIMIENTO+'</td><td>'+response[fila].COLONIA+'</td>'+
-                        '<td class="text-center"><i class="fa fa-'+(response[fila].IdPErsonaPromueve == null ? '' : 'check-')+'square-o"></i></td></tr>';
+                        '<td class="text-center"><i class="fa fa-'+(response[fila].IdPErsonaPromueve == null ? '' : 'check-')+'square-o"></i></td>'+
+                        '<td class="text-center"><a href="#" class="btnDetallesBeneficiario" data-id="'+response[fila].CLAVEUNICA+'"><i class="fa fa-newspaper-o"></i></a></td></tr>';
                 }
                 $tabla += '</tbody></table>';
                 $('#modalListIntegrantes .modal-body').html($tabla);
                 $('#modalListIntegrantes .modal-title').addClass('text-center');
                 $('#modalListIntegrantes .modal-title').html('Programa '+$(self).data('nombreorg')+'<br>Beneficiarios de la sección '+$(self).data('seccion'));
+
+                $('.btnDetallesBeneficiario').click(function(event){
+                    event.stopPropagation();
+                    event.preventDefault();
+
+                    self = this;
+
+                    $.ajax({
+                        url: urlPerson,
+                        dataType: "json",
+                        data: {id: $(self).data('id') },
+                        type: "GET",
+                    }).done(function(response) {
+                        $nombreCompleto = response.NOMBRE+' '+
+                                          response.APELLIDO_PATERNO+' '+
+                                          response.APELLIDO_MATERNO;
+                        var sexo = 'U';
+
+                        $datos = [
+                            {'colum': 'CALLE', 'label': 'Domicilio'},
+                            {'colum': 'CORREOELECTRONICO', 'label': 'E-mail'},
+                            {'colum': 'TELMOVIL', 'label': 'Tel. Móvil'},
+                            {'colum': 'SECCION', 'label': 'Sección'},
+                            {'colum': 'CASILLA', 'label': 'Casilla'},
+                            //{'colum': 'DISTRITO', 'label': 'Distrito'},
+                        ];
+
+                        $tplFila = '<div class="form-group">'+
+                            '<label class="col-sm-3 col-xs-2 control-label">Nombre</label>'+
+                            '<div class="col-sm-9 col-xs-10">'+
+                                '<div class="well well-sm">'+$nombreCompleto+'</div>'+
+                            '</div>'+
+                        '</div>';
+
+                        $('#frmPersonDetails').append($tplFila);
+
+                        for($fila in $datos) {
+                            var valor = response[$datos[$fila].colum];
+                            valor = (valor == null ? '' : valor);
+                            valor = (valor == '' ? '&nbsp;' : valor);
+
+                            if($datos[$fila].colum == 'SEXO') {
+                                sexo = valor;
+                            }
+
+                            $tplFila += '<div class="form-group">'+
+                                '<label class="col-sm-3 col-xs-2 control-label">'+$datos[$fila].label+'</label>'+
+                                '<div class="col-sm-9 col-xs-10">'+
+                                    '<div class="well well-sm">'+valor+'</div>'+
+                                '</div>'+
+                            '</div>';
+                        }
+
+                        if (sexo == '') {
+                            sexo = 'U';
+                        }
+                        
+                        $('#modalDetallesBeneficiario form').html($tplFila);
+
+                        $('#modalDetallesBeneficiario').modal('show');
+                    });
+                });
             }
         });
 
@@ -649,15 +711,20 @@ $(document).ready(function(){
 
     $('#btnBuscar').click(function(){
         $parametros = '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
-                    '&IdPuesto='+$('#puesto').val()+'&IdPuestoDepende=';
+                    '&IdPuesto='+($('#puesto').val() != 0 && typeof($('#puesto').val()) != 'undefined' ? $('#puesto').val() : 0)+
+                    '&IdPuestoDepende=';
 
         var IdPuestoDepende = 0;
 
         $('[name=IdPuestoDepende]').each(function(index, element){
-            IdPuestoDepende = $(this).val() != 0 ? $(this).val() : IdPuestoDepende;
+            IdPuestoDepende = $(this).val() != 0 && typeof($(this).val()) != 'undefined' ? $(this).val() : IdPuestoDepende;
         });
 
-        $parametros += $parametros+IdPuestoDepende;
+        /*if ($('#list-jefe-de-seccion').val() != 0 && $('#list-jefe-de-seccion').val() != 'undefined') {
+            IdPuestoDepende = $('#list-jefe-de-seccion').val();
+        }*/
+
+        $parametros = $parametros+IdPuestoDepende;
 
         // Se guardan los parámetros en una cookie para precargar la última búsqueda al entrar en esta sección
         $.cookie('parametros', $parametros, { path: '/' } );
@@ -701,6 +768,26 @@ $(document).ready(function(){
         );
 
         $("#treeContainer").delegate("a", "click", verModalNodo);
+
+        /*if ($('#list-jefe-de-seccion').val() != 0 && $('#list-jefe-de-seccion').val() != 'undefined') {
+            $.ajax({
+                url: getParents,
+                dataType: "json",
+                data: '_csrf='+$('[name=_csrf]').val()+'&nodo='+$('#list-jefe-de-seccion').val(),
+                type: "POST",
+            }).done(function(response){
+                nodosPadres = 'El Jefe de Sección se encuentra en: <ol class="breadcrumb">';
+
+                for(nodo=response.length-1; nodo>=0; nodo--) {
+                    nodosPadres += '<li>'+response[nodo].Descripcion+'</li>';
+                }
+
+                nodosPadres += '</ol>';
+                $('#ubicacionSeccion').html(nodosPadres);
+            });
+        } else {
+            $('#ubicacionSeccion').html('');
+        }*/
     });
 
     $('#btnViewPerson').click(function(e){
@@ -724,7 +811,7 @@ $(document).ready(function(){
         $.ajax({
             url: urlResumen,
             dataType: "json",
-            data: {_csrf: CookieParams._csrf ,idMuni: $('#municipio').val()},
+            data: {_csrf: $('[name=_csrf]').val() ,idMuni: $('#municipio').val()},
             type: "GET",
         }).done(function(response) {
             $('#loadIndicator').hide();
@@ -736,12 +823,15 @@ $(document).ready(function(){
                 $('#alertResult').hide();
                 tablaResumen = $(ConvertJsonToTable(response, 'tablaResumen', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
                 $('<th>Detalles</th>').insertAfter(tablaResumen.find('th:last'));
+                tablaResumen.find('th:first').remove();
 
                 tablaResumen.find('tr').each(function(index, value) {
                     td = $(this).find('td:last');
+                    idPuesto = $(this).find('td:first').text();
+                    $(this).find('td:first').remove();
                     puesto = $(this).find('td:first').text();
                     if (puesto != 'AVANCE ESTRUCTURA' && puesto != 'PROMOCIÓN') {
-                        $('<td class="center"><a href="#" class="btn btn-default distribucionPuesto" data-puesto="'+puesto+'"><i class="fa fa-list"></i></a></td>').insertAfter(td);
+                        $('<td class="center"><a href="#" class="btn btn-default distribucionPuesto" data-puesto="'+idPuesto+'"><i class="fa fa-list"></i></a></td>').insertAfter(td);
                     } else {
                         $('<td class="center"></td>').insertAfter(td);
                     }
@@ -767,7 +857,51 @@ $(document).ready(function(){
                         if (response.length == 0) {
                             $('#modalFaltantesbBySeccion .modal-body').html('<h3>Puestos Completos</h3>');
                         } else {
-                            $('#modalFaltantesbBySeccion .modal-body').html(ConvertJsonToTable(response, 'tblFaltantes', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
+                            thead = '<thead>';
+                            tbody = '<tbody>';
+
+                            $.each(response, function(key, row) {
+                                thead = '<tr>';
+                                tbody += '<tr>';
+
+                                $.each(row, function(key, value) {
+                                    if (key != 'idNodo') {
+                                        thead += '<th>'+key.replace('Seccion', 'Sección')+'</th>';
+                                        if (key == 'Seccion' || key == 'Puesto') {
+                                            tbody += '<td><a href="#" class="nodoFaltante" data-id="'+row.idNodo+'">'+value+'</a></td>';
+                                        } else {
+                                            tbody += '<td>'+value+'</td>';
+                                        }
+                                    }
+                                });
+                                thead += '</tr>';
+                                tbody += '</tr>';
+                            });
+
+                            thead += '</thead>';
+                            tbody += '</tbody>';
+                            table = '<table border="1" cellpadding="1" cellspacing="1" id="tblFaltantes" \n\
+                                class="table table-condensed table-bordered table-hover">'+
+                                thead+tbody+'</table>';
+
+                            //$('#modalFaltantesbBySeccion .modal-body').html(ConvertJsonToTable(response, 'tblFaltantes', 'table table-condensed table-striped table-bordered table-hover', 'Download'));
+                            $('#modalFaltantesbBySeccion .modal-body').html(table);
+
+                            $('#tblFaltantes .nodoFaltante').click(function(){
+                                self = this;
+                                
+                                $.ajax({
+                                    url: getParents,
+                                    dataType: "json",
+                                    data: '_csrf='+$('[name=_csrf]').val()+'&nodo='+$(self).data('id')+'&tipo=id',
+                                    type: "POST",
+                                }).done(function(response){
+                                    sessionStorage.setItem('fancytree-1-expanded', response); // Si queremos que expandido el nodo se agrega +'~'+$(self).data('id')
+                                    sessionStorage.setItem('fancytree-1-focus', $(self).data('id'));
+                                    sessionStorage.setItem('fancytree-1-active', $(self).data('id'));
+                                    location.reload();
+                                });
+                            });
                         }
                         $('#modalFaltantesbBySeccion').modal('show');
                     });
@@ -794,8 +928,8 @@ $(document).ready(function(){
             for (var i=0; i<result.length; i++) {
                 text = result[i].DescripcionEstructura;
 
-                // Para el caso de promotores, agregar el nombre
-                if (result[i].Nivel == 7) {
+                // Para el caso de promotores y coordinador de promotores, agregar el nombre
+                if (result[i].Nivel == 7 || result[i].Nivel == 6) {
                     text += ' ' + result[i].NOMBRECOMPLETO;
                 }
 
@@ -815,6 +949,8 @@ $(document).ready(function(){
             $objFiltro = buildSelect(id, result);
             $objFiltro.find('select').change(agregaPuestoDepende);
 
+            $(this).parent().nextAll().remove();
+
             if($('#'+id).length) {
                 $('#'+id).parent().replaceWith($objFiltro);
                 $('#'+id).parent().nextAll().remove();
@@ -827,6 +963,7 @@ $(document).ready(function(){
     function agregaPuestoDepende() {
         if( $(this).val()!='' && $(this).val()!=0 ) {
             $('#loadIndicator').show();
+            self = this;
 
             $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
                     '&Nivel='+$(this).find('option:selected').data('nivel')+'&IdPuestoDepende='+$(this).val(),
@@ -837,7 +974,7 @@ $(document).ready(function(){
 
                         if (result.length>0) {
                             id = doId(result[0].DescripcionPuesto);
-                            agregaPuesto(result, id);
+                            agregaPuesto.call(self, result, id);
                         }
                     },
                 "json").done(function(){ $('#loadIndicator').hide(); });
@@ -853,6 +990,7 @@ $(document).ready(function(){
 
         var options = '<option value="0">Todos</option>';
         var idMuni = $(this).val();
+        self = this;
 
         if (idMuni != '') {
             $('#btnResumen').show();
@@ -866,19 +1004,40 @@ $(document).ready(function(){
                 if (result.length>0) {
                     id = doId(result[0].Descripcion);
                     $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
-                        function(result){ agregaPuesto(result, id); }, "json")
+                        function(result){ agregaPuesto.call(self, result, id); }, "json")
                         .done(function(){ $('#loadIndicator').hide(); });
                 } else {
                     $('#loadIndicator').hide();
                 }
             });
+
+            /*$.ajax({
+                url: getSeccionesMuni,
+                type: 'POST',
+                data: '_csrf='+$('[name=_csrf]').val()+'&municipio=' + $('#municipio').val(),
+                dataType: 'json',
+            }).done(function(response){
+                var secciones = '<div class="form-group">'+
+                    '<label for="list-jefe-de-seccion">Secciones: </label>'+
+                    '<select id="list-jefe-de-seccion" class="form-control" name="seccion">'+
+                        '<option value="0">Jefes de Sección</option>';
+
+                for (seccion in response) {
+                    secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5">' + response[seccion].NumSector+ '</option>';
+                }
+
+                secciones += '</select><br></div><br>';
+
+                $('#listJefeSeccion').html(secciones);
+                $('#loadIndicator').hide();
+            });*/
+
+            $('#MUNICIPIO_persona option[value='+idMuni+']').attr('selected', true);
         } else {
             $('#loadIndicator').hide();
             $('#btnResumen').hide();
             $('.btnCollapseTree').hide();
         }
-
-        $('#MUNICIPIO_persona option[value='+idMuni+']').attr('selected', true);
     });
 
     $('#printResumen').click(function(){
@@ -916,4 +1075,7 @@ $(document).ready(function(){
 
     $('#btnBuscar').ScrollTo();
 
+    if ($.cookie('parametros')) {
+        $('#municipio').trigger('change');
+    }
 });

@@ -1,68 +1,3 @@
-function buildSelect(id, result) {
-    filtro = '<div class="form-group filtroEstructura">'+
-            '<label for="'+id+'">'+result[0].DescripcionPuesto+'</label>'+
-            '<select id="'+id+'" class="form-control" name="IdPuestoDepende[]" data-nivel='+result[0].Nivel+'>'+
-            '<option value="0">Todos</option>';
-
-        for (var i=0; i<result.length; i++) {
-            text = result[i].DescripcionEstructura;
-
-            // Para el caso de promotores, agregar el nombre
-            if (result[i].Nivel == 7) {
-                text += ' ' + result[i].NOMBRECOMPLETO;
-            }
-
-            filtro += '<option value="'+result[i].IdNodoEstructuraMov+'" data-nivel="'+
-                result[i].Nivel+'">'+text+'</option>';
-        }
-
-        filtro += '</select></div>';
-
-        $objFiltro = $(filtro);
-
-        return $objFiltro.clone(true);
-}
-
-function agregaPuesto(result, id) {
-    if (result.length>0) {
-        $objFiltro = buildSelect(id, result);
-        $objFiltro.find('select').change(agregaPuestoDepende);
-
-        if($('#'+id).length) {
-            $('#'+id).parent().replaceWith($objFiltro);
-            $('#'+id).parent().nextAll().remove();
-        } else {
-            $('#bodyForm').append($objFiltro);
-        }
-    }
-}
-
-function agregaPuestoDepende() {
-    nivel = $(this).data('nivel');
-    seleccionado = $(this).val();
-    detalleReporte = $('input:checked:last').val();
-
-    if( seleccionado!='' && seleccionado!=0 && nivel<detalleReporte) {
-        $('#loadIndicator').show();
-
-        $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
-                '&Nivel='+$(this).find('option:selected').data('nivel')+'&IdPuestoDepende='+$(this).val(),
-                function(result) {
-                    if (result == null) {
-                        result = {};
-                    }
-
-                    if (result.length>0) {
-                        id = doId(result[0].DescripcionPuesto);
-                        agregaPuesto(result, id);
-                    }
-                },
-            "json").done(function(){ $('#loadIndicator').hide(); });
-    } else {
-        $(this).parent().nextAll().remove();
-    }
-}
-
 $(document).ready(function(){
     $form = $('<form action="" method="post" target="_blank" style="display:none">'+
             '<input type="text" name="title" id="title">'+
@@ -91,9 +26,10 @@ $(document).ready(function(){
         $('#loadIndicator').show();
         $('.filtroEstructura').remove();
 
-        var options = '<br class="filtroEstructura"/><div class="form-group filtroEstructura"><label>Seleccione el detalle del reporte: </label> <br class="filtroEstructura"/>&nbsp; ';
+        var options = '<br class="filtroEstructura no-delete"/><div class="form-group filtroEstructura no-delete"><label>Seleccione el detalle del reporte: </label> <br class="filtroEstructura"/>&nbsp; ';
 
         var idMuni = $(this).val();
+        self = this;
 
         if (idMuni != '') {
             $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
@@ -104,7 +40,7 @@ $(document).ready(function(){
                             'data-nivel="'+result[i].Nivel+'" class="chkPuesto" checked> '+
                             result[i].Descripcion+' </label> &nbsp; </div>';
                 }
-                options += '</div><br class="filtroEstructura"/>';
+                options += '</div><br class="filtroEstructura no-delete"/>';
                 $("#bodyForm").append(options);
                 $('.chkPuesto').iCheck({
                     checkboxClass: 'icheckbox_minimal-green',
@@ -115,7 +51,7 @@ $(document).ready(function(){
                 if (result.length>0) {
                     id = doId(result[0].Descripcion);
                     $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
-                        function(result){ agregaPuesto(result, id); }, "json")
+                        function(result){ agregaPuesto.call(self, result, id); }, "json")
                         .done(function(){ $('#loadIndicator').hide(); });
                 } else {
                     $('#loadIndicator').hide();
