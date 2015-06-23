@@ -1,0 +1,17 @@
+#bingoListPromotores,
+#bingoListPromovidos {
+    max-height: 400px;
+    overflow: auto;
+}
+.list-group-item {
+    cursor: pointer;
+}
+.list-group-item:hover {
+    background-color: #dff0d8;
+}
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+    background-color: #3c763d;
+    border-color: #3c763d
+}

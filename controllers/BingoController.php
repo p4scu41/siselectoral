@@ -3,21 +3,20 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\CSeccion;
-use app\models\DetalleEstructuraMovilizacion;
 use yii\filters\AccessControl;
+use app\helpers\MunicipiosUsuario;
 
-class SeccionController extends \yii\web\Controller
+class BingoController extends \yii\web\Controller
 {
     public function behaviors()
     {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['getbymunicipio'],
+                'only' => ['index'],
                 'rules' => [
                     [
-                        'actions' => ['getbymunicipio'],
+                        'actions' => ['index'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -26,42 +25,31 @@ class SeccionController extends \yii\web\Controller
         ];
     }
 
-    public function actionGetbymunicipio()
+    public function actionIndex()
     {
-        $idMuni = Yii::$app->request->post('municipio');
-
-        $secciones = CSeccion::find()
-            ->select(['NumSector'])
-            ->where(['IdMunicipio' => $idMuni])
-            ->orderBy('NumSector ASC')
-            ->asArray()
-            ->all();
+        $municipios = MunicipiosUsuario::getMunicipios();
         
-        return json_encode($secciones);
+        return $this->render('index', [
+            'municipios' => $municipios
+        ]);
     }
 
-    public function actionGetseccionesonmuni()
+    public function actionGetpromovidos()
     {
-        $idMuni = Yii::$app->request->post('municipio');
-        $secciones = null;
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        if ($idMuni != null) {
-            $secciones = DetalleEstructuraMovilizacion::getSeccionesMuni($idMuni);
-        }
+        $promovidos = \app\models\Promocion::getByPromotor(Yii::$app->request->post('promotor'));
 
-        return json_encode($secciones);
+        return $promovidos;
     }
 
-    public function actionGetjsmuni()
+    public function actionSetparticipacion()
     {
-        $idMuni = Yii::$app->request->post('municipio');
-        $secciones = null;
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $promovidos = array_filter(explode('|', Yii::$app->request->post('promovidos')));
 
-        if ($idMuni != null) {
-            $secciones = DetalleEstructuraMovilizacion::getJsmuni($idMuni);
-        }
+        \app\models\Promocion::setParticipacion($promovidos);
 
-        return json_encode($secciones);
+        return true;
     }
-
 }

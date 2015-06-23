@@ -92,6 +92,14 @@ use app\helpers\PerfilUsuario;
     </li>
     <?PHP } ?>
 
+    <?PHP if (PerfilUsuario::hasPermiso('a4cd8559-5d0d-43ba-bc7f-db91cc927a0f', 'R')) { ?>
+    <li class="<?= Yii::$app->request->getPathInfo() == 'bingo/' ? 'active' : '' ?>">
+        <a href="<?= Url::to(['bingo/index']) ?>">
+            <i class="fa fa-building-o"></i> <span>Bingo</span>
+        </a>
+    </li>
+    <?PHP } ?>
+
     <!--<li>
         <a href="#">
             <i class="fa fa-cog"></i> <span>Configuraciones</span>
