@@ -57,9 +57,10 @@ $(document).ready(function(){
             '<thead>'+
                 '<tr>'+
                     '<th></th>'+
+                    '<th>Nombre(s)</th>'+
                     '<th>Apellido Paterno</th>'+
                     '<th>Apellido Materno</th>'+
-                    '<th>Nombre(s)</th>'+
+                    '<th>Clave Elector</th>'+
                     '<th>Fecha Nacimiento</th>'+
                     '<th>Sección</th>'+
                     '<th>Casilla</th>'+
@@ -73,6 +74,7 @@ $(document).ready(function(){
                     '<td>'+response[persona].NOMBRE+'</td>'+
                     '<td>'+response[persona].APELLIDO_PATERNO+'</td>'+
                     '<td>'+response[persona].APELLIDO_MATERNO+'</td>'+
+                    '<td>'+response[persona].ALFA_CLAVE_ELECTORAL+'</td>'+
                     '<td>'+response[persona].FECHANACIMIENTO+'</td>'+
                     '<td>'+response[persona].SECCION+'</td>'+
                     '<td>'+response[persona].CASILLA+'</td>'+

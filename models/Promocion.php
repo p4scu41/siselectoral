@@ -182,5 +182,44 @@ class Promocion extends \yii\db\ActiveRecord
 
         return $result;
     }
+
+    public static function getByPromotor($promotor)
+    {
+        $sql = 'SELECT
+            [PadronGlobal].[CLAVEUNICA],
+            ([PadronGlobal].NOMBRE+\' \'+[PadronGlobal].APELLIDO_PATERNO+\' \'+[PadronGlobal].APELLIDO_MATERNO) AS NOMBRECOMPLETO,
+            [PadronGlobal].[SECCION],
+            [PadronGlobal].[CASILLA],
+            ([PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC]) AS COLONIA,
+            [PadronGlobal].[SEXO]
+        FROM [Promocion]
+        INNER JOIN [PadronGlobal] ON
+            [Promocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+        WHERE
+            [Promocion].[Participacion] IS NULL AND
+            [Promocion].[IdPuesto] = '.$promotor.'
+        ORDER BY NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO';
+
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+
+        foreach ($result as $index => $promovido) {
+            $result[$index]['foto'] = PadronGlobal::getFotoByUID($result['CLAVEUNICA'], $result['SEXO']);
+        }
+
+        return $result;
+    }
+
+    public static function setParticipacion($promovidos)
+    {
+        if (count($promovidos)) {
+            foreach ($promovidos as $promovido) {
+                $query = 'UPDATE [Promocion]
+                    SET [Participacion] = 1
+                    WHERE [IdpersonaPromovida] = \''.$promovido.'\'';
+
+                Yii::$app->db->createCommand($query)->execute();
+            }
+        }
+    }
     
 }

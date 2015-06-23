@@ -953,10 +953,17 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $sqlSecciones = 'SELECT
                 [IdNodoEstructuraMov]
                 ,[NumSector]
+                ,CASE
+                WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
+                    THEN \'NO ASIGNADO\'
+                    ELSE ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO])
+                END AS NOMBRECOMPLETO
             FROM [DetalleEstructuraMovilizacion]
             INNER JOIN [CSeccion] ON
                 [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
-            WHERE [IdPuesto] = 5 AND [Municipio] = '.$idMuni.'
+            LEFT JOIN [PadronGlobal] ON
+                [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+            WHERE [IdPuesto] = 5 AND [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.'
             ORDER BY [NumSector]';
 
         $secciones = Yii::$app->db->createCommand($sqlSecciones)->queryAll();

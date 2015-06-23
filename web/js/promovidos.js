@@ -107,7 +107,7 @@ $(document).ready(function(){
                         '<option value="0">Todos</option>';
 
                 for (seccion in response) {
-                    secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5">' + response[seccion].NumSector+ '</option>';
+                    secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5">' + response[seccion].NumSector+' '+response[seccion].NOMBRECOMPLETO+'</option>';
                 }
 
                 secciones += '</select></div>';

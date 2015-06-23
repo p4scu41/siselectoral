@@ -77,61 +77,61 @@ $this->registerJs('var viewPersona = "'.Url::toRoute('padron/view').'";', \yii\w
                     <?php $disabled = ($model->SEXO && !$model->isNewRecord) ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
                     <?= $form->field($model, 'SEXO')->dropDownList(['M'=>'Mujer', 'H'=>'Hombre'], $disabled) ?>
 
-                    <?php $disabled = ($model->ESTADO_CIVIL && !$model->isNewRecord) ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
+                    <?php $disabled = /*($model->ESTADO_CIVIL && !$model->isNewRecord) ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : */['prompt' => 'Elija una opción'] ?>
                     <?= $form->field($model, 'ESTADO_CIVIL')->dropDownList($estado_civil, $disabled) ?>
 
-                    <?php $disabled = ($model->OCUPACION && !$model->isNewRecord) ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
+                    <?php $disabled = /*($model->OCUPACION && !$model->isNewRecord) ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : */['prompt' => 'Elija una opción'] ?>
                     <?= $form->field($model, 'OCUPACION')->dropDownList($ocupacion, $disabled) ?>
 
-                    <?php $disabled = ($model->ESCOLARIDAD && !$model->isNewRecord) ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
+                    <?php $disabled = /*($model->ESCOLARIDAD && !$model->isNewRecord) ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : */['prompt' => 'Elija una opción'] ?>
                     <?= $form->field($model, 'ESCOLARIDAD')->dropDownList($escolaridad, $disabled) ?>
 
                     <?php $disabled = ($model->MUNICIPIO && !$model->isNewRecord) ? ['prompt' => 'Elija una opción', 'disabled'=>'true'] : ['prompt' => 'Elija una opción'] ?>
                     <?= $form->field($model, 'MUNICIPIO')->dropDownList($municipios, $disabled) ?>
 
-                    <?php $disabled = ($model->DOMICILIO && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->DOMICILIO && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'DOMICILIO')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->NUM_INTERIOR && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->NUM_INTERIOR && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'NUM_INTERIOR')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->NUM_EXTERIOR && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->NUM_EXTERIOR && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'NUM_EXTERIOR')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->MANZANA && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->MANZANA && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'MANZANA')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->CODIGO_POSTAL && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->CODIGO_POSTAL && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'CODIGO_POSTAL')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->COLONIA && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->COLONIA && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'COLONIA')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->DES_LOC && !$model->isNewRecord) ? ['disabled'=>'true', 'placeholder'=>'Ejem. Col., Barr., Ejido, Rancheria.'] : ['placeholder'=>'Ejem. Col., Barr., Ejido, Rancheria.'] ?>
+                    <?php $disabled = /*($model->DES_LOC && !$model->isNewRecord) ? */ ['placeholder'=>'Ejem. Col., Barr., Ejido, Rancheria.'] ?>
                     <?= $form->field($model, 'DES_LOC')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->NOM_LOC && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->NOM_LOC && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'NOM_LOC')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->CORREOELECTRONICO && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->CORREOELECTRONICO && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'CORREOELECTRONICO')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->TELMOVIL && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->TELMOVIL && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'TELMOVIL')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->TELCASA && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->TELCASA && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'TELCASA')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->DISTRITO && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
-                    <?= $form->field($model, 'DISTRITO')->textInput($disabled) ?>
+                    <?php $disabled = ['disabled'=>'true'];/*($model->DISTRITO && !$model->isNewRecord) ? ['disabled'=>'true'] : []*/ ?>
+                    <?= $form->field($model, 'DISTRITO')->textInput($disabled)->label('Distrito Federal') ?>
 
-                    <?php $disabled = ($model->DISTRITOLOCAL && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->DISTRITOLOCAL && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'DISTRITOLOCAL')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->CASILLA && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->CASILLA && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'CASILLA')->textInput($disabled) ?>
 
-                    <?php $disabled = ($model->SECCION && !$model->isNewRecord) ? ['disabled'=>'true'] : [] ?>
+                    <?php $disabled = /*($model->SECCION && !$model->isNewRecord) ? ['disabled'=>'true'] : */[] ?>
                     <?= $form->field($model, 'SECCION')->textInput($disabled) ?>
 
                     <div class="form-group">

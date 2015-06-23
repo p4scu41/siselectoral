@@ -301,6 +301,11 @@ class PadronController extends Controller
 
         if (Yii::$app->request->isPost) {
             $model->CLAVEUNICA = PadronGlobal::newUID();
+            $model->CONS_ALF_POR_SECCION = 0;
+            $model->FECHA_NACI_CLAVE_ELECTORAL = substr(Yii::$app->request->post('PadronGlobal')['ALFA_CLAVE_ELECTORAL'], -12, 6);
+            $model->LUGAR_NACIMIENTO = substr(Yii::$app->request->post('PadronGlobal')['ALFA_CLAVE_ELECTORAL'], -6, 2);
+            $model->DIGITO_VERIFICADOR = substr(Yii::$app->request->post('PadronGlobal')['ALFA_CLAVE_ELECTORAL'], -3, 1);
+            $model->CLAVE_HOMONIMIA = substr(Yii::$app->request->post('PadronGlobal')['ALFA_CLAVE_ELECTORAL'], -2, 2);
             $model->AGREGADO = 1;
         }
         
