@@ -110,17 +110,16 @@ class Organizaciones extends \yii\db\ActiveRecord
     {
         $sqlIntegrantes = 'SELECT
                 [PadronGlobal].[CLAVEUNICA],
-                ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
-                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto,
+                REPLACE(([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS NombreCompleto,
                 CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION],
                 [PadronGlobal].[TELCASA],
                 [PadronGlobal].[TELMOVIL],
-                [PadronGlobal].[DES_LOC]
-                    +\' \'+[PadronGlobal].[NOM_LOC] As Domicilio
+                [PadronGlobal].[COLONIA] AS Domicilio
                 ,[CMunicipio].[DescMunicipio]
                 ,[DetallePromocion].[IdPErsonaPromueve]
-                ,([personaPromueve].[NOMBRE]+\' \'+[personaPromueve].[APELLIDO_PATERNO]
-                    +\' \'+[personaPromueve].[APELLIDO_MATERNO]) AS nombre_promueve
+                ,REPLACE(([personaPromueve].[NOMBRE]+\' \'+[personaPromueve].[APELLIDO_PATERNO]
+                    +\' \'+[personaPromueve].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS nombre_promueve
                 ,(SELECT
                     COUNT(*)
                 FROM
@@ -279,14 +278,14 @@ class Organizaciones extends \yii\db\ActiveRecord
         $listIntegrantes = Yii::$app->db->createCommand('SELECT
                     [PadronGlobal].[CLAVEUNICA]
                     ,[PadronGlobal].[SEXO]
-                    ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
-                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NOMBRE
+                    ,REPLACE(([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS NOMBRE
                     ,[PadronGlobal].[FECHANACIMIENTO]
                     ,[PadronGlobal].[COLONIA]
                     ,[CMunicipio].[DescMunicipio]
                     ,[DetallePromocion].[IdPErsonaPromueve]
-                    ,([personaPromueve].[NOMBRE]+\' \'+[personaPromueve].[APELLIDO_PATERNO]
-                        +\' \'+[personaPromueve].[APELLIDO_MATERNO]) AS nombre_promueve
+                    ,REPLACE(([personaPromueve].[NOMBRE]+\' \'+[personaPromueve].[APELLIDO_PATERNO]
+                        +\' \'+[personaPromueve].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS nombre_promueve
                 FROM
                     [IntegrantesOrganizaciones]
                 INNER JOIN [PadronGlobal] ON
@@ -334,8 +333,8 @@ class Organizaciones extends \yii\db\ActiveRecord
 
         $sqlIntegrante = 'SELECT
                 [PadronGlobal].[CLAVEUNICA],
-                ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
-                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto,
+                REPLACE(([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]
+                        +\' \'+[PadronGlobal].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS NombreCompleto,
                 CAST([PadronGlobal].[SECCION] AS INT) AS [SECCION],
                 [PadronGlobal].[MUNICIPIO],
                 [PadronGlobal].[TELCASA],
@@ -395,8 +394,8 @@ class Organizaciones extends \yii\db\ActiveRecord
     {
         $sqlPromotores = 'SELECT
                     [IdPErsonaPromueve]
-                    ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+
-                        [PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto
+                    ,REPLACE(([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+
+                        [PadronGlobal].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS NombreCompleto
                 FROM
                     [DetallePromocion]
                 INNER JOIN [PadronGlobal] ON

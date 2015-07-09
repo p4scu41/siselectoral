@@ -58,7 +58,7 @@ $this->registerJs('var getOtrasOrgs = "'.Url::toRoute('organizaciones/getotrasor
                 <tr>
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Sección</th>
-                    <th class="text-center">Dirección</th>
+                    <th class="text-center">Colonia</th>
                     <th class="text-center">Promovido</th>
                     <th class="text-center">Otras Organizaciones</th>
                     <th class="text-center">Eliminar</th>

@@ -69,6 +69,8 @@ class PadronGlobal extends \yii\db\ActiveRecord
         return [
             [['SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'COLONIA', 'DOMICILIO', 'NOM_LOC', 'CODIGO_POSTAL', 'FECHANACIMIENTO', 'MUNICIPIO', 'ALFA_CLAVE_ELECTORAL'], 'required'],
             [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'string'],
+            [['CLAVEUNICA', 'ALFA_CLAVE_ELECTORAL', 'SEXO', 'NOMBRE', 'APELLIDO_PATERNO', 'APELLIDO_MATERNO', 'CALLE', 'NUM_INTERIOR', 'NUM_EXTERIOR', 'COLONIA', 'CORREOELECTRONICO', 'TELMOVIL', 'TELCASA', 'CASILLA', 'DOMICILIO', 'DES_LOC', 'NOM_LOC'], 'trim'],
+            [['ALFA_CLAVE_ELECTORAL'], 'string', 'length' => 18],
             [['CONS_ALF_POR_SECCION', 'LUGAR_NACIMIENTO', 'DIGITO_VERIFICADOR', 'CLAVE_HOMONIMIA', 'CODIGO_POSTAL', 'FOLIO_NACIONAL', 'EN_LISTA_NOMINAL', 'ENTIDAD', 'DISTRITO', 'MUNICIPIO', 'SECCION', 'LOCALIDAD', 'MANZANA', 'NUM_EMISION_CREDENCIAL'], 'number'],
             [['DISTRITOLOCAL', 'FECHA_NACI_CLAVE_ELECTORAL', 'ESTADO_CIVIL', 'OCUPACION', 'ESCOLARIDAD'], 'integer'],
             [['FECHANACIMIENTO'], 'date', 'format' => 'yyyy-MM-dd'],
@@ -134,7 +136,7 @@ class PadronGlobal extends \yii\db\ActiveRecord
 
     public function getNombreCompleto()
     {
-        return $this->NOMBRE.' '.$this->APELLIDO_PATERNO.' '.$this->APELLIDO_MATERNO;
+        return str_replace('\\', 'Ñ', $this->NOMBRE.' '.$this->APELLIDO_PATERNO.' '.$this->APELLIDO_MATERNO);
     }
 
     /**

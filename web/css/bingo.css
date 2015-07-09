@@ -15,3 +15,44 @@
     background-color: #3c763d;
     border-color: #3c763d
 }
+.bs-glyphicons-list {
+  padding-left: 0;
+  list-style: none;
+  max-height: 400px;
+  overflow: auto;
+}
+.bs-glyphicons li:hover {
+  color: #fff;
+  background-color: #dff0d8;
+}
+.bs-glyphicons li.active {
+  background-color: #B3CF95;
+}
+.bs-glyphicons li {
+  float: left;
+  width: 12.5%;
+  height: 74px;
+  padding: 10px;
+  font-size: 10px;
+  line-height: 1.4;
+  text-align: center;
+  background-color: #f9f9f9;
+  border: 1px solid #fff;
+  cursor: pointer;
+}
+.bs-glyphicons .glyphicon {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+.bs-glyphicons .glyphicon-class {
+  display: block;
+  text-align: center;
+  word-wrap: break-word;
+}
+@media (min-width: 768px) {
+    .bs-glyphicons li {
+      width: 7.5%;
+      font-size: 12px;
+    }
+}

@@ -99,11 +99,11 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                         <p><button type="button" class="btn btn-success" id="btnBuscar">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Buscar
                             </button> &nbsp;
-                            <?php //if (!PerfilUsuario::isCapturista()) { ?>
+                            <?php if (PerfilUsuario::isAdminGeneral() || PerfilUsuario::isAdminMunicipal()) { ?>
                             <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal" style="display: none;">
                                 <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Status
                             </button> &nbsp;
-                            <?php //} ?>
+                            <?php } ?>
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
                         
@@ -253,21 +253,23 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         </div>
                                                     </div>
 
-                                                    <div class="table-responsive">
-                                                        <table id="treeEstrucAlterna" class="table table-condensed table-bordered table-hover" style="display: none">
-                                                            <colgroup>
-                                                                <col width="*"></col>
-                                                                <col width="80px"></col>
-                                                            </colgroup>
-                                                            <thead>
-                                                                <tr>
-                                                                    <th class="text-center">Puesto</th>
-                                                                    <th class="text-center">Asignaci&oacute;n</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            </tbody>
-                                                        </table>
+                                                    <div id="divTreeEstrucAlterna" style="display: none">
+                                                        <div class="">
+                                                            <table id="treeEstrucAlterna" class="table table-condensed table-bordered table-hover" style="display: none">
+                                                                <colgroup>
+                                                                    <col width="*"></col>
+                                                                    <col width="80px"></col>
+                                                                </colgroup>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="text-center">Puesto</th>
+                                                                        <th class="text-center">Asignaci&oacute;n</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
 
                                                 </div>

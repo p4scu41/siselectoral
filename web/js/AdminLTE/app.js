@@ -39,7 +39,20 @@ $(function() {
     });
 
     //Activate tooltips
-    $("[data-toggle='tooltip']").tooltip();
+    $("[data-toggle='tooltip']").tooltip({
+      position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+          $( this ).css( position );
+          $( "<div>" )
+            .addClass( "arrow" )
+            .addClass( feedback.vertical )
+            .addClass( feedback.horizontal )
+            .appendTo( this );
+        }
+      }
+    });
 
     /*
      * Add collapse and remove events to boxes
@@ -153,6 +166,11 @@ $(function() {
         e.preventDefault();
         e.stopPropagation();
         window.history.back();
+    });
+
+    // Arregla el error de Yii2 en la paginacion que agrega doble ?
+    $('a').each(function(){
+        $(this).attr('href', $(this).attr('href').replace('??', '?'));
     });
 });
 function fix_sidebar() {

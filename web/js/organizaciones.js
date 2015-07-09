@@ -32,5 +32,19 @@ $(document).ready(function () {
 
         $('#modalBuscarPersona').modal('hide');
     });
-    
+
+
+    $('#btnSendForm').click(function(){
+        if ($('#organizaciones-idpersonarepresentante').val() == '') {
+            alert('ERROR: Debe proporcionar el dato del Representante');
+            return false;
+        }
+
+        if ($('#organizaciones-idpersonaenlace').val() == '') {
+            alert('ERROR: Debe proporcionar el dato del Enlace');
+            return false;
+        }
+
+        $('#formOrganizacion').trigger('submit');
+    });
 });

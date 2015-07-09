@@ -21,8 +21,7 @@ use yii\helpers\Url;
         </a>
         <div class="navbar-right">
             <ul class="nav navbar-nav">
-                <!-- Notifications: style can be found in dropdown.less -->
-                <li class="dropdown notifications-menu">
+                <!--<li class="dropdown notifications-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-warning"></i>
                         <span class="label label-warning">10</span>
@@ -30,7 +29,6 @@ use yii\helpers\Url;
                     <ul class="dropdown-menu">
                         <li class="header">Notificaciones</li>
                         <li>
-                            <!-- inner menu: contains the actual data -->
                             <ul class="menu">
                                 <li>
                                     <a href="#">
@@ -62,7 +60,7 @@ use yii\helpers\Url;
                         </li>
                         <li class="footer"><a href="#">Ver Todos</a></li>
                     </ul>
-                </li>
+                </li>-->
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -77,14 +75,14 @@ use yii\helpers\Url;
                                 ?>" class="img-rounded" />
                             <p>
                                 <?= Yii::$app->user->identity->login ?>
-                                <small>&Uacute;ltimo acceso: Hoy</small>
+                                <!--<small>&Uacute;ltimo acceso: Hoy</small>-->
                             </p>
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">
-                            <div class="pull-left">
+                            <!--<div class="pull-left">
                                 <a href="#" class="btn btn-default btn-flat">Configuraciones</a>
-                            </div>
+                            </div>-->
                             <div class="pull-right">
                                 <a href="<?= Url::to(['site/logout']) ?>" data-method="post" class="btn btn-default btn-flat">Salir</a>
                             </div>

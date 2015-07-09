@@ -163,7 +163,7 @@ $(document).ready(function(){
                 var sexo = 'U';
 
                 $datos = [
-                    {'colum': 'CALLE', 'label': 'Domicilio'},
+                    {'colum': 'DOMICILIO', 'label': 'Domicilio'},
                     {'colum': 'CORREOELECTRONICO', 'label': 'E-mail'},
                     {'colum': 'TELMOVIL', 'label': 'Tel. Móvil'},
                     {'colum': 'SECCION', 'label': 'Sección'},
@@ -228,7 +228,7 @@ $(document).ready(function(){
                 //tablaResumenNodo.find('tr:last').addClass('itemHide');
                 //tablaResumenNodo.find('tr:last').prev().replaceWith('<tr><td colspan="5">AVANCE DE LA META DE PROMOCIÓN CIUDADANA</td></tr>');
 
-                tablaPromocion = $('<div class="table-responsive"><table class="table table-condensed table-bordered table-hover" id="tablaPromocion">'+
+                tablaPromocion = $('<div class=""><table class="table table-condensed table-bordered table-hover" id="tablaPromocion">'+
                                     '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADANA</strong></td></tr>'+
                                     '</th><th>Total</th><th>Ocupados</th><th>Vacantes</th><th>Avances %</th></tr></table></div>');
                 tablaPromocion.find('#tablaPromocion').append( tablaResumenNodo.find('tr:last') );
@@ -321,6 +321,8 @@ $(document).ready(function(){
             } else {
                 $('#infoEstrucAlterna span:first').text('0');
                 $('#treeEstrucAlterna').hide();
+                $('#divTreeEstrucAlterna').hide();
+                //$("#treeEstrucAlterna").delegate("a", "click", verModalNodo);
             }
         });
 
@@ -459,7 +461,7 @@ $(document).ready(function(){
                         var sexo = 'U';
 
                         $datos = [
-                            {'colum': 'CALLE', 'label': 'Domicilio'},
+                            {'colum': 'DOMICILIO', 'label': 'Domicilio'},
                             {'colum': 'CORREOELECTRONICO', 'label': 'E-mail'},
                             {'colum': 'TELMOVIL', 'label': 'Tel. Móvil'},
                             {'colum': 'SECCION', 'label': 'Sección'},
@@ -545,10 +547,14 @@ $(document).ready(function(){
         }
     }*/
 
-    $('#dependencias').click(function(){
+    $('#dependencias').click(function(event){
+        event.stopPropagation();
+        event.preventDefault();
+
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
+        $('#divTreeEstrucAlterna').hide();
         $('#seccion_programas').hide();
         $('#seccion_promocion').hide();
         $('#seccion_coordinados').toggle('slow', function() {
@@ -562,10 +568,14 @@ $(document).ready(function(){
         });
     });
 
-    $('#meta').click(function(){
+    $('#meta').click(function(event){
+        event.stopPropagation();
+        event.preventDefault();
+
         $('#seccion_coordinados').hide();
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
+        $('#divTreeEstrucAlterna').hide();
         $('#seccion_programas').hide();
         $('#seccion_promocion').hide();
         $('#seccion_resumenNodo').toggle('slow', function() {
@@ -579,10 +589,14 @@ $(document).ready(function(){
         }
     });
 
-    $('#vacantes').click(function(){
+    $('#vacantes').click(function(event){
+        event.stopPropagation();
+        event.preventDefault();
+
         $('#seccion_coordinados').hide();
         $('#seccion_resumenNodo').hide();
         $('#treeEstrucAlterna').hide();
+        $('#divTreeEstrucAlterna').hide();
         $('#seccion_programas').hide();
         $('#seccion_promocions').hide();
         $('#seccion_vacantes').toggle('slow', function() {
@@ -596,29 +610,42 @@ $(document).ready(function(){
         }
     });
 
-    $('#infoEstrucAlterna').click(function(){
+    $('#infoEstrucAlterna').click(function(event){
+        event.stopPropagation();
+        event.preventDefault();
+
         $('#seccion_coordinados').hide();
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
         $('#seccion_programas').hide();
         $('#seccion_promocion').hide();
         $('#treeEstrucAlterna').toggle('slow');
+        $('#divTreeEstrucAlterna').toggle('slow');
     });
 
-    $('#btn_programas').click(function(){
+    $('#btn_programas').click(function(event){
+        event.stopPropagation();
+        event.preventDefault();
+
         $('#seccion_coordinados').hide();
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
+        $('#divTreeEstrucAlterna').hide();
         $('#seccion_promocion').hide();
         $('#seccion_programas').toggle('slow');
     });
 
-    $('#meta_promocion').click(function(){
+    $('#meta_promocion').click(function(event){
+        event.stopPropagation();
+        event.preventDefault();
+
         $('#seccion_coordinados').hide();
         $('#seccion_resumenNodo').hide();
         $('#seccion_vacantes').hide();
         $('#treeEstrucAlterna').hide();
+        $('#divTreeEstrucAlterna').hide();
+
         $('#seccion_programas').hide();
         $('#seccion_promocion').toggle('slow');
     });
@@ -690,7 +717,7 @@ $(document).ready(function(){
             // Issue an ajax request to load child nodes
             data.result = {
                 url: urlBranch,
-                data: {idNodo: node.key}
+                data: {idNodo: node.key, alterna: true}
             };
         },
         renderColumns: function(event, data) {
@@ -702,9 +729,10 @@ $(document).ready(function(){
             } else {
                 $tdList.eq(1).html('<a href="#" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-user"></span></a>');
             }
-            $tdList.eq(1).delegate("a", "click", function(e){
+            /*$tdList.eq(1).delegate("a", "click", function(e){
                 e.stopPropagation();  // prevent fancytree activate for this row
-            });
+            });*/
+            $tdList.eq(1).delegate("a", "click", verModalNodo);
         }
     });
 
@@ -985,62 +1013,64 @@ $(document).ready(function(){
         }
     }
 
-    $('#municipio').change(function(){
-        $('#loadIndicator').show();
-        $("#puesto option:first").text('Cargando datos...');
-        $('.filtroEstructura').remove();
+    if (logIDPerfUsr == IDPerfAdm || logIDPerfUsr == IDPerfAdmMuni ) {
+        $('#municipio').change(function(){
+            $('#loadIndicator').show();
+            $("#puesto option:first").text('Cargando datos...');
+            $('.filtroEstructura').remove();
 
-        var options = '<option value="0">Todos</option>';
-        var idMuni = $(this).val();
-        self = this;
+            var options = '<option value="0">Todos</option>';
+            var idMuni = $(this).val();
+            self = this;
 
-        if (idMuni != '') {
-            $('#btnResumen').show();
-            $('.btnCollapseTree').show();
-            $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
-                for (var i=0; i<result.length; i++) {
-                    options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
-                }
-                $("#puesto").html(options);
-            }).done(function(result) {
-                if (result.length>0) {
-                    id = doId(result[0].Descripcion);
-                    $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
-                        function(result){ agregaPuesto.call(self, result, id); }, "json")
-                        .done(function(){ $('#loadIndicator').hide(); });
-                } else {
+            if (idMuni != '') {
+                $('#btnResumen').show();
+                $('.btnCollapseTree').show();
+                $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
+                    for (var i=0; i<result.length; i++) {
+                        options += '<option value="'+result[i].IdPuesto+'" data-nivel="'+result[i].Nivel+'">'+result[i].Descripcion+'</option>';
+                    }
+                    $("#puesto").html(options);
+                }).done(function(result) {
+                    if (result.length>0) {
+                        id = doId(result[0].Descripcion);
+                        $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
+                            function(result){ agregaPuesto.call(self, result, id); }, "json")
+                            .done(function(){ $('#loadIndicator').hide(); });
+                    } else {
+                        $('#loadIndicator').hide();
+                    }
+                });
+
+                /*$.ajax({
+                    url: getSeccionesMuni,
+                    type: 'POST',
+                    data: '_csrf='+$('[name=_csrf]').val()+'&municipio=' + $('#municipio').val(),
+                    dataType: 'json',
+                }).done(function(response){
+                    var secciones = '<div class="form-group">'+
+                        '<label for="list-jefe-de-seccion">Secciones: </label>'+
+                        '<select id="list-jefe-de-seccion" class="form-control" name="seccion">'+
+                            '<option value="0">Jefes de Sección</option>';
+
+                    for (seccion in response) {
+                        secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5">' + response[seccion].NumSector+ '</option>';
+                    }
+
+                    secciones += '</select><br></div><br>';
+
+                    $('#listJefeSeccion').html(secciones);
                     $('#loadIndicator').hide();
-                }
-            });
+                });*/
 
-            /*$.ajax({
-                url: getSeccionesMuni,
-                type: 'POST',
-                data: '_csrf='+$('[name=_csrf]').val()+'&municipio=' + $('#municipio').val(),
-                dataType: 'json',
-            }).done(function(response){
-                var secciones = '<div class="form-group">'+
-                    '<label for="list-jefe-de-seccion">Secciones: </label>'+
-                    '<select id="list-jefe-de-seccion" class="form-control" name="seccion">'+
-                        '<option value="0">Jefes de Sección</option>';
-
-                for (seccion in response) {
-                    secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5">' + response[seccion].NumSector+ '</option>';
-                }
-
-                secciones += '</select><br></div><br>';
-
-                $('#listJefeSeccion').html(secciones);
+                $('#MUNICIPIO_persona option[value='+idMuni+']').attr('selected', true);
+            } else {
                 $('#loadIndicator').hide();
-            });*/
-
-            $('#MUNICIPIO_persona option[value='+idMuni+']').attr('selected', true);
-        } else {
-            $('#loadIndicator').hide();
-            $('#btnResumen').hide();
-            $('.btnCollapseTree').hide();
-        }
-    });
+                $('#btnResumen').hide();
+                $('.btnCollapseTree').hide();
+            }
+        });
+    }
 
     $('#printResumen').click(function(){
         $imprimible = $('#modalResumen').clone();

@@ -31,7 +31,9 @@ AppAsset::register($this);
         <![endif]-->
     </head>
     <body class="skin-blue">
-        <div id="div_loading"> &nbsp; </div>
+        <?php if (stripos(Yii::$app->request->getPathInfo(), 'prepresultado') === false) { ?>
+            <div id="div_loading"> &nbsp; </div>
+        <?php } ?>
 
         <?php $this->beginBody() ?>
 

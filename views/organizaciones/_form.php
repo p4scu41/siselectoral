@@ -15,6 +15,7 @@ $this->registerJsFile(Url::to('@web/js/organizaciones.js'));
 
     <?php $form = ActiveForm::begin([
         'layout' => 'horizontal',
+        'id' => 'formOrganizacion'
     ]); ?>
 
     <?= $form->field($model, 'Nombre')->textInput() ?>
@@ -46,7 +47,7 @@ $this->registerJsFile(Url::to('@web/js/organizaciones.js'));
     <?= $form->field($model, 'idTipoOrganizacion')->dropDownList($tipos, ['prompt' => 'Elija una opción']) ?>
 
     <div class="form-group text-center">
-        <?= Html::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::button($model->isNewRecord ? 'Guardar' : 'Actualizar', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary', 'id'=>'btnSendForm']) ?>
         <?= Html::a('Cancelar', Url::toRoute('organizaciones/index', true), ['class' => 'btn btn-danger']) ?>
     </div>
 

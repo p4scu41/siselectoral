@@ -90,6 +90,7 @@ class ReporteController extends \yii\web\Controller
         $titulo = Yii::$app->request->post('title');
         $content = str_replace('<h3 class="text-center" id="titulo">'.$titulo.'</h3>', '', Yii::$app->request->post('content'));
         $orientation = Pdf::ORIENT_PORTRAIT;
+        $colums = (Yii::$app->request->post('columns') ? Yii::$app->request->post('columns') : 1);
 
         if (strpos($titulo, 'Estructura Municipal') !== false) {
             $orientation = Pdf::ORIENT_LANDSCAPE;
@@ -113,12 +114,15 @@ class ReporteController extends \yii\web\Controller
             'methods' => [
                 'SetHeader' => ['|'.$titulo.'|'],
                 'SetFooter' => ['SIRECI - Sistema de Red Ciudadana|Pagina {PAGENO}|'.date("d-m-Y h:i:s A")],
+                'SetColumns' => [$colums]
             ]
         ]);
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $headers = Yii::$app->response->headers;
         $headers->add('Content-Type', 'application/pdf');
+        $headers->add('Set-Cookie', 'fileDownload=true; path=/');
+        $headers->add('Cache-Control', 'max-age=60, must-revalidate');
 
         $pdfApi = $pdf->getApi();
         $pdfApi->SetProtection(['print']);

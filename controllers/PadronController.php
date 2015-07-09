@@ -237,7 +237,7 @@ class PadronController extends Controller
         }
 
         $personas = PadronGlobal::find()
-            ->select('CLAVEUNICA, NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO, SECCION, CASILLA, DOMICILIO, NOM_LOC')
+            ->select(['CLAVEUNICA', 'REPLACE([NOMBRE], \'\\\', \'Ñ\') AS NOMBRE', 'REPLACE([APELLIDO_PATERNO], \'\\\', \'Ñ\') AS APELLIDO_PATERNO', 'REPLACE([APELLIDO_MATERNO], \'\\\', \'Ñ\') AS APELLIDO_MATERNO', 'SECCION', 'CASILLA', 'DOMICILIO', 'NOM_LOC'])
             ->where($where)
             ->orderBy('APELLIDO_PATERNO, APELLIDO_MATERNO, NOMBRE')
             ->asArray()
@@ -306,6 +306,7 @@ class PadronController extends Controller
             $model->LUGAR_NACIMIENTO = substr(Yii::$app->request->post('PadronGlobal')['ALFA_CLAVE_ELECTORAL'], -6, 2);
             $model->DIGITO_VERIFICADOR = substr(Yii::$app->request->post('PadronGlobal')['ALFA_CLAVE_ELECTORAL'], -3, 1);
             $model->CLAVE_HOMONIMIA = substr(Yii::$app->request->post('PadronGlobal')['ALFA_CLAVE_ELECTORAL'], -2, 2);
+            $model->CALLE = $model->DOMICILIO.(!empty($model->NUM_EXTERIOR) ? $model->NUM_EXTERIOR : ', '.$model->NUM_EXTERIOR).', CP '.$model->CODIGO_POSTAL.', '.$model->DES_LOC.' '.$model->NOM_LOC.', '.
             $model->AGREGADO = 1;
         }
         
@@ -495,7 +496,7 @@ class PadronController extends Controller
         $personas = PadronGlobal::find()
             ->select('*')
             ->where('ALFA_CLAVE_ELECTORAL = \''.$clave.'\'')
-            ->andWhere('[MUNICIPIO] IN ('.implode(',', MunicipiosUsuario::getMunicipios()).')')
+            ->andWhere('[MUNICIPIO] IN ('.implode(',', array_keys(MunicipiosUsuario::getMunicipios())).')')
             ->asArray()
             ->all();
 

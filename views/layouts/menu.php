@@ -92,7 +92,7 @@ use app\helpers\PerfilUsuario;
     </li>
     <?PHP } ?>
 
-    <?PHP if (PerfilUsuario::hasPermiso('a4cd8559-5d0d-43ba-bc7f-db91cc927a0f', 'R')) { ?>
+    <?PHP if (PerfilUsuario::hasPermiso('3e3d98fb-a3d2-4d4f-a63a-c010498891e0', 'R')) { ?>
     <li class="<?= Yii::$app->request->getPathInfo() == 'bingo/' ? 'active' : '' ?>">
         <a href="<?= Url::to(['bingo/index']) ?>">
             <i class="fa fa-building-o"></i> <span>Bingo</span>
@@ -100,19 +100,49 @@ use app\helpers\PerfilUsuario;
     </li>
     <?PHP } ?>
 
-    <!--<li>
+    <?PHP if (PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R') || PerfilUsuario::hasPermiso('7b8b4d91-2b1d-4a65-9f29-a4c2f22c9b8f', 'R') || PerfilUsuario::hasPermiso('19cff826-d301-48bd-a824-960c67b7d6f6', 'R')) { ?>
+    <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'prep') !== false ? 'active' : '' ?>">
         <a href="#">
-            <i class="fa fa-cog"></i> <span>Configuraciones</span>
+            <i class="fa fa-info-circle"></i> <span>PREP</span>
+            <i class="fa fa-angle-left pull-right"></i>
         </a>
+        <ul class="treeview-menu" style="display: none;">
+            <?PHP if (PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) { ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'prepcasilla/') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['prepcasilla/index']) ?>" style="margin-left: 10px;"><i class="fa fa-home"></i> Casillas</a>
+            </li>
+            <?PHP } ?>
+            <?PHP if (PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) { ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'prepseccion/') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['prepseccion/index']) ?>" style="margin-left: 10px;"><i class="fa fa-fax"></i> Secciones</a>
+            </li>
+            <?PHP } ?>
+            <?PHP if (PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) { ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'prepcasillaseccion/') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['prepcasillaseccion/index']) ?>" style="margin-left: 10px;"><i class="fa fa-qrcode"></i> Casillas por Sección</a>
+            </li>
+            <?PHP } ?>
+            <?PHP if (PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) { ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'preppartido/') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['preppartido/index']) ?>" style="margin-left: 10px;"><i class="fa fa-users"></i> Partidos Politicos</a>
+            </li>
+            <?PHP } ?>
+            <?PHP if (PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) { ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'prepcandidato/') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['prepcandidato/index']) ?>" style="margin-left: 10px;"><i class="fa fa-user"></i> Candidatos</a>
+            </li>
+            <?PHP } ?>
+            <?PHP if (PerfilUsuario::hasPermiso('7b8b4d91-2b1d-4a65-9f29-a4c2f22c9b8f', 'R')) { ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'prepvoto/') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['prepvoto/index']) ?>" style="margin-left: 10px;"><i class="fa fa-archive"></i> Votos</a>
+            </li>
+            <?PHP } ?>
+            <?PHP if (PerfilUsuario::hasPermiso('19cff826-d301-48bd-a824-960c67b7d6f6', 'R')) { ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'prepresultado/') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['prepresultado/index']) ?>" style="margin-left: 10px;"><i class="fa fa-bar-chart"></i> Resultados</a>
+            </li>
+            <?PHP } ?>
+        </ul>
     </li>
-    <li>
-        <a href="#">
-            <i class="fa fa-envelope-o"></i> <span>Notificaciones</span>
-        </a>
-    </li>
-    <li>
-        <a href="#">
-            <i class="fa fa-question-circle"></i> <span>Ayuda</span>
-        </a>
-    </li>-->
+    <?PHP } ?>
 </ul>

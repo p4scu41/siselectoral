@@ -212,7 +212,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                     }
                 }
 
-                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.$nombrePromotor.
+                $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.str_replace('\\', 'Ñ', $nombrePromotor).
                             ($count > 0 ? '['.$count.']' : '').'", '.
                             '"data": { "IdPuesto": "'.$puesto->IdPuesto.'", "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
 
@@ -621,12 +621,17 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         if ($resultPuestos) {
             foreach ($resultPuestos as $nodo) {
                 if($nodo['IdPersonaPuesto'] != '00000000-0000-0000-0000-000000000000') {
-                    $persona = Yii::$app->db->createCommand("SELECT ([NOMBRE]+ ' ' +[APELLIDO_PATERNO]+ ' ' +[APELLIDO_MATERNO]) AS NOMBRECOMPLETO, SEXO "
+                    $persona = Yii::$app->db->createCommand('SELECT REPLACE(([NOMBRE]+ \' \' +[APELLIDO_PATERNO]+ \' \' +[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS NOMBRECOMPLETO, SEXO '
                                                 ."FROM [PadronGlobal] WHERE [CLAVEUNICA] = '".$nodo['IdPersonaPuesto']."'")->queryOne();
                     $foto = ['foto'=>''];
                     if ($withFoto) {
                         $foto['foto'] = PadronGlobal::getFotoByUID($nodo['IdPersonaPuesto'], $persona['SEXO']);
                     }
+
+                    if (!$persona) {
+                        $persona = ['NOMBRECOMPLETO' => 'No asignado'];
+                    }
+
                     unset($persona['SEXO']);
                     $result[] = array_merge($nodo, $persona, $foto);
                 } else {
@@ -651,6 +656,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      */
     public static function getResumenNodo($idNodo)
     {
+        $nodo = DetalleEstructuraMovilizacion::find()->where('IdNodoEstructuraMov = '.$idNodo)->one();
+
         $sqlResumenNodo = 'SELECT [Puestos].[Nivel],
                 [Puestos].[Descripcion] AS Puesto
                 ,COUNT([DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]) AS Total
@@ -670,6 +677,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
             WHERE
                 [DetalleEstructuraMovilizacion].[Dependencias] like \'%|'.$idNodo.'|%\'
+                '.($nodo['IdPuesto'] == 7 ? ' OR IdNodoEstructuraMov = '.$idNodo : '').'
             GROUP BY [Puestos].[Descripcion], [Puestos].[Nivel]
             ORDER BY [Puestos].[Nivel]';
 
@@ -875,7 +883,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 WHERE
                     [PadronGlobal].[MUNICIPIO] = '.$idMuni
             . ')  AND IdPuesto!=5) AND Municipio = '.$idMuni.
-                ' AND Dependencias LIKE \'%|'.$idNodo.'|%\' '.
+                ' AND IdPuestoDepende = '.$idNodo.' '.
             ' ORDER BY Descripcion';
 
         $alternas = Yii::$app->db->createCommand($sql)->queryAll();
@@ -956,8 +964,10 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 ,CASE
                 WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
                     THEN \'NO ASIGNADO\'
-                    ELSE ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO])
+                    ELSE REPLACE(([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]), \'\\\', \'Ñ\')
                 END AS NOMBRECOMPLETO
+                ,[TELCASA]
+                ,[TELMOVIL]
             FROM [DetalleEstructuraMovilizacion]
             INNER JOIN [CSeccion] ON
                 [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
@@ -1102,18 +1112,18 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         return $nodosPadres;
     }
 
-    public static function getPromotoresByNodo($idNodo) {
+    public static function getPromotoresByNodo($idNodo, $participacion=true) {
         $query = 'SELECT
             [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] AS idNodo,
-            ([NOMBRE]+ \' \' +[APELLIDO_PATERNO]+ \' \' +[APELLIDO_MATERNO]) AS NOMBRECOMPLETO,
+            REPLACE(([NOMBRE]+ \' \' +[APELLIDO_PATERNO]+ \' \' +[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS NOMBRECOMPLETO,
             COUNT([Promocion].[IdpersonaPromovida]) AS faltantes
         FROM
             [DetalleEstructuraMovilizacion]
         INNER JOIN [PadronGlobal] ON
             [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA]
         INNER JOIN [Promocion] ON
-            [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = [Promocion].[IdPuesto] AND
-            [Promocion].[Participacion] IS NULL
+            [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = [Promocion].[IdPuesto]
+            '.($participacion ? 'AND [Promocion].[Participacion] IS NULL' : '').'
         WHERE
             [DetalleEstructuraMovilizacion].[IdPersonaPuesto] != \'00000000-0000-0000-0000-000000000000\' AND
             [DetalleEstructuraMovilizacion].[IdPuesto] = 7 AND
@@ -1128,4 +1138,41 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         return $promotores;
     }
 
+    public static function getCoordMuni($idMuni)
+    {
+        $sql = 'SELECT * FROM [DetalleEstructuraMovilizacion]
+            WHERE [IdPuesto] = 2 AND [Municipio] = '.(int)$idMuni;
+
+        $coordMuni = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return $coordMuni;
+    }
+
+    public static function getInfoNodo($idNodo)
+    {
+        $sql = 'SELECT
+            [CLAVEUNICA]
+            ,REPLACE(([NOMBRE]+ \' \' +[APELLIDO_PATERNO]+ \' \' +[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS NOMBRECOMPLETO
+            ,[SEXO]
+            ,[TELCASA]
+            ,[TELMOVIL]
+            ,[DES_LOC]+\' \'+[NOM_LOC] AS COLONIA
+            ,[NUM_INTERIOR]
+            ,[NUM_EXTERIOR]
+            ,[CODIGO_POSTAL]
+            ,[CORREOELECTRONICO]
+            ,[DOMICILIO]
+            ,[IdPuesto]
+            ,[IdPuestoDepende]
+            ,[IdSector]
+            ,[Meta]
+        FROM [DetalleEstructuraMovilizacion]
+        INNER JOIN [PadronGlobal] ON
+            [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+        WHERE [IdNodoEstructuraMov] = '.$idNodo;
+
+        $result = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return $result;
+    }
 }

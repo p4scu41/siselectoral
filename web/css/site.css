@@ -654,6 +654,13 @@ modalPerson #tablaResumen tr:last-child {
     margin-bottom: auto !important;
 }
 
+.modal.modal-wide .modal-dialog {
+  width: 90%;
+}
+.modal-wide .modal-body {
+  overflow-y: auto;
+}
+
 @media print {
     #indicadoresPuesto .btn.btn-app{
         width: 80px;

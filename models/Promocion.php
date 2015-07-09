@@ -95,8 +95,8 @@ class Promocion extends \yii\db\ActiveRecord
         $sql = 'SELECT
             [PadronGlobal].[CLAVEUNICA]
             ,[PadronGlobal].[CLAVEUNICA] AS id
-            ,([PadronGlobal].[NOMBRE] + \' \' + [PadronGlobal].[APELLIDO_PATERNO]+ \' \' +[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto
-            ,([PadronGlobal].[NOMBRE] + \' \' + [PadronGlobal].[APELLIDO_PATERNO]+ \' \' +[PadronGlobal].[APELLIDO_MATERNO]) AS text
+            ,REPLACE(([PadronGlobal].[NOMBRE] + \' \' + [PadronGlobal].[APELLIDO_PATERNO]+ \' \' +[PadronGlobal].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS NombreCompleto
+            ,REPLACE(([PadronGlobal].[NOMBRE] + \' \' + [PadronGlobal].[APELLIDO_PATERNO]+ \' \' +[PadronGlobal].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS text
             ,[DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
             ,[DetalleEstructuraMovilizacion].[Descripcion]
         FROM
@@ -166,8 +166,8 @@ class Promocion extends \yii\db\ActiveRecord
     public static function getOrganizaciones($IdpersonaPromovida)
     {
         $sql = 'SELECT [Organizaciones].[Nombre]
-                ,(PadronEnlace.NOMBRE+\' \'+PadronEnlace.APELLIDO_PATERNO+\' \'+PadronEnlace.APELLIDO_MATERNO) AS Enlace
-                ,(PadronRepresentante.NOMBRE+\' \'+PadronRepresentante.APELLIDO_PATERNO+\' \'+PadronRepresentante.APELLIDO_MATERNO) AS Representante
+                ,REPLACE((PadronEnlace.NOMBRE+\' \'+PadronEnlace.APELLIDO_PATERNO+\' \'+PadronEnlace.APELLIDO_MATERNO), \'\\\', \'Ñ\') AS Enlace
+                ,REPLACE((PadronRepresentante.NOMBRE+\' \'+PadronRepresentante.APELLIDO_PATERNO+\' \'+PadronRepresentante.APELLIDO_MATERNO), \'\\\', \'Ñ\') AS Representante
             FROM [Organizaciones]
             LEFT JOIN [PadronGlobal] AS PadronEnlace ON
                 [Organizaciones].[IdPersonaEnlace] = [PadronEnlace].[CLAVEUNICA]
@@ -187,24 +187,24 @@ class Promocion extends \yii\db\ActiveRecord
     {
         $sql = 'SELECT
             [PadronGlobal].[CLAVEUNICA],
-            ([PadronGlobal].NOMBRE+\' \'+[PadronGlobal].APELLIDO_PATERNO+\' \'+[PadronGlobal].APELLIDO_MATERNO) AS NOMBRECOMPLETO,
+            REPLACE(([PadronGlobal].APELLIDO_PATERNO+\' \'+[PadronGlobal].APELLIDO_MATERNO+\' \'+[PadronGlobal].NOMBRE), \'\\\', \'Ñ\') AS NOMBRECOMPLETO,
             [PadronGlobal].[SECCION],
             [PadronGlobal].[CASILLA],
             ([PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC]) AS COLONIA,
-            [PadronGlobal].[SEXO]
+            [PadronGlobal].[SEXO],
+            [Participacion]
         FROM [Promocion]
         INNER JOIN [PadronGlobal] ON
             [Promocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
         WHERE
-            [Promocion].[Participacion] IS NULL AND
             [Promocion].[IdPuesto] = '.$promotor.'
         ORDER BY NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO';
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();
 
-        foreach ($result as $index => $promovido) {
+        /*foreach ($result as $index => $promovido) {
             $result[$index]['foto'] = PadronGlobal::getFotoByUID($result['CLAVEUNICA'], $result['SEXO']);
-        }
+        }*/
 
         return $result;
     }
@@ -220,6 +220,51 @@ class Promocion extends \yii\db\ActiveRecord
                 Yii::$app->db->createCommand($query)->execute();
             }
         }
+    }
+
+    public static function getAvanceBingo($idNodo)
+    {
+        $sql = 'SELECT
+            COUNT([Promocion].[IdpersonaPromovida]) AS total_promovidos,
+            COUNT([Promocion].[Participacion]) AS total_participacion
+        FROM [Promocion]
+        INNER JOIN [DetalleEstructuraMovilizacion] ON
+            [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = [Promocion].[IdPuesto]
+        WHERE [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\' OR
+            [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo;
+
+        $result = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return $result;
+    }
+    
+    public static function getByDepentNodo($idNodo)
+    {
+        $sql = 'SELECT
+            SUBSTRING([PadronGlobal].APELLIDO_PATERNO,1,1) AS Letra,
+            [PadronGlobal].[CLAVEUNICA],
+            REPLACE(([PadronGlobal].APELLIDO_PATERNO+\' \'+[PadronGlobal].APELLIDO_MATERNO+\' \'+[PadronGlobal].NOMBRE), \'\\\', \'Ñ\') AS NOMBRECOMPLETO,
+            [PadronGlobal].[SECCION],
+            [PadronGlobal].[CASILLA],
+            ([PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC]) AS COLONIA,
+            [PadronGlobal].[SEXO],
+            [Participacion]
+        FROM [Promocion]
+        INNER JOIN [PadronGlobal] ON
+            [Promocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+        INNER JOIN [DetalleEstructuraMovilizacion] ON
+            [Promocion].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+        WHERE
+            [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%'.$idNodo.'%\'
+        ORDER BY APELLIDO_PATERNO, APELLIDO_MATERNO, NOMBRE';
+
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+
+        /*foreach ($result as $index => $promovido) {
+            $result[$index]['foto'] = PadronGlobal::getFotoByUID($result['CLAVEUNICA'], $result['SEXO']);
+        }*/
+
+        return $result;
     }
     
 }
