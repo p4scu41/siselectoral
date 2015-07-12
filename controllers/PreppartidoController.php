@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 use app\helpers\ResizeImage;
 use yii\helpers\Url;
+use app\helpers\PerfilUsuario;
 
 /**
  * PREPPartidoController implements the CRUD actions for PREPPartido model.
@@ -61,6 +62,10 @@ class PREPPartidoController extends Controller
      */
     public function actionIndex()
     {
+        if (!PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $searchModel = new PREPPartidoSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

@@ -14,10 +14,10 @@ class SeccionController extends \yii\web\Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['getbymunicipio'],
+                'only' => ['getbymunicipio', 'getseccionesonmuni', 'getjsmuni', 'getpromotores'],
                 'rules' => [
                     [
-                        'actions' => ['getbymunicipio'],
+                        'actions' => ['getbymunicipio', 'getseccionesonmuni', 'getjsmuni', 'getpromotores'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

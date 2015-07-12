@@ -3,47 +3,23 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\PREPCasilla;
-use app\models\PREPCasillaSearch;
+use app\models\Usuarios;
+use app\models\UsuariosSearch;
+use app\models\Perfiles;
+use app\models\CMunicipio;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use app\helpers\PerfilUsuario;
+use yii\helpers\ArrayHelper;
 
 /**
- * PrepcasillaController implements the CRUD actions for PREPCasilla model.
+ * UsuariosController implements the CRUD actions for Usuarios model.
  */
-class PrepcasillaController extends Controller
+class UsuariosController extends Controller
 {
-    /**
-     * Titulo singular para breadcrumb y encabezado
-     *
-     * @var string
-     */
-    private $titulo_sin = 'Casilla';
-
-    /**
-     * Titulo plural para breadcrumb y encabezado
-     *
-     * @var string
-     */
-    private $titulo_plu = 'Casillas';
-    
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete'],
-                'rules' => [
-                    [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -54,28 +30,22 @@ class PrepcasillaController extends Controller
     }
 
     /**
-     * Lists all PREPCasilla models.
+     * Lists all Usuarios models.
      * @return mixed
      */
     public function actionIndex()
     {
-        if (!PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) {
-            return $this->redirect(['site/index']);
-        }
-
-        $searchModel = new PREPCasillaSearch();
+        $searchModel = new UsuariosSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'titulo_sin' => $this->titulo_sin,
-            'titulo_plu' => $this->titulo_plu,
         ]);
     }
 
     /**
-     * Displays a single PREPCasilla model.
+     * Displays a single Usuarios model.
      * @param integer $id
      * @return mixed
      */
@@ -83,34 +53,33 @@ class PrepcasillaController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'titulo_sin' => $this->titulo_sin,
-            'titulo_plu' => $this->titulo_plu,
         ]);
     }
 
     /**
-     * Creates a new PREPCasilla model.
+     * Creates a new Usuarios model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PREPCasilla();
+        $model = new Usuarios();
+        $perfiles = ArrayHelper::map(Perfiles::find()->all(), 'IdPerfil', 'Nombre');
+        $municipios = ArrayHelper::map(CMunicipio::find()->all(), 'IdMunicipio', 'DescMunicipio');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //return $this->redirect(['view', 'id' => $model->id_casilla]);
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->IdUsuario]);
         } else {
             return $this->render('create', [
                 'model' => $model,
-                'titulo_sin' => $this->titulo_sin,
-                'titulo_plu' => $this->titulo_plu,
+                'perfiles' => $perfiles,
+                'municipios' => $municipios,
             ]);
         }
     }
 
     /**
-     * Updates an existing PREPCasilla model.
+     * Updates an existing Usuarios model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -118,21 +87,22 @@ class PrepcasillaController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $perfiles = ArrayHelper::map(Perfiles::find()->all(), 'IdPerfil', 'Nombre');
+        $municipios = ArrayHelper::map(CMunicipio::find()->all(), 'IdMunicipio', 'DescMunicipio');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //return $this->redirect(['view', 'id' => $model->id_casilla]);
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->IdUsuario]);
         } else {
             return $this->render('update', [
                 'model' => $model,
-                'titulo_sin' => $this->titulo_sin,
-                'titulo_plu' => $this->titulo_plu,
+                'perfiles' => $perfiles,
+                'municipios' => $municipios,
             ]);
         }
     }
 
     /**
-     * Deletes an existing PREPCasilla model.
+     * Deletes an existing Usuarios model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -145,18 +115,18 @@ class PrepcasillaController extends Controller
     }
 
     /**
-     * Finds the PREPCasilla model based on its primary key value.
+     * Finds the Usuarios model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return PREPCasilla the loaded model
+     * @return Usuarios the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PREPCasilla::findOne($id)) !== null) {
+        if (($model = Usuarios::findOne($id)) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('La página solicitada no existe.');
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
 }

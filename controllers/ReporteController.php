@@ -10,6 +10,7 @@ use app\models\CMunicipio;
 use app\models\Reporte;
 use app\models\DetalleEstructuraMovilizacion;
 use app\helpers\MunicipiosUsuario;
+use app\helpers\PerfilUsuario;
 
 class ReporteController extends \yii\web\Controller
 {
@@ -32,6 +33,10 @@ class ReporteController extends \yii\web\Controller
 
     public function actionIndex()
     {
+        if (!PerfilUsuario::hasPermiso('b3d614ee-f96d-4f42-8c36-2a6e4b6eabeb', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $municipios = MunicipiosUsuario::getMunicipios();
 
         return $this->render('index', [
@@ -105,15 +110,15 @@ class ReporteController extends \yii\web\Controller
             'orientation' => $orientation,
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
             //'cssFile' => '@web/css/kv-mpdf-bootstrap.css',
-            'cssInline' => 'body { font-size: 10px !important; } a { font-size: 8px !important; text-decoration: none; } ',
+            'cssInline' => 'body { font-size: 8px !important; } a { font-size: 6px !important; text-decoration: none; } ',
             'options' => [
                 'title' => $titulo,
-                'subject' => 'SIRECI - Sistema de Red Ciudadana '.date("d-m-Y h:i:s A")
+                'subject' => 'SIRECI - '.date("d-m-Y h:i:s A")
             ],
-            'defaultFontSize' => 10,
+            'defaultFontSize' => 8,
             'methods' => [
                 'SetHeader' => ['|'.$titulo.'|'],
-                'SetFooter' => ['SIRECI - Sistema de Red Ciudadana|Pagina {PAGENO}|'.date("d-m-Y h:i:s A")],
+                'SetFooter' => ['|Pagina {PAGENO}|'],
                 'SetColumns' => [$colums]
             ]
         ]);
@@ -182,6 +187,10 @@ class ReporteController extends \yii\web\Controller
 
     public function actionPromovidos()
     {
+        if (!PerfilUsuario::hasPermiso('5ea0a4c2-22f6-4fdc-9050-f25a65f3be91', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $municipios = MunicipiosUsuario::getMunicipios();
 
         return $this->render('promovidos', [

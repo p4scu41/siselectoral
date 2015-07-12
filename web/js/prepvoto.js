@@ -53,6 +53,18 @@ $(document).ready(function(){
                 break;
         }
 
+        if ($('#iniSeccion').val() != '') {
+            if ($('#finSeccion').val() == '' || typeof($('#finSeccion').val()) == 'undefined') {
+                $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Fin de las Secciones</div>');
+                return false;
+            }
+
+            if ($('#iniSeccion').val() > $('#finSeccion').val()) {
+                $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el rango correcto de las Secciones</div>');
+                return false;
+            }
+        }
+
         $('#formFiltroVotos').trigger('submit');
     });
 
@@ -87,6 +99,102 @@ $(document).ready(function(){
             dataType: 'json',
             data: 'casilla='+separado[1]+'&obser='+$(self).val()
         }).done(function(respuesta){
+        });
+    });
+
+    $('#municipio, #distritoLocal, #distritoFederal').change(function(){
+        loadZonas.apply(this);
+    });
+
+    $('#zona').change(function(){
+        loadSecciones.apply(this);
+    });
+
+    //$('.sparkline').sparkline('html', {type: 'bar'});
+
+    /*$(".sparkline").each(function() {
+        var $this = $(this);
+        $this.sparkline('html', $this.data());
+    });*/
+
+    var datos_grafica = {
+            "gui": {
+                "behaviors": [
+                    {
+                        "id": "ViewSource",
+                        "enabled": "none"
+                    },
+                    {
+                        "id": "About",
+                        "enabled": "none"
+                    },
+                    {
+                        "id": "BuyLicense",
+                        "enabled": "none"
+                    },
+                    {
+                        "id": "LogScale",
+                        "enabled": "none"
+                    },
+                    {
+                        "id": "Reload",
+                        "enabled": "none"
+                    }
+                ]
+            },
+            "graphset":[
+            {
+                "type":"bar",
+                "stacked": true,
+                "stack-type": "normal",
+                "border-width":1,
+                "border-color":"#CCCCCC",
+                "background-color":"#fff #eee",
+                "scaleX":{
+                    "visible": false,
+                },
+                "scaleY":{
+                    "visible": false,
+                },
+                "tooltip":{
+                    "visible": false,
+                },
+                plotarea : {
+                    width : '100%',
+                    height : '100%',
+                    margin : '0 0 0 0'
+                },
+                "series":[
+                    {
+                        "values":[30],
+                        "text":"Meta",
+                        "animate":true,
+                        "effect":2,
+                        "stack": 1,
+                        "background-color":"#008d4c",
+                    },
+                    {
+                        "values":[100],
+                        "text":"Votos",
+                        "animate":true,
+                        "effect":2,
+                        "stack": 1,
+                        "background-color":"#dff0d8",
+                    }
+                ]
+            }
+        ]
+    };
+
+    $('.mini_grafica').each(function(){
+        datos_grafica.graphset[0].series[0].values[0] = $(this).data('valor');
+        datos_grafica.graphset[0].series[1].values[0] = 100 - datos_grafica.graphset[0].series[0].values[0];
+
+        zingchart.render({
+            id: $(this).attr('id'),
+            data: datos_grafica,
+            height: 120,
+            width: 80
         });
     });
 });
@@ -136,5 +244,52 @@ function actualizaPorcentajes()
         separado = $(this).attr('class').split('-');
         porcentaje = sumaTotalVotos!=0 ? Math.round($('th[class=sumaCandidato-'+separado[1]+']').text()/sumaTotalVotos*100) : 0;
         $(this).text(porcentaje + ' %');
+    });
+}
+
+function loadSecciones()
+{
+    $('#loadIndicator').show();
+
+    $.ajax({
+        url: urlGetSecciones,
+        method: 'POST',
+        dataType: 'json',
+        data: $('#formFiltroVotos').serialize()
+    }).done(function(response) {
+        $('#loadIndicator').hide();
+        $('#div_secciones').removeClass('hidden');
+
+        $('#iniSeccion option:not(:first), #finSeccion option:not(:first)').remove();
+
+        if (response.length) {
+            for (seccion in response) {
+                $('#iniSeccion').append('<option value="'+response[seccion].seccion+'">'+response[seccion].seccion+'</option>');
+                $('#finSeccion').append('<option value="'+response[seccion].seccion+'">'+response[seccion].seccion+'</option>');
+            }
+        }
+    });
+}
+
+function loadZonas()
+{
+    $('#loadIndicator').show();
+
+    $.ajax({
+        url: urlGetZonas,
+        method: 'POST',
+        dataType: 'json',
+        data: $('#formFiltroVotos').serialize()
+    }).done(function(response) {
+        $('#loadIndicator').hide();
+        $('#div_zonas').removeClass('hidden');
+
+        $('#zona option:not(:first)').remove();
+
+        if (response.length) {
+            for (zona in response) {
+                $('#zona').append('<option value="'+response[zona].zona+'">'+response[zona].zona+'</option>');
+            }
+        }
     });
 }

@@ -496,6 +496,7 @@ class Reporte extends \yii\db\ActiveRecord
                 tblPersonaPromovida.APELLIDO_PATERNO) AS personaPromovida
             ,(tblPersonaPromovida.DOMICILIO+\', #\'+tblPersonaPromovida.NUM_INTERIOR+\', \'+tblPersonaPromovida.DES_LOC+\' \'+
                 tblPersonaPromovida.NOM_LOC) AS Domicilio
+            ,(tblPersonaPromovida.DES_LOC+\' \'+tblPersonaPromovida.NOM_LOC) AS Colonia
         FROM 
             Promocion
         INNER JOIN DetalleEstructuraMovilizacion ON
@@ -547,7 +548,7 @@ class Reporte extends \yii\db\ActiveRecord
                         $reporte .= '{ "Nombre": " &nbsp; ",'
                             .'"Tel. Celular": " &nbsp; ", '
                             .'"Tel. Casa": " &nbsp; ", '
-                            .($incluir_domicilio ? '"Domicilio": " &nbsp; ", ' : '')
+                            .($incluir_domicilio ? '"Colonia": " &nbsp; ", ' : '')
                             .'"Promovido Por": " &nbsp; ",'
                             .'"Organización": " &nbsp; " },';
                     }
@@ -563,7 +564,7 @@ class Reporte extends \yii\db\ActiveRecord
                     $reporte .= '{ "Nombre": "<b>'.$promotor['Descripcion'].' '.str_replace('\\', 'Ñ', $promotor['personaPuesto']).' - Sección '.$promotor['NumSector'].'</b>",'
                         .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
                         .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
-                        .($incluir_domicilio ? '"Domicilio": "<b>'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'</b>" ,' : '')
+                        .($incluir_domicilio ? '"Colonia": "<b>'.str_replace('\\', 'Ñ', $promotor['Colonia']).'</b>" ,' : '')
                         .'"Promovido Por": " &nbsp; ",'
                         .'"Organización": "'.$organizaciones.'" },';
 
@@ -582,7 +583,7 @@ class Reporte extends \yii\db\ActiveRecord
                     $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.str_replace('\\', 'Ñ', $promotor['personaPromovida']).'",'
                         .'"Tel. Celular": "'.$promotor['TELMOVIL'].'", '
                         .'"Tel. Casa": "'.$promotor['TELCASA'].'", '
-                        .($incluir_domicilio ? '"Domicilio": "'.str_replace('\\', 'Ñ', $promotor['Domicilio']).'",' : '')
+                        .($incluir_domicilio ? '"Colonia": "'.str_replace('\\', 'Ñ', $promotor['Colonia']).'",' : '')
                         .'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.str_replace('\\', 'Ñ', $promotor['personaPromueve']) : ' &nbsp; ').'",'
                         .'"Organización": "'.$organizaciones.'" },';
                 }

@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\SeguimientoCambios;
+use app\helpers\PerfilUsuario;
 
 /**
  * OrganizacionesController implements the CRUD actions for Organizaciones model.
@@ -21,10 +22,10 @@ class OrganizacionesController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante', 'getpromotorintegrante'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante', 'getpromotorintegrante', 'getotrasorgs'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante', 'getpromotorintegrante'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'integrantes', 'delintegrante', 'addintegrante', 'getpromotorintegrante', 'getotrasorgs'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -45,6 +46,10 @@ class OrganizacionesController extends Controller
      */
     public function actionIndex()
     {
+        if (!PerfilUsuario::hasPermiso('a4cd8559-5d0d-43ba-bc7f-db91cc927a0f', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $searchModel = new OrganizacionesSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dependencias = Organizaciones::getDependencias();
@@ -78,6 +83,10 @@ class OrganizacionesController extends Controller
      */
     public function actionView($id)
     {
+        if (!PerfilUsuario::hasPermiso('a4cd8559-5d0d-43ba-bc7f-db91cc927a0f', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -90,6 +99,10 @@ class OrganizacionesController extends Controller
      */
     public function actionCreate()
     {
+        if (!PerfilUsuario::hasPermiso('a4cd8559-5d0d-43ba-bc7f-db91cc927a0f', 'C')) {
+            return $this->redirect(['site/index']);
+        }
+
         $model = new Organizaciones();
         $dependencias = Organizaciones::getDependencias();
 
@@ -121,6 +134,10 @@ class OrganizacionesController extends Controller
      */
     public function actionUpdate($id)
     {
+        if (!PerfilUsuario::hasPermiso('a4cd8559-5d0d-43ba-bc7f-db91cc927a0f', 'U')) {
+            return $this->redirect(['site/index']);
+        }
+
         $model = $this->findModel($id);
         $dependencias = Organizaciones::getDependencias();
         $log = new SeguimientoCambios();
@@ -151,6 +168,10 @@ class OrganizacionesController extends Controller
      */
     public function actionDelete($id)
     {
+        if (!PerfilUsuario::hasPermiso('a4cd8559-5d0d-43ba-bc7f-db91cc927a0f', 'D')) {
+            return $this->redirect(['site/index']);
+        }
+
         $model = $this->findModel($id);
 
         $log = new SeguimientoCambios();
@@ -184,6 +205,10 @@ class OrganizacionesController extends Controller
 
     public function actionIntegrantes($idOrg)
     {
+        if (!PerfilUsuario::hasPermiso('390b834b-707c-482e-9856-203334afb11e', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $model = $this->findModel($idOrg);
         $integrantes = Organizaciones::listIntegrantes($idOrg);
         $secciones = \yii\helpers\ArrayHelper::map($integrantes, 'SECCION', 'SECCION');
@@ -199,6 +224,10 @@ class OrganizacionesController extends Controller
 
     public function actionDelintegrante()
     {
+        if (!PerfilUsuario::hasPermiso('390b834b-707c-482e-9856-203334afb11e', 'D')) {
+            return $this->redirect(['site/index']);
+        }
+
         $idOrg = Yii::$app->request->post('org');
         $idInte = Yii::$app->request->post('inte');
         $response = ['error'=>false, 'mensaje'=>'Integrante eliminado exitosamente'];
@@ -228,6 +257,10 @@ class OrganizacionesController extends Controller
 
     public function actionAddintegrante()
     {
+        if (!PerfilUsuario::hasPermiso('390b834b-707c-482e-9856-203334afb11e', 'C')) {
+            return $this->redirect(['site/index']);
+        }
+
         $idOrg = Yii::$app->request->post('org');
         $idInte = Yii::$app->request->post('inte');
         $response = ['error'=>false, 'mensaje'=>'Integrante agregado exitosamente'];

@@ -20,6 +20,7 @@ use app\helpers\MunicipiosUsuario;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
 use app\models\SeguimientoCambios;
+use app\helpers\PerfilUsuario;
 
 /**
  * PadronController implements the CRUD actions for PadronGlobal model.
@@ -31,10 +32,10 @@ class PadronController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['get', 'persona', 'buscar', 'buscarajax', 'find', 'view', 'create', 'update', 'delete'],
+                'only' => ['get', 'persona', 'buscar', 'buscarajax', 'find', 'view', 'create', 'update', 'delete', 'findbyclaveelectoral'],
                 'rules' => [
                     [
-                        'actions' => ['get', 'persona', 'buscar', 'buscarajax', 'find', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['get', 'persona', 'buscar', 'buscarajax', 'find', 'view', 'create', 'update', 'delete', 'findbyclaveelectoral'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -170,6 +171,10 @@ class PadronController extends Controller
      */
     public function actionBuscar()
     {
+        if (!PerfilUsuario::hasPermiso('36b78aa7-3642-489f-975a-a7213937af74', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $searchModel = new PadronGlobalSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -253,6 +258,10 @@ class PadronController extends Controller
      */
     public function actionView($id)
     {
+        if (!PerfilUsuario::hasPermiso('36b78aa7-3642-489f-975a-a7213937af74', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $model = $this->findModel($id);
         $observacion = Cardex::find()->where('CLAVEUNICA = \''.$model->CLAVEUNICA.'\'')->one();
 
@@ -273,6 +282,10 @@ class PadronController extends Controller
      */
     public function actionCreate()
     {
+        if (!PerfilUsuario::hasPermiso('36b78aa7-3642-489f-975a-a7213937af74', 'C')) {
+            return $this->redirect(['site/index']);
+        }
+
         $model = new PadronGlobal();
         $municipios = MunicipiosUsuario::getMunicipios();
         
@@ -363,6 +376,10 @@ class PadronController extends Controller
      */
     public function actionUpdate($id)
     {
+        if (!PerfilUsuario::hasPermiso('36b78aa7-3642-489f-975a-a7213937af74', 'U')) {
+            return $this->redirect(['site/index']);
+        }
+
         $model = $this->findModel($id);
         $municipios = MunicipiosUsuario::getMunicipios();
         
@@ -451,6 +468,10 @@ class PadronController extends Controller
      */
     public function actionDelete($id)
     {
+        if (!PerfilUsuario::hasPermiso('36b78aa7-3642-489f-975a-a7213937af74', 'D')) {
+            return $this->redirect(['site/index']);
+        }
+
         $model = $this->findModel($id);
 
         $log = new SeguimientoCambios();

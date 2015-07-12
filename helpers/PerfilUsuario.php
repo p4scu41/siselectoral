@@ -56,7 +56,7 @@ class PerfilUsuario
             $sql = 'SELECT * FROM [Permisos] WHERE
             [IdPerfilUsuario] = \''.Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil.'\' AND
             [IdModulo] = \''.$modulo.'\' AND
-            [TipoPermiso] LIKE \'%'.$permiso.'%\'';
+            [TipoPermiso] LIKE \'%|'.$permiso.'|%\'';
 
             $result = Yii::$app->db->createCommand($sql)->queryOne();
 

@@ -186,7 +186,7 @@ $(document).ready(function(){
 
             for (promovido in response) {
                 if (response[promovido].Participacion == null) {
-                    item = '<li>'+
+                    item = '<li class="liBingo" title="'+response[promovido].PROMOTOR+'">'+
                         '<span class="glyphicon">'+contador+'</span>'+
                         '<span class="glyphicon-class"><input type="checkbox" name="chk_promovido" value="'+response[promovido].CLAVEUNICA+'"></span>'+
                     '</li>';
@@ -196,6 +196,21 @@ $(document).ready(function(){
 
                 contador++;
             }
+
+             $(".liBingo").tooltip({
+                position: {
+                  my: "center bottom-20",
+                  at: "center top",
+                  using: function( position, feedback ) {
+                    $( this ).css( position );
+                    $( "<div>" )
+                      .addClass( "arrow" )
+                      .addClass( feedback.vertical )
+                      .addClass( feedback.horizontal )
+                      .appendTo( this );
+                  }
+                }
+              });
 
             if (bingo) {
                 $('#itemsBingo').html('<div class="jumbotron"><h1 class="text-center">Bingo!!!!</h1></div>');

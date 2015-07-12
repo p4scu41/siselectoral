@@ -14,8 +14,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJsFile(Url::to('@web/js/prepvoto.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.numeric.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/zingchart/zingchart.min.js'), ['position' => yii\web\View::POS_BEGIN]);
+$this->registerJs('zingchart.MODULESDIR = "'.Url::to('@web/js/plugins/zingchart/modules').'"', yii\web\View::POS_BEGIN);
 $this->registerJs('urlVotar = "'.Url::toRoute('prepvoto/votar').'"', yii\web\View::POS_HEAD);
 $this->registerJs('urlObservacion = "'.Url::toRoute('prepcasillaseccion/observacion').'"', yii\web\View::POS_HEAD);
+$this->registerJs('urlGetSecciones = "'.Url::toRoute('prepseccion/getbyattr').'"', yii\web\View::POS_HEAD);
+$this->registerJs('urlGetZonas = "'.Url::toRoute('prepseccion/getzonas').'"', yii\web\View::POS_HEAD);
 $this->registerCssFile(Url::to('@web/css/voto.css'));
 ?>
 <div class="prepvoto-index">
@@ -76,6 +80,15 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
                                 <label for="distritoFederal">Distrito Federal: </label>
                                 <?= Html::dropDownList('distritoFederal', Yii::$app->request->post('distritoFederal'), $distritosFederales, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'distritoFederal']); ?>
                             </div>
+                            <div class="form-group <?= Yii::$app->request->post('tipoEleccion')!=null ? '' : 'hidden' ?>" id="div_zonas">
+                                <label>Zonas: </label>
+                                <?= Html::dropDownList('zona', Yii::$app->request->post('zona'), $zonas, ['prompt' => 'Inicio', 'class' => 'form-control', 'id' => 'zona']); ?>
+                            </div>
+                            <div class="form-group <?= Yii::$app->request->post('iniSeccion')!=null || Yii::$app->request->post('zona')!=null? '' : 'hidden' ?>" id="div_secciones">
+                                <label>Secciones: </label>
+                                <?= Html::dropDownList('iniSeccion', Yii::$app->request->post('iniSeccion'), $secciones, ['prompt' => 'Inicio', 'class' => 'form-control', 'id' => 'iniSeccion']); ?>
+                                <?= Html::dropDownList('finSeccion', Yii::$app->request->post('finSeccion'), $secciones, ['prompt' => 'Fin', 'class' => 'form-control', 'id' => 'finSeccion']); ?>
+                            </div>
                         </div>
                         <div id="alertResult"></div>
                         <p>
@@ -93,13 +106,13 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
     </div><!--/.col (left) -->
 
     <div class="col-lg-12">
+        <div class="table-responsive">
         <?php
         $tabla = '';
 
         if (!empty($casillas)) {
             $tabla = '<table class="table table-condensed table-striped table-bordered table-hover" id="panelVotos">';
-            $thead = '<thead><tr>'
-                . '<th></th>';
+            $thead = '<thead>FILA_GRAFICAS';
             $sumaCandidatos = [];
 
             foreach ($candidatos as $candidato) {
@@ -155,7 +168,19 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
 
             $tbody .= '</tbody>';
 
-            $tabla .= $thead.$tbody.'</table>';
+            $theadGraficas = '<tr>'
+                . '<th rowspan="2"></th>';
+
+            foreach ($candidatos as $candidato) {
+                //$theadGraficas .= '<th><div class="sparkline" data-type="bar" data-width="100px" data-height="200px" data-bar-Width="14" data-bar-Spacing="7" data-bar-Color="#B3CF95" data-RangeMin="0" data-RangeMax="100">50,100</div></th>';
+                $theadGraficas .= '<th class="text-center"><div class="mini_grafica" id="mini_grafica_'.$candidato->id_candidato.'" data-valor="'.($sumaTotal != 0 ? round($sumaCandidatos[$candidato->id_candidato]/$sumaTotal,2)*100 : 0).'"></div></th>';
+            }
+
+            $theadGraficas .= '<th></th>'
+                . '<th></th>'
+                . '</tr>';
+
+            $tabla .= str_replace('FILA_GRAFICAS', $theadGraficas, $thead).$tbody.'</table>';
         }
 
         echo $tabla;
@@ -164,5 +189,6 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
             echo '<div class="alert alert-danger">No se econtraron datos que mostrar</div>';
         }
         ?>
+        </div>
     </div>
 </div>   <!-- /.row -->

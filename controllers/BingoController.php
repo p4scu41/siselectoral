@@ -8,6 +8,7 @@ use app\helpers\MunicipiosUsuario;
 use app\models\Promocion;
 use app\models\DetalleEstructuraMovilizacion;
 use app\models\PadronGlobal;
+use app\helpers\PerfilUsuario;
 
 class BingoController extends \yii\web\Controller
 {
@@ -16,10 +17,10 @@ class BingoController extends \yii\web\Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index'],
+                'only' => ['index', 'getpromovidos', 'getpromovidosseccion', 'setparticipacion', 'getavance', 'getinfopromotor'],
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'getpromovidos', 'getpromovidosseccion', 'setparticipacion', 'getavance', 'getinfopromotor'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -30,6 +31,10 @@ class BingoController extends \yii\web\Controller
 
     public function actionIndex()
     {
+        if (!PerfilUsuario::hasPermiso('3e3d98fb-a3d2-4d4f-a63a-c010498891e0', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $municipios = MunicipiosUsuario::getMunicipios();
         
         return $this->render('index', [

@@ -283,7 +283,7 @@ class Organizaciones extends \yii\db\ActiveRecord
                     ,[PadronGlobal].[FECHANACIMIENTO]
                     ,[PadronGlobal].[COLONIA]
                     ,[CMunicipio].[DescMunicipio]
-                    ,[DetallePromocion].[IdPErsonaPromueve]
+                    ,[Promocion].[IdPersonaPromueve]
                     ,REPLACE(([personaPromueve].[NOMBRE]+\' \'+[personaPromueve].[APELLIDO_PATERNO]
                         +\' \'+[personaPromueve].[APELLIDO_MATERNO]), \'\\\', \'Ñ\') AS nombre_promueve
                 FROM
@@ -292,10 +292,10 @@ class Organizaciones extends \yii\db\ActiveRecord
                     [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
                 INNER JOIN [CMunicipio] ON
                     [PadronGlobal].[MUNICIPIO] = [CMunicipio].[IdMunicipio]
-                LEFT JOIN [DetallePromocion] ON
-                    [DetallePromocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+                LEFT JOIN [Promocion] ON
+                    [Promocion].[IdpersonaPromovida] = [IntegrantesOrganizaciones].[IdPersonaIntegrante]
                 LEFT JOIN [PadronGlobal] AS [personaPromueve] ON
-                    [personaPromueve].[CLAVEUNICA] = [DetallePromocion].[IdPErsonaPromueve]
+                    [personaPromueve].[CLAVEUNICA] = [Promocion].[IdPersonaPromueve]
                 WHERE
                     [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND
                     [PadronGlobal].[SECCION] = '.$idSeccion.'
@@ -383,6 +383,11 @@ class Organizaciones extends \yii\db\ActiveRecord
                 [Organizaciones] ON
                 [Organizaciones].[IdOrganizacion] = [IntegrantesOrganizaciones].[IdOrganizacion]
             WHERE
+                [Organizaciones].[IdOrganizacion] NOT IN (
+                    SELECT DISTINCT([IdOrganizacion])
+                    FROM [DetalleEstructuraMovilizacion]
+                    WHERE [IdOrganizacion] != -1
+                ) AND
                 [PadronGlobal].[MUNICIPIO] = '.$idMuni;
 
         $orgs = Yii::$app->db->createCommand($sqlOrgs)->queryAll();

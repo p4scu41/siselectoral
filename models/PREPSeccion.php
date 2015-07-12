@@ -86,4 +86,17 @@ class PREPSeccion extends \yii\db\ActiveRecord
         return $secciones;
     }
 
+    public static function getZonas($where)
+    {
+        $sql = 'SELECT [zona]
+            FROM [PREP_Seccion]
+            WHERE [activo] = 1 AND [zona]!=0 AND [zona] IS NOT NULL AND '.$where.'
+            GROUP BY [zona]
+            ORDER BY [zona]';
+
+        $zonas = Yii::$app->db->createCommand($sql)->queryAll();
+
+        return $zonas;
+    }
+
 }

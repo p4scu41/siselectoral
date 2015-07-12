@@ -107,7 +107,7 @@ class PREPVoto extends \yii\db\ActiveRecord
         $voto->save();
     }
 
-    public static function getResultados($candidato, $nameColum, $valueColum, $iniSeccion, $finSeccion)
+    /*public static function getResultados($candidato, $nameColum, $valueColum, $iniSeccion, $finSeccion)
     {
         $sql = 'SELECT
                 [PREP_Seccion].[seccion]
@@ -127,6 +127,37 @@ class PREPVoto extends \yii\db\ActiveRecord
                 [PREP_Voto].[id_candidato] = '.$candidato.' AND
                 [PREP_Seccion].['.$nameColum.'] = '.$valueColum.' AND
                 [PREP_Seccion].[seccion] BETWEEN '.$iniSeccion.' AND '.$finSeccion.'
+            GROUP BY
+                [PREP_Seccion].[seccion], [PREP_Voto].[id_candidato]
+            ORDER BY
+                [PREP_Seccion].[seccion], [PREP_Voto].[id_candidato]';
+
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+
+        return $result;
+    }*/
+
+    public static function getResultados($nameColum, $valueColum, $zona, $iniSeccion, $finSeccion)
+    {
+        $sql = 'SELECT
+                [PREP_Seccion].[seccion]
+                ,[PREP_Voto].[id_candidato]
+                ,SUM([PREP_Voto].[no_votos]) AS no_votos
+                ,SUM([CSeccion].[MetaAlcanzar]) AS meta
+            FROM
+                [PREP_Voto]
+            INNER JOIN [PREP_Casilla_Seccion] ON
+                [PREP_Casilla_Seccion].[id_casilla_seccion] = [PREP_Voto].[id_casilla_seccion]
+            INNER JOIN [PREP_Seccion] ON
+                [PREP_Seccion].[id_seccion] = [PREP_Casilla_Seccion].[id_seccion]
+            INNER JOIN [CSeccion] ON
+                [CSeccion].[IdMunicipio] = [PREP_Seccion].[municipio] AND
+                [CSeccion].[NumSector] = [PREP_Seccion].[seccion]
+            WHERE
+                1 = 1 AND
+                [PREP_Seccion].['.$nameColum.'] = '.$valueColum.'
+                '.($zona ? ' AND [PREP_Seccion].[zona] = '.$zona : '').'
+                '.($iniSeccion ? ' AND [PREP_Seccion].[seccion] BETWEEN '.$iniSeccion.' AND '.$finSeccion : '').'
             GROUP BY
                 [PREP_Seccion].[seccion], [PREP_Voto].[id_candidato]
             ORDER BY

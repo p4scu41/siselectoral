@@ -14,6 +14,7 @@ use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use app\helpers\MunicipiosUsuario;
 use app\models\SeguimientoCambios;
+use app\helpers\PerfilUsuario;
 
 /**
  * PromocionController implements the CRUD actions for Promocion model.
@@ -25,10 +26,10 @@ class PromocionController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -49,6 +50,10 @@ class PromocionController extends Controller
      */
     public function actionIndex()
     {
+        if (!PerfilUsuario::hasPermiso('ce7ad335-baee-498f-b4b0-94c283d9701b', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $searchModel = new PromocionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $municipios = MunicipiosUsuario::getMunicipios();

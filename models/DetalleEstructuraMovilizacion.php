@@ -611,7 +611,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 [DetalleEstructuraMovilizacion]
             INNER JOIN [Puestos]
                 ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
-            WHERE '.$filtros.'
+            WHERE [IdOrganizacion] = -1 AND
+                '.$filtros.'
             ORDER BY [Puestos].[Nivel]';
 
         $resultPuestos = Yii::$app->db->createCommand($sqlPuestos)->queryAll();

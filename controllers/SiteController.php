@@ -16,6 +16,7 @@ use app\models\Puestos;
 use app\models\DetalleEstructuraMovilizacion;
 use app\models\Organizaciones;
 use app\models\SeguimientoCambios;
+use app\helpers\PerfilUsuario;
 
 class SiteController extends Controller
 {
@@ -26,10 +27,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta', 'getprogramas', 'getintegrantesprogbyseccion', 'getpuestosfaltantesbyseccion'],
+                'only' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta', 'getprogramas', 'getintegrantesprogbyseccion', 'getpuestosfaltantesbyseccion', 'getparents'],
                 'rules' => [
                     [
-                        'actions' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta', 'getprogramas', 'getintegrantesprogbyseccion', 'getpuestosfaltantesbyseccion'],
+                        'actions' => ['logout', 'index', 'positiontree', 'gettree', 'gettreealtern', 'getbranch', 'getresumen', 'getresumennodo', 'getpuestosonmuni', 'getpuestosdepend', 'setpuestopersona', 'getmetabypromotor', 'getmetabyseccion', 'getavancemeta', 'getprogramas', 'getintegrantesprogbyseccion', 'getpuestosfaltantesbyseccion', 'getparents'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -126,6 +127,10 @@ class SiteController extends Controller
 
     public function actionPositiontree()
     {
+        if (!PerfilUsuario::hasPermiso('7cf41ceb-f4a5-4fd8-88c6-3f991348d250', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $municipios = MunicipiosUsuario::getMunicipios();
         $puestos = ArrayHelper::map(
             Puestos::find()

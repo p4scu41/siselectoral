@@ -10,7 +10,9 @@
     height: 50px;
     cursor: pointer;
 }
-
+.mini_grafica > div {
+    margin: auto;
+}
 /****** Tooltip ********/
 .ui-tooltip, .arrow:after {
 background: white;

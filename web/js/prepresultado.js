@@ -54,22 +54,12 @@ $(document).ready(function(){
                 break;
         }
 
-        if ($('#candidato').val() == '' || typeof($('#candidato').val()) == 'undefined') {
+        /*if ($('#candidato').val() == '' || typeof($('#candidato').val()) == 'undefined') {
             $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar al Candidato</div>');
             return false;
-        }
+        }*/
 
-        if ($('#iniSeccion').val() == '' || typeof($('#iniSeccion').val()) == 'undefined') {
-            $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Inicio de las Secciones</div>');
-            return false;
-        }
-
-        if ($('#finSeccion').val() == '' || typeof($('#finSeccion').val()) == 'undefined') {
-            $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Fin de las Secciones</div>');
-            return false;
-        }
-
-        if ($('#iniSeccion').val() >= $('#finSeccion').val()) {
+        if ($('#iniSeccion').val() > $('#finSeccion').val()) {
             $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el rango correcto de las Secciones</div>');
             return false;
         }
@@ -78,8 +68,12 @@ $(document).ready(function(){
     });
 
     $('#municipio, #distritoLocal, #distritoFederal').change(function(){ 
-        loadCandidatos.apply(this) ;
-        loadSecciones.apply(this) ;
+        //loadCandidatos.apply(this);
+        loadZonas.apply(this);
+    });
+
+    $('#zona').change(function(){
+        loadSecciones.apply(this);
     });
 
 });
@@ -131,6 +125,29 @@ function loadSecciones()
     });
 }
 
+function loadZonas()
+{
+    $('#loadIndicator').show();
+
+    $.ajax({
+        url: urlGetZonas,
+        method: 'POST',
+        dataType: 'json',
+        data: $('#formFiltroVotos').serialize()
+    }).done(function(response) {
+        $('#loadIndicator').hide();
+        $('#div_zonas').removeClass('hidden');
+
+        $('#zona option:not(:first)').remove();
+
+        if (response.length) {
+            for (zona in response) {
+                $('#zona').append('<option value="'+response[zona].zona+'">'+response[zona].zona+'</option>');
+            }
+        }
+    });
+}
+
 function getResultados()
 {
     $('#loadIndicator').show();
@@ -145,20 +162,62 @@ function getResultados()
         $('#tabs_resultado').removeClass('hidden');
 
         fecha = new Date();
-        tabla = '<table border="1" cellpadding="1" cellspacing="1" id="" class="table table-condensed table-striped table-bordered table-hover">'+
-            '<thead><tr><th>Sección</th><th>Meta</th><th>Votos</th></tr></thead><tbody>';
-        votos = [];
-        metas = [];
-        secciones = [];
-        
-        for(fila in response) {
-            tabla += '<tr><td>'+response[fila].seccion+'</td><td>'+response[fila].meta+'</td><td>'+response[fila].no_votos+'</td></tr>'
-            metas.push(parseInt(response[fila].meta));
-            votos.push(parseInt(response[fila].no_votos));
-            secciones.push(parseInt(response[fila].seccion));
+
+        tabla = '<table border="1" cellpadding="1" cellspacing="1" id="" class="table table-condensed table-striped table-bordered table-hover">';
+        thead = '<thead><tr><th></th><th>Meta Estimada</th>';
+        tbody = '<tbody>';
+
+        listSumVotos = [];
+        listCandidatos = [];
+        arrVotosCandidatos = [];
+        sumaTotal = 0;
+
+        for (candidato in response.candidatos) {
+            thead += '<th>'+response.candidatos[candidato].nombre+'</th>';
+            listCandidatos.push(response.candidatos[candidato].nombre);
+            listSumVotos[response.candidatos[candidato].id_candidato] = 0;
         }
 
-        tabla += '</tbody></table>';
+        thead += '<th>Total</th>';
+
+        for (fila in response.resultado) {
+            tbody += '<tr><td>Sección '+response.resultado[fila].seccion+'</td>\n\
+                    <td>'+response.resultado[fila].meta+'</td>';
+            sumaSeccion = 0;
+
+            for (candidato in response.candidatos) {
+                if (typeof(response.resultado[fila].votos[response.candidatos[candidato].id_candidato]) == 'undefined') {
+                    tbody += '<td>0</td>';
+                    listSumVotos[response.candidatos[candidato].id_candidato] += 0;
+                } else {
+                    tbody += '<td>'+response.resultado[fila].votos[response.candidatos[candidato].id_candidato]+'</td>';
+                    listSumVotos[response.candidatos[candidato].id_candidato] += parseInt(response.resultado[fila].votos[response.candidatos[candidato].id_candidato]);
+                    sumaSeccion += parseInt(response.resultado[fila].votos[response.candidatos[candidato].id_candidato]);
+                }
+            }
+            sumaTotal += sumaSeccion;
+            tbody += '<td>'+sumaSeccion+'</td>';
+            tbody += '</tr>';
+        }
+
+        for (candidato in response.candidatos) {
+            arrVotosCandidatos.push(listSumVotos[response.candidatos[candidato].id_candidato]);
+        }
+
+        thead += '<tr><th>Votos</th><th></th>';
+        for (candidato in response.candidatos) {
+            thead += '<th>'+listSumVotos[response.candidatos[candidato].id_candidato]+'</th>';
+        }
+        thead += '<th>'+sumaTotal+'</th><tr>';
+
+        thead += '<tr><th>Porcentajes</th><th></th>';
+        for (candidato in response.candidatos) {
+            thead += '<th>'+(sumaTotal!=0 ? Math.round(listSumVotos[response.candidatos[candidato].id_candidato]/sumaTotal*100) : 0)+' %</th>';
+        }
+        thead += '<th>100%</th><tr>';
+        thead += '</thead>';
+        tbody += '</tbody>';
+        tabla += thead+tbody+'</table>';
 
         $('#tabla_resultado').html(tabla);
 
@@ -198,7 +257,7 @@ function getResultados()
                     "depth":25
                 },*/
                 "title":{
-                    "text":"Número de Votos y Meta de Promoción por Sección",
+                    "text":"Resultados Electorales Preliminares",
                     "background-color":"none",
                     "font-color":"black",
                     "border-width":1,
@@ -206,7 +265,7 @@ function getResultados()
                     "bold":true,
                     "border-bottom":"none"
                 },
-                "subtitle":{
+                /*"subtitle":{
                     "text": $('#candidato option:selected').text(),
                     "background-color":"none",
                     "font-color":"black",
@@ -214,14 +273,14 @@ function getResultados()
                     "border-color":"#CCCCCC",
                     "bold":true,
                     "border-top":"none"
-                },
+                },*/
                 "source":{
                     "text":"Fecha de Corte: "+String("00000" + fecha.getDate()).slice(-2) + "-" + String("00000" + (fecha.getMonth()+1)).slice(-2) + "-" + fecha.getFullYear()+' '+fecha.getHours()+':'+fecha.getMinutes()
                 },
                 "border-width":1,
                 "border-color":"#CCCCCC",
                 "background-color":"#fff #eee",
-                "legend":{},
+                //"legend":{},
                 "plot":{
                     "valueBox":{
                         "type":"all",
@@ -242,27 +301,27 @@ function getResultados()
                 },
                 "scaleX":{
                     "label":{
-                        "text":"Sección"
+                        "text":"Candidatos"
                     },
-                    "values":secciones,
+                    "values":listCandidatos,
                     "item":{
                         "font-size":"9px"
                     }
                 },
                 "scaleY":{
                     "label":{
-                        "text":"Promoción"
+                        "text":"Votos"
                     },
                 },
                 "series":[
-                    {
+                    /*{
                         "values":metas,
                         "text":"Meta",
                         "animate":true,
                         "effect":2,
-                    },
+                    },*/
                     {
-                        "values":votos,
+                        "values":arrVotosCandidatos,
                         "text":"Votos",
                         "animate":true,
                         "effect":2,
@@ -276,7 +335,7 @@ function getResultados()
             id: "grafica_resultado",
             data: datos_grafica,
             height: 400,
-            width: "100%"
+            width: "80%"
         });
         
     });

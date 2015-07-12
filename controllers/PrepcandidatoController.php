@@ -13,6 +13,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use app\helpers\MunicipiosUsuario;
+use app\helpers\PerfilUsuario;
 
 /**
  * PrepcandidatoController implements the CRUD actions for PREPCandidato model.
@@ -38,10 +39,10 @@ class PrepcandidatoController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'get'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'get'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -62,6 +63,10 @@ class PrepcandidatoController extends Controller
      */
     public function actionIndex()
     {
+        if (!PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $searchModel = new PREPCandidatoSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 

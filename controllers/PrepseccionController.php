@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use app\helpers\MunicipiosUsuario;
+use app\helpers\PerfilUsuario;
 
 /**
  * PrepseccionController implements the CRUD actions for PREPSeccion model.
@@ -35,10 +36,10 @@ class PrepseccionController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'getbymuni', 'getbyattr', 'getzonas'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'getbymuni', 'getbyattr', 'getzonas'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -59,6 +60,10 @@ class PrepseccionController extends Controller
      */
     public function actionIndex()
     {
+        if (!PerfilUsuario::hasPermiso('1fdee8d8-ef29-4966-badf-3a796b0e1570', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $searchModel = new PREPSeccionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $municipios = MunicipiosUsuario::getMunicipios();
@@ -192,7 +197,32 @@ class PrepseccionController extends Controller
                 return [];
         }
 
+        if (Yii::$app->request->post('zona')) {
+            $secciones->andWhere('zona = '.Yii::$app->request->post('zona'));
+        }
+
         $result = $secciones->all();
+
+        return $result;
+    }
+
+    public function actionGetzonas()
+    {
+        Yii::$app->getResponse()->format = \yii\web\Response::FORMAT_JSON;
+        $result = [];
+        $where = null;
+
+        if (Yii::$app->request->post('tipoEleccion') != null) {
+            if (Yii::$app->request->post('municipio') != null) {
+                $where = 'municipio = '.(int)Yii::$app->request->post('municipio');
+            } else if (Yii::$app->request->post('distritoLocal') != null) {
+                $where = 'distrito_local = '.(int)Yii::$app->request->post('distritoLocal');
+            } else if (Yii::$app->request->post('distritoFederal') != null) {
+                $where = 'distrito_federal = '.(int)Yii::$app->request->post('distritoFederal');
+            }
+
+            $result = PREPSeccion::getZonas($where);
+        }
 
         return $result;
     }

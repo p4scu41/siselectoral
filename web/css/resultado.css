@@ -5,3 +5,12 @@
 #myChartDiv-menu-sep-tools{
     display: none !important;
 }*/
+#tabla_resultado > table {
+    margin: auto;
+    width: auto;
+    max-width: inherit;
+}
+
+#grafica_resultado > div {
+    margin: auto;
+}

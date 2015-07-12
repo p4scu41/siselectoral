@@ -13,6 +13,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use app\helpers\MunicipiosUsuario;
+use app\helpers\PerfilUsuario;
 
 /**
  * PrepvotoController implements the CRUD actions for PREPVoto model.
@@ -24,10 +25,10 @@ class PrepresultadoController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'get'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'get'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -47,6 +48,10 @@ class PrepresultadoController extends Controller
      */
     public function actionIndex()
     {
+        if (!PerfilUsuario::hasPermiso('19cff826-d301-48bd-a824-960c67b7d6f6', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
         $tiposEleccion = ArrayHelper::map(PREPTipoEleccion::find()->select('id_tipo_eleccion, descripcion')->all(), 'id_tipo_eleccion', 'descripcion');
         $municipios = MunicipiosUsuario::getMunicipios();
         $distritosLocales = ArrayHelper::map(
@@ -56,6 +61,9 @@ class PrepresultadoController extends Controller
             PREPSeccion::find()->select('distrito_federal')->groupBy('distrito_federal')->orderBy('distrito_federal')->all(),
             'distrito_federal', 'distrito_federal');
         $candidatos = [];
+        $zonas = [];
+        $secciones = [];
+        $whereZonaSeccion = '';
 
         if (Yii::$app->request->post('tipoEleccion') != null) {
             if (Yii::$app->request->post('municipio') != null) {
@@ -66,7 +74,38 @@ class PrepresultadoController extends Controller
                 $where = 'distrito_federal = '.(int)Yii::$app->request->post('distritoFederal');
             }
 
+            $whereZonaSeccion = $where;
+
+            if (Yii::$app->request->post('zona')) {
+                $whereZonaSeccion .= ' AND zona = '.Yii::$app->request->post('zona');
+            }
+
+            if (Yii::$app->request->post('iniSeccion')) {
+                $whereZonaSeccion .= ' AND seccion BETWEEN '.Yii::$app->request->post('iniSeccion'). ' AND '.Yii::$app->request->post('finSeccion');
+            }
+
             $candidatos = ArrayHelper::map(PREPCandidato::find()->where($where)->andWhere('activo = 1')->all(), 'id_candidato', 'nombre');
+
+            $zonas = ArrayHelper::map(PREPSeccion::getZonas($where), 'zona', 'zona');
+            $listSecciones = PREPSeccion::find()->select('id_seccion, seccion')->where('activo = 1')->orderBy('seccion');
+
+            switch (Yii::$app->request->post('tipoEleccion')) {
+                case '1': // Presidencia Municipal
+                    $listSecciones->andWhere('municipio = '.Yii::$app->request->post('municipio'));
+                    break;
+                case '2': // Diputación Local
+                    $listSecciones->andWhere('distrito_local = '.Yii::$app->request->post('distritoLocal'));
+                    break;
+                case '3': // Diputación Federal
+                    $listSecciones->andWhere('distrito_federal = '.Yii::$app->request->post('distritoFederal'));
+                    break;
+            }
+
+            if (Yii::$app->request->post('zona')) {
+                $listSecciones->andWhere('zona = '.Yii::$app->request->post('zona'));
+            }
+
+            $secciones = ArrayHelper::map($listSecciones->all(), 'seccion', 'seccion');
         }
 
         return $this->render('index', [
@@ -75,6 +114,8 @@ class PrepresultadoController extends Controller
             'distritosLocales' => $distritosLocales,
             'distritosFederales' => $distritosFederales,
             'candidatos' => $candidatos,
+            'zonas' => $zonas,
+            'secciones' => $secciones,
         ]);
     }
 
@@ -120,12 +161,26 @@ class PrepresultadoController extends Controller
         }
 
         $result = PREPVoto::getResultados(
-            (int)Yii::$app->request->post('candidato'),
             $nameColum,
             (int)$valueColum,
+            (int)Yii::$app->request->post('zona'),
             (int)Yii::$app->request->post('iniSeccion'),
             (int)Yii::$app->request->post('finSeccion'));
 
-        return $result;
+        $candidatos = PREPCandidato::find()->select('id_candidato, id_partido, nombre')->orderBy('id_candidato')->where($nameColum.'='.(int)$valueColum)->andWhere('activo = 1')->all();
+        $resultados = [];
+
+        foreach ($result as $fila) {
+            $resultados[$fila['seccion']]['seccion'] = $fila['seccion'];
+            $resultados[$fila['seccion']]['meta'] = $fila['meta'];
+            $resultados[$fila['seccion']]['votos'][$fila['id_candidato']] = $fila['no_votos'];
+        }
+
+        $respuesta = [
+            'resultado' => $resultados,
+            'candidatos' => $candidatos
+        ];
+
+        return $respuesta;
     }
 }

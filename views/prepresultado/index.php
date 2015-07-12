@@ -16,6 +16,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/zingchart/zingchart.min.js'), ['p
 $this->registerJs('zingchart.MODULESDIR = "'.Url::to('@web/js/plugins/zingchart/modules').'"', yii\web\View::POS_BEGIN);
 $this->registerJs('urlGetCandidatos = "'.Url::toRoute('prepcandidato/get').'"', yii\web\View::POS_HEAD);
 $this->registerJs('urlGetSecciones = "'.Url::toRoute('prepseccion/getbyattr').'"', yii\web\View::POS_HEAD);
+$this->registerJs('urlGetZonas = "'.Url::toRoute('prepseccion/getzonas').'"', yii\web\View::POS_HEAD);
 $this->registerJs('urlGetResultados = "'.Url::toRoute('prepresultado/get').'"', yii\web\View::POS_HEAD);
 ?>
 
@@ -52,14 +53,14 @@ $this->registerJs('urlGetResultados = "'.Url::toRoute('prepresultado/get').'"', 
                                 <label for="distritoFederal">Distrito Federal: </label>
                                 <?= Html::dropDownList('distritoFederal', Yii::$app->request->post('distritoFederal'), $distritosFederales, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'distritoFederal']); ?>
                             </div>
-                            <div class="form-group <?= Yii::$app->request->post('tipoEleccion')!=null ? '' : 'hidden' ?>" id="div_candidato">
-                                <label for="candidato">Candidatos: </label>
-                                <?= Html::dropDownList('candidato', Yii::$app->request->post('candidato'), $candidatos, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'candidato']); ?>
+                            <div class="form-group <?= Yii::$app->request->post('tipoEleccion')!=null ? '' : 'hidden' ?>" id="div_zonas">
+                                <label>Zonas: </label>
+                                <?= Html::dropDownList('zona', Yii::$app->request->post('zona'), $zonas, ['prompt' => 'Inicio', 'class' => 'form-control', 'id' => 'zona']); ?>
                             </div>
-                            <div class="form-group hidden" id="div_secciones">
+                            <div class="form-group <?= Yii::$app->request->post('iniSeccion')!=null || Yii::$app->request->post('zona')!=null? '' : 'hidden' ?>" id="div_secciones">
                                 <label>Secciones: </label>
-                                <?= Html::dropDownList('iniSeccion', null, [], ['prompt' => 'Inicio', 'class' => 'form-control', 'id' => 'iniSeccion']); ?>
-                                <?= Html::dropDownList('finSeccion', null, [], ['prompt' => 'Fin', 'class' => 'form-control', 'id' => 'finSeccion']); ?>
+                                <?= Html::dropDownList('iniSeccion', Yii::$app->request->post('iniSeccion'), $secciones, ['prompt' => 'Inicio', 'class' => 'form-control', 'id' => 'iniSeccion']); ?>
+                                <?= Html::dropDownList('finSeccion', Yii::$app->request->post('finSeccion'), $secciones, ['prompt' => 'Fin', 'class' => 'form-control', 'id' => 'finSeccion']); ?>
                             </div>
                         </div>
                         <div id="alertResult"></div>
