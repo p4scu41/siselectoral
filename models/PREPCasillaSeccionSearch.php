@@ -41,7 +41,21 @@ class PREPCasillaSeccionSearch extends PREPCasillaSeccion
      */
     public function search($params)
     {
-        $query = PREPCasillaSeccion::find();
+        $sql = 'SELECT [PREP_Casilla_Seccion].*
+            FROM [PREP_Casilla_Seccion]
+            INNER JOIN [PREP_Seccion] ON
+                [PREP_Casilla_Seccion].[id_seccion] = [PREP_Seccion].[id_seccion]
+            WHERE 1 = 1 ';
+
+        if ($params['municipio']) {
+            $sql .= ' AND [PREP_Seccion].[municipio] = '.$params['municipio'];
+        }
+
+        if ($params['PREPCasillaSeccionSearch']['id_seccion']) {
+            $sql .= ' AND [PREP_Casilla_Seccion].[id_seccion] = '.$params['PREPCasillaSeccionSearch']['id_seccion'];
+        }
+
+        $query = PREPCasillaSeccion::findBySql($sql);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -54,23 +68,6 @@ class PREPCasillaSeccionSearch extends PREPCasillaSeccion
             // $query->where('0=1');
             return $dataProvider;
         }
-
-        $query->andFilterWhere([
-            'id_casilla_seccion' => $this->id_casilla_seccion,
-            'id_seccion' => $this->id_seccion,
-            'id_casilla' => $this->id_casilla,
-            'cp' => $this->cp,
-        ]);
-
-        $query->andFilterWhere(['like', 'descripcion', $this->descripcion])
-            ->andFilterWhere(['like', 'colonia', $this->colonia])
-            ->andFilterWhere(['like', 'domicilio', $this->domicilio])
-            ->andFilterWhere(['like', 'localidad', $this->localidad])
-            ->andFilterWhere(['like', 'repre_gral', $this->repre_gral])
-            ->andFilterWhere(['like', 'tel_repre_gral', $this->tel_repre_gral])
-            ->andFilterWhere(['like', 'repre_casilla', $this->repre_casilla])
-            ->andFilterWhere(['like', 'tel_repre_casilla', $this->tel_repre_casilla])
-            ->andFilterWhere(['like', 'observaciones', $this->observaciones]);
 
         return $dataProvider;
     }

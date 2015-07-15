@@ -254,7 +254,10 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                     </div>
 
                                                     <div id="divTreeEstrucAlterna" style="display: none">
-                                                        <div class="">
+                                                        <div id="total_benefi_alterna"></div>
+                                                        <div id="list_alternas"></div>
+                                                        <div id="list_integrantes_alternas" class="tblListIntegrantesBySeccion" style="display: none;"></div>
+                                                        <!--<div class="">
                                                             <table id="treeEstrucAlterna" class="table table-condensed table-bordered table-hover" style="display: none">
                                                                 <colgroup>
                                                                     <col width="*"></col>
@@ -269,7 +272,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                                 <tbody>
                                                                 </tbody>
                                                             </table>
-                                                        </div>
+                                                        </div>-->
                                                     </div>
 
                                                 </div>

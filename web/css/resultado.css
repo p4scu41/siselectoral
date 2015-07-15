@@ -14,3 +14,7 @@
 #grafica_resultado > div {
     margin: auto;
 }
+
+#grafica_resultado-license {
+    display: none;
+}

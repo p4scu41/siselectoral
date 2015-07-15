@@ -14,6 +14,7 @@ use yii\helpers\Url;
  * @property string $propietario
  * @property string $suplente
  * @property string $observaciones
+ * @property string $color
  */
 class PREPPartido extends \yii\db\ActiveRecord
 {
@@ -31,7 +32,7 @@ class PREPPartido extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre', 'nombre_corto', 'propietario', 'suplente', 'observaciones'], 'string'],
+            [['nombre', 'nombre_corto', 'propietario', 'suplente', 'observaciones', 'color'], 'string'],
             [['nombre_corto'], 'string', 'max' => 10],
         ];
     }
@@ -48,6 +49,7 @@ class PREPPartido extends \yii\db\ActiveRecord
             'propietario' => 'Propietario',
             'suplente' => 'Suplente',
             'observaciones' => 'Observaciones',
+            'color' => 'Color',
         ];
     }
 

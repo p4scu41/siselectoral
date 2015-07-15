@@ -292,10 +292,10 @@ class SiteController extends Controller
         return $meta;
     }
 
-    public function actionGetprogramas($idMuni, $idNodo)
+    public function actionGetprogramas($idMuni, $idNodo, $alterna=false)
     {
         //$programas = Organizaciones::find()->where(['IdMunicipio'=>$idMuni, 'idTipoOrganizacion'=>22])->asArray()->all();
-        $programas = Organizaciones::getOrgsOnMuni($idMuni);
+        $programas = Organizaciones::getOrgsOnMuni($idMuni, $alterna);
         /*$nodo = DetalleEstructuraMovilizacion::find()->where('IdNodoEstructuraMov='.$idNodo)->one();
         $seccion = null;
         // Puesto = Jefe de Seccion

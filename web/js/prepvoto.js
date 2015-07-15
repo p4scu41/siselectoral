@@ -1,3 +1,70 @@
+var datos_grafica = {
+    "gui": {
+        "behaviors": [
+            {
+                "id": "ViewSource",
+                "enabled": "none"
+            },
+            {
+                "id": "About",
+                "enabled": "none"
+            },
+            {
+                "id": "BuyLicense",
+                "enabled": "none"
+            },
+            {
+                "id": "LogScale",
+                "enabled": "none"
+            },
+            {
+                "id": "Reload",
+                "enabled": "none"
+            }
+        ]
+    },
+    "graphset":[{
+        "type":"bar",
+        "stacked": true,
+        "stack-type": "normal",
+        "border-width":1,
+        "border-color":"#CCCCCC",
+        "background-color":"#fff #eee",
+        "scaleX":{
+            "visible": false,
+        },
+        "scaleY":{
+            "visible": false,
+        },
+        "tooltip":{
+            "visible": false,
+        },
+        plotarea : {
+            width : '100%',
+            height : '100%',
+            margin : '0 0 0 0'
+        },
+        "series":[
+            {
+                "values":[30],
+                "text":"Meta",
+                "animate":true,
+                "effect":2,
+                "stack": 1,
+                "background-color":"#008d4c",
+            },
+            {
+                "values":[100],
+                "text":"Votos",
+                "animate":true,
+                "effect":2,
+                "stack": 1,
+                "background-color":"#dff0d8",
+            }
+        ]
+    }]
+};
+
 $(document).ready(function(){
     $('#tipoEleccion').change(function(){
         $('#municipio').closest('div').addClass('hidden');
@@ -85,6 +152,7 @@ $(document).ready(function(){
             $('.sumaCasilla-'+separado[1]).text(sumVotosCasilla(separado[1]));
             sumTotalVotos();
             actualizaPorcentajes();
+            creaGraficas();
         });
     });
 
@@ -117,78 +185,16 @@ $(document).ready(function(){
         $this.sparkline('html', $this.data());
     });*/
 
-    var datos_grafica = {
-            "gui": {
-                "behaviors": [
-                    {
-                        "id": "ViewSource",
-                        "enabled": "none"
-                    },
-                    {
-                        "id": "About",
-                        "enabled": "none"
-                    },
-                    {
-                        "id": "BuyLicense",
-                        "enabled": "none"
-                    },
-                    {
-                        "id": "LogScale",
-                        "enabled": "none"
-                    },
-                    {
-                        "id": "Reload",
-                        "enabled": "none"
-                    }
-                ]
-            },
-            "graphset":[
-            {
-                "type":"bar",
-                "stacked": true,
-                "stack-type": "normal",
-                "border-width":1,
-                "border-color":"#CCCCCC",
-                "background-color":"#fff #eee",
-                "scaleX":{
-                    "visible": false,
-                },
-                "scaleY":{
-                    "visible": false,
-                },
-                "tooltip":{
-                    "visible": false,
-                },
-                plotarea : {
-                    width : '100%',
-                    height : '100%',
-                    margin : '0 0 0 0'
-                },
-                "series":[
-                    {
-                        "values":[30],
-                        "text":"Meta",
-                        "animate":true,
-                        "effect":2,
-                        "stack": 1,
-                        "background-color":"#008d4c",
-                    },
-                    {
-                        "values":[100],
-                        "text":"Votos",
-                        "animate":true,
-                        "effect":2,
-                        "stack": 1,
-                        "background-color":"#dff0d8",
-                    }
-                ]
-            }
-        ]
-    };
+    creaGraficas()
 
+});
+
+function creaGraficas()
+{
     $('.mini_grafica').each(function(){
         datos_grafica.graphset[0].series[0].values[0] = $(this).data('valor');
         datos_grafica.graphset[0].series[1].values[0] = 100 - datos_grafica.graphset[0].series[0].values[0];
+        datos_grafica.graphset[0].series[0]['background-color'] = $(this).data('color');
 
         zingchart.render({
             id: $(this).attr('id'),
@@ -197,7 +203,7 @@ $(document).ready(function(){
             width: 80
         });
     });
-});
+}
 
 function sumVotosCandidato(candidato)
 {
@@ -244,7 +250,10 @@ function actualizaPorcentajes()
         separado = $(this).attr('class').split('-');
         porcentaje = sumaTotalVotos!=0 ? Math.round($('th[class=sumaCandidato-'+separado[1]+']').text()/sumaTotalVotos*100) : 0;
         $(this).text(porcentaje + ' %');
+        $('#mini_grafica_'+separado[1]).data('valor', porcentaje);
     });
+
+    creaGraficas();
 }
 
 function loadSecciones()

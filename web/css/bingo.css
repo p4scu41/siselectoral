@@ -101,3 +101,18 @@ transform: rotate(45deg);
 bottom: -20px;
 top: auto;
 }
+@media print {
+    .bs-glyphicons-list {
+        max-height: initial;
+        overflow: visible;
+    }
+    .bs-glyphicons .glyphicon {
+        font-size: 13px;
+    }
+    .bs-glyphicons li {
+        padding: initial;
+        width: 6%;
+        height: 50px;
+        border: 1px solid #CCC;
+    }
+}

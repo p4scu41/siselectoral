@@ -50,14 +50,17 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
                                     </label>
                                 </div>
                             </div>
-                            <?php //} ?>
-                            <!--<label class="radio-inline">
-                                <input type="radio" name="tipo_promovido" value="1"> Promovidos Efectivos
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" name="tipo_promovido" value="2"> Listado de Promoción
-                            </label>--><br>
-                            <input type="hidden" name="tipo_promovido" value="1"/>
+                            <?php //}
+                            if (PerfilUsuario::isAdminGeneral()) {?>
+                                <label class="radio-inline">
+                                    <input type="radio" name="tipo_promovido" value="1"> Promovidos Efectivos
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="tipo_promovido" value="2"> Listado de Promoción
+                                </label><br>
+                            <?php } else { ?>
+                                <input type="hidden" name="tipo_promovido" value="1"/>
+                            <?php } ?>
                         </div>
                         <p>
                             <button type="button" class="btn btn-success" id="btnGenerarReporte">

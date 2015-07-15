@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 
 $this->registerJsFile(Url::to('@web/js/bingo.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.fileDownload.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
 $this->registerCssFile(Url::to('@web/css/bingo.css'),  ['depends' => [\yii\bootstrap\BootstrapAsset::className()]]);
 $this->registerJs('getSeccionesMuni="'.Url::toRoute('seccion/getjsmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('getPromotoresBySeccion="'.Url::toRoute('seccion/getpromotores', true).'";', \yii\web\View::POS_HEAD);
@@ -127,6 +128,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" id="btnAceptarBingo">Aceptar</button>
+                <button type="button" class="btn btn-info" id="btnImprimirBingo">Imprimir</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
             </div>
         </div>

@@ -57,7 +57,7 @@ class ReporteController extends \yii\web\Controller
             if (Yii::$app->request->post('tipoReporte') == 1) { // Avance Seccional
                 $reporteDatos = Reporte::avanceSeccional(Yii::$app->request->post('Municipio'));
                 $omitirCentrado = array(2);
-                $respuesta['titulo'] = 'Avance Seccional de '.$municipio->DescMunicipio;
+                $respuesta['titulo'] = 'Avance de Promoción Seccional de '.$municipio->DescMunicipio;
             } elseif (Yii::$app->request->post('tipoReporte') == 2) { // Estructura
                 $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
                 $nodo = null;
@@ -131,6 +131,8 @@ class ReporteController extends \yii\web\Controller
 
         $pdfApi = $pdf->getApi();
         $pdfApi->SetProtection(['print']);
+        $pdfApi->SetWatermarkText('FV', 0.08);
+        $pdfApi->showWatermarkText = true;
 
         return $pdf->render();
     }
@@ -195,6 +197,19 @@ class ReporteController extends \yii\web\Controller
 
         return $this->render('promovidos', [
             'municipios' => $municipios,
+        ]);
+    }
+
+    public function actionSeccional()
+    {
+        if (!PerfilUsuario::hasPermiso('b3d614ee-f96d-4f42-8c36-2a6e4b6eabeb', 'R')) {
+            return $this->redirect(['site/index']);
+        }
+
+        $municipios = MunicipiosUsuario::getMunicipios();
+
+        return $this->render('seccional', [
+            'municipios' => $municipios
         ]);
     }
 }

@@ -10,7 +10,9 @@ $this->title = 'Resultados';
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->registerCssFile(Url::to('@web/css/resultado.css'));
+$this->registerCssFile(Url::to('@web/js/plugins/jquery-ui-timepicker/jquery-ui-timepicker-addon.css'));
 
+//$this->registerJsFile(Url::to('@web/js/plugins/jquery-ui-timepicker/jquery-ui-timepicker-addon.js'), ['depends' => [\yii\web\JqueryAsset::className()]]);
 $this->registerJsFile(Url::to('@web/js/prepresultado.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/zingchart/zingchart.min.js'), ['position' => yii\web\View::POS_BEGIN]);
 $this->registerJs('zingchart.MODULESDIR = "'.Url::to('@web/js/plugins/zingchart/modules').'"', yii\web\View::POS_BEGIN);
@@ -61,6 +63,10 @@ $this->registerJs('urlGetResultados = "'.Url::toRoute('prepresultado/get').'"', 
                                 <label>Secciones: </label>
                                 <?= Html::dropDownList('iniSeccion', Yii::$app->request->post('iniSeccion'), $secciones, ['prompt' => 'Inicio', 'class' => 'form-control', 'id' => 'iniSeccion']); ?>
                                 <?= Html::dropDownList('finSeccion', Yii::$app->request->post('finSeccion'), $secciones, ['prompt' => 'Fin', 'class' => 'form-control', 'id' => 'finSeccion']); ?>
+                            </div>
+                            <div class="form-group">
+                                <label for="fechaCorte">Fecha y Hora de Corte: </label>
+                                <?= Html::textInput('fechaCorte', Yii::$app->request->post('fechaCorte'), ['class' => 'form-control', 'id' => 'fechaCorte']); ?>
                             </div>
                         </div>
                         <div id="alertResult"></div>

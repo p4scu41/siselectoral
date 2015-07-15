@@ -369,7 +369,7 @@ class Organizaciones extends \yii\db\ActiveRecord
         return $integrante;
     }
 
-    public static function getOrgsOnMuni($idMuni)
+    public static function getOrgsOnMuni($idMuni, $alterna)
     {
         $sqlOrgs = 'SELECT
                 distinct [Organizaciones].[IdOrganizacion],
@@ -383,7 +383,8 @@ class Organizaciones extends \yii\db\ActiveRecord
                 [Organizaciones] ON
                 [Organizaciones].[IdOrganizacion] = [IntegrantesOrganizaciones].[IdOrganizacion]
             WHERE
-                [Organizaciones].[IdOrganizacion] NOT IN (
+                [Organizaciones].[IdOrganizacion] 
+                '.($alterna ? '' : 'NOT').' IN (
                     SELECT DISTINCT([IdOrganizacion])
                     FROM [DetalleEstructuraMovilizacion]
                     WHERE [IdOrganizacion] != -1

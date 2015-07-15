@@ -55,10 +55,17 @@ class PrepcasillaseccionController extends Controller
 
         $searchModel = new PREPCasillaSeccionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $municipios = MunicipiosUsuario::getMunicipios();
+        $secciones = [];
+        if (Yii::$app->request->get('municipio')) {
+            $secciones = ArrayHelper::map(PREPSeccion::getByMunicipio(Yii::$app->request->get('municipio')), 'id_seccion', 'seccion');
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'municipios' => $municipios,
+            'secciones' => $secciones
         ]);
     }
 
@@ -85,6 +92,7 @@ class PrepcasillaseccionController extends Controller
         $municipios = MunicipiosUsuario::getMunicipios();
         $secciones = [];
         $casillas = ArrayHelper::map(PREPCasilla::find()->all(), 'id_casilla', 'descripcion');
+        $model->activo = 0; // Por defecto se deja como inactiva la casilla
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             //return $this->redirect(['view', 'id' => $model->id_casilla_seccion]);
@@ -115,6 +123,12 @@ class PrepcasillaseccionController extends Controller
         $casillas = ArrayHelper::map(PREPCasilla::find()->all(), 'id_casilla', 'descripcion');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if ($model->activo == 1) {
+                $model->fecha_activo = date('Y-m-d H:i:s');
+            } else {
+                $model->fecha_inactivo = date('Y-m-d H:i:s');
+            }
+            $model->save();
             //return $this->redirect(['view', 'id' => $model->id_casilla_seccion]);
             return $this->redirect(['index']);
         } else {
@@ -176,6 +190,29 @@ class PrepcasillaseccionController extends Controller
         $model->observaciones = Yii::$app->request->post('obser');
         $model->save();
         
+        return true;
+    }
+    
+    /**
+     * Updates an existing PREPCasillaSeccion model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionChangeactivo()
+    {
+        $model = $this->findModel(Yii::$app->request->post('id'));
+       
+        if ($model->activo == 1) {
+            $model->activo = 0;
+            $model->fecha_inactivo = date('Y-m-d H:i:s');
+        } else {
+            $model->activo = 1;
+            $model->fecha_activo = date('Y-m-d H:i:s');
+        }
+        
+        $model->save();
+
         return true;
     }
 

@@ -137,7 +137,7 @@ class PREPVoto extends \yii\db\ActiveRecord
         return $result;
     }*/
 
-    public static function getResultados($nameColum, $valueColum, $zona, $iniSeccion, $finSeccion)
+    public static function getResultados($nameColum, $valueColum, $zona, $iniSeccion, $finSeccion, $fechaCorte)
     {
         $sql = 'SELECT
                 [PREP_Seccion].[seccion]
@@ -158,6 +158,7 @@ class PREPVoto extends \yii\db\ActiveRecord
                 [PREP_Seccion].['.$nameColum.'] = '.$valueColum.'
                 '.($zona ? ' AND [PREP_Seccion].[zona] = '.$zona : '').'
                 '.($iniSeccion ? ' AND [PREP_Seccion].[seccion] BETWEEN '.$iniSeccion.' AND '.$finSeccion : '').'
+                '.($fechaCorte != '' ? ' AND ([created_at] <= CONVERT(date, \''.$fechaCorte.'\', 111) OR [updated_at] <= CONVERT(date, \''.$fechaCorte.'\', 111))' : '').'
             GROUP BY
                 [PREP_Seccion].[seccion], [PREP_Voto].[id_candidato]
             ORDER BY
@@ -167,4 +168,60 @@ class PREPVoto extends \yii\db\ActiveRecord
 
         return $result;
     }
+
+    public static function getCountTotalCasillas($nameColum, $valueColum, $zona, $iniSeccion, $finSeccion)
+    {
+        $sql = 'SELECT
+                COUNT(*) AS total_casillas
+            FROM
+                [PREP_Casilla_Seccion]
+            INNER JOIN [PREP_Seccion] ON
+                [PREP_Seccion].[id_seccion] = [PREP_Casilla_Seccion].[id_seccion]
+            INNER JOIN [CSeccion] ON
+                [CSeccion].[IdMunicipio] = [PREP_Seccion].[municipio] AND
+                [CSeccion].[NumSector] = [PREP_Seccion].[seccion]
+            WHERE
+                1 = 1 AND
+                [PREP_Seccion].['.$nameColum.'] = '.$valueColum.'
+                '.($zona ? ' AND [PREP_Seccion].[zona] = '.$zona : '').'
+                '.($iniSeccion ? ' AND [PREP_Seccion].[seccion] BETWEEN '.$iniSeccion.' AND '.$finSeccion : '');
+
+        $result = Yii::$app->db->createCommand($sql)->queryOne();
+
+        if ($result == null) {
+            return 0;
+        }
+
+        return $result['total_casillas'];
+    }
+    
+    public static function getCountCasillasConsideradas($nameColum, $valueColum, $zona, $iniSeccion, $finSeccion, $fechaCorte)
+    {
+        $sql = 'SELECT
+                [PREP_Voto].[id_casilla_seccion]
+            FROM
+                [PREP_Voto]
+            INNER JOIN [PREP_Casilla_Seccion] ON
+                [PREP_Casilla_Seccion].[id_casilla_seccion] = [PREP_Voto].[id_casilla_seccion]
+            INNER JOIN [PREP_Seccion] ON
+                [PREP_Seccion].[id_seccion] = [PREP_Casilla_Seccion].[id_seccion]
+            INNER JOIN [CSeccion] ON
+                [CSeccion].[IdMunicipio] = [PREP_Seccion].[municipio] AND
+                [CSeccion].[NumSector] = [PREP_Seccion].[seccion]
+            WHERE
+                1 = 1 AND
+                [PREP_Seccion].['.$nameColum.'] = '.$valueColum.'
+                '.($zona ? ' AND [PREP_Seccion].[zona] = '.$zona : '').' 
+                '.($iniSeccion ? ' AND [PREP_Seccion].[seccion] BETWEEN '.$iniSeccion.' AND '.$finSeccion : '').'
+                '.($fechaCorte != '' ? ' AND ([created_at] <= CONVERT(date, \''.$fechaCorte.'\', 111) OR [updated_at] <= CONVERT(date, \''.$fechaCorte.'\', 111))' : '').'
+            GROUP BY
+                [PREP_Seccion].[seccion], [PREP_Voto].[id_casilla_seccion]
+            ORDER BY
+                [PREP_Seccion].[seccion], [PREP_Voto].[id_casilla_seccion]';
+
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+
+        return count($result);
+    }
+    
 }

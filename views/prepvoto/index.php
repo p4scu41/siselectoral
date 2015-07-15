@@ -157,28 +157,24 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
                 . '<th></th>'
                 . '</tr><tr><th>Porcentajes</th>';
 
+            $theadGraficas = '<tr>'
+                . '<th rowspan="2"></th>';
+
             // Porcentajes
             foreach ($candidatos as $candidato) {
                 $thead .= '<th class="porcentaje-'.$candidato->id_candidato.'">'.($sumaTotal != 0 ? round($sumaCandidatos[$candidato->id_candidato]/$sumaTotal,2)*100 : 0).' %</th>';
+                $theadGraficas .= '<th class="text-center"><div class="mini_grafica" id="mini_grafica_'.$candidato->id_candidato.'" data-color="'.$candidato->partido->color.'" data-valor="'.($sumaTotal != 0 ? round($sumaCandidatos[$candidato->id_candidato]/$sumaTotal,2)*100 : 0).'"></div></th>';
             }
+
+             $theadGraficas .= '<th></th>'
+                . '<th></th>'
+                . '</tr>';
 
             $thead .= '<th>100 %</th>'
                 . '<th></th>'
                 . '</tr></thead>';
 
             $tbody .= '</tbody>';
-
-            $theadGraficas = '<tr>'
-                . '<th rowspan="2"></th>';
-
-            foreach ($candidatos as $candidato) {
-                //$theadGraficas .= '<th><div class="sparkline" data-type="bar" data-width="100px" data-height="200px" data-bar-Width="14" data-bar-Spacing="7" data-bar-Color="#B3CF95" data-RangeMin="0" data-RangeMax="100">50,100</div></th>';
-                $theadGraficas .= '<th class="text-center"><div class="mini_grafica" id="mini_grafica_'.$candidato->id_candidato.'" data-valor="'.($sumaTotal != 0 ? round($sumaCandidatos[$candidato->id_candidato]/$sumaTotal,2)*100 : 0).'"></div></th>';
-            }
-
-            $theadGraficas .= '<th></th>'
-                . '<th></th>'
-                . '</tr>';
 
             $tabla .= str_replace('FILA_GRAFICAS', $theadGraficas, $thead).$tbody.'</table>';
         }

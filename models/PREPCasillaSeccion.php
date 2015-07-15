@@ -19,7 +19,9 @@ use Yii;
  * @property string $tel_repre_gral
  * @property string $repre_casilla
  * @property string $tel_repre_casilla
- * @property string $observaciones
+ * @property integer $activo
+ * @property string $fecha_activo
+ * @property string $fecha_inactivo
  */
 class PREPCasillaSeccion extends \yii\db\ActiveRecord
 {
@@ -38,8 +40,8 @@ class PREPCasillaSeccion extends \yii\db\ActiveRecord
     {
         return [
             [['id_seccion', 'id_casilla', 'descripcion'], 'required'],
-            [['id_seccion', 'id_casilla', 'cp'], 'integer'],
-            [['descripcion', 'colonia', 'domicilio', 'localidad', 'repre_gral', 'tel_repre_gral', 'repre_casilla', 'tel_repre_casilla', 'observaciones'], 'string']
+            [['id_seccion', 'id_casilla', 'cp', 'activo'], 'integer'],
+            [['descripcion', 'colonia', 'domicilio', 'localidad', 'repre_gral', 'tel_repre_gral', 'repre_casilla', 'tel_repre_casilla', 'observaciones', 'fecha_activo', 'fecha_inactivo'], 'string']
         ];
     }
 
@@ -62,6 +64,9 @@ class PREPCasillaSeccion extends \yii\db\ActiveRecord
             'repre_casilla' => 'Representante Casilla',
             'tel_repre_casilla' => 'Tel Representante Casilla',
             'observaciones' => 'Observaciones',
+            'activo' => 'Activo',
+            'fecha_activo' => 'Fecha Activo',
+            'fecha_inactivo' => 'Fecha Inactivo',
         ];
     }
 
@@ -131,7 +136,7 @@ class PREPCasillaSeccion extends \yii\db\ActiveRecord
             FROM [PREP_Casilla_Seccion]
             INNER JOIN [PREP_Seccion] ON
                 [PREP_Seccion].[id_seccion] = [PREP_Casilla_Seccion].[id_seccion]
-            WHERE '.$where.'
+            WHERE '.$where.' AND [PREP_Casilla_Seccion].[activo] = 1 
             ORDER BY [PREP_Seccion].[seccion], [PREP_Casilla_Seccion].[descripcion]';
 
         $casillas = Yii::$app->db->createCommand($sql)->queryAll();

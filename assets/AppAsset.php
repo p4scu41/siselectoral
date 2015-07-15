@@ -40,6 +40,8 @@ class AppAsset extends AssetBundle
         'js/plugins/fileinput.min.js',
         'js/plugins/iCheck/icheck.min.js',
         'js/plugins/jquery.alerts.js',
+        'js/plugins/jquery-ui-timepicker/jquery-ui-timepicker-addon.min.js',
+        'js/plugins/jquery-ui-timepicker/i18n/jquery-ui-timepicker-addon-i18n.min.js',
         'js/AdminLTE/app.js',
     ];
     public $depends = [

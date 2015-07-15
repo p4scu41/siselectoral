@@ -52,6 +52,8 @@ use yii\bootstrap\ActiveForm;
 
     <?= $form->field($model, 'observaciones')->textInput() ?>
 
+    <?= $form->field($model, 'color')->textInput() ?>
+
     <div class="form-group text-center">
         <?= Html::submitButton($model->isNewRecord ? "Guardar" : "Actualizar", ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?> &nbsp; 
         <?= Html::a('Cancelar', ['index'], ['class' => 'btn btn-danger']) ?>

@@ -126,6 +126,8 @@ $(document).ready(function(){
 
             if (node.data.persona != '00000000-0000-0000-0000-000000000000') {
                 btnAsignarPersona.find('a').attr('href', urlUpdatePersona+ '?id='+ node.data.persona);
+            } else {
+                btnAsignarPersona.find('a').attr('href', '#');
             }
 
             btnAsignarPersona.find('button').data('idNodo', node.key);
@@ -143,7 +145,7 @@ $(document).ready(function(){
             $('#loadIndicator').hide();
             $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));
             $('#imgPerson').attr('src', imgNoPerson);
-            $('#frmPersonDetails').html('<div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div>');
+            $('#frmPersonDetails').html('<div class="alert alert-danger"><i class="fa fa-frown-o fa-lg"></i> Puesto no asignado</div><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>');
 
             $('#modalPerson').modal('show');
             $('#btnViewPerson').data('id', '#');
@@ -306,14 +308,12 @@ $(document).ready(function(){
         "json");
 
         // Obtiene la estructura alterna
-        $.ajax({
-            url: urlTree,//urlTreeAltern
+        /*$.ajax({
+            url: urlTree,
             dataType: "json",
             data: '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
                     '&IdPuestoDepende='+node.key+'&alterna=true',
             type: "POST",
-            /*data: '_csrf='+$('[name=_csrf]').val()+'&idNodo='+node.key,
-            type: "GET",*/
         }).done(function(response) {
             if (response.length>0) {
                 $('#infoEstrucAlterna span:first').text(response.length);
@@ -322,9 +322,8 @@ $(document).ready(function(){
                 $('#infoEstrucAlterna span:first').text('0');
                 $('#treeEstrucAlterna').hide();
                 $('#divTreeEstrucAlterna').hide();
-                //$("#treeEstrucAlterna").delegate("a", "click", verModalNodo);
             }
-        });
+        });*/
 
         // Obtiene la meta seccional
         $.ajax({
@@ -387,6 +386,45 @@ $(document).ready(function(){
             $('#list_integrantes').html('');
             $('#list_integrantes').hide();
         });
+
+        // Obtiene las estructuras alternas ORGANIZACIONES
+        $.ajax({
+            url: urlGetProgramas,
+            dataType: "json",
+            data: '_csrf='+$('[name=_csrf]').val()+'&idMuni='+$('#municipio').val()+'&idNodo='+node.key+'&alterna=true',
+            type: "GET",
+        }).done(function(response){
+            count = 0;
+            total_benefi_progra = 0;
+
+            if (response.length) {
+                $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
+                    '<thead><tr><th>Nombre</th><th>Beneficiarios</th><th>Sección</th></tr></thead><tbody>';
+
+                for(fila in response) {
+                    if (response[fila].Integrantes != 0) {
+                    total_benefi_progra += parseInt(response[fila].Integrantes);
+                        $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes.format(0, 3, ',')+'</td><td class="text-center">'+
+                                '<a class="btn btn-default" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'" title="Desplegar detalles">'+
+                                '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></td></tr>';
+                        count++;
+                    }
+                }
+                $tabla += '</tbody></table>';
+
+
+            } else {
+                $tabla = 'No hay Estructuras Alternas';
+            }
+
+            $('#list_alternas').html($tabla);
+            $('#list_alternas a').click(getIntegrantesAlternas);
+            $('#infoEstrucAlterna span:first').text(count);
+            $('#total_benefi_alterna').html('Total de integrantes de las estructuras alternas: '+total_benefi_progra.format(0, 3, ','));
+            $('#list_integrantes_alternas').html('');
+            $('#list_integrantes_alternas').hide();
+            $('#divTreeEstrucAlterna').hide();
+        });
     };
 
     function getIntegrantesBySeccion() {
@@ -415,6 +453,35 @@ $(document).ready(function(){
             $('#list_integrantes').html($tabla);
             $('#list_integrantes a').click(listIntegratesFromSeccion);
             $('#list_integrantes').toggle();
+        });
+    }
+
+    function getIntegrantesAlternas() {
+        idorg = $(this).data('idorg');
+        self = this;
+
+        $.ajax({
+            url: urlGetIntegrantes,
+            dataType: "json",
+            data: {idOrg:idorg, idMuni:$('#municipio').val(), idNodo: $(self).data('idnodo')},
+            type: "GET",
+        }).done(function(response) {
+            if ( response.length ) {
+                $tabla = 'Distribución de los integrantes por sección<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-bordered table-hover">'+
+                        '<thead><tr><th class="text-center">Sección</th><th class="text-center">Meta</th><th class="text-center"># Ben.</th><th class="text-center">Ver Lista</th></tr></thead><tbody>';
+
+                for(fila in response) {
+                    $tabla += '<tr class="text-center"><td>'+parseInt(response[fila].SECCION)+'</td><td>'+response[fila].MetaAlcanzar+'</td>'+
+                            '<td>'+response[fila].total+'</td><td><a class="btn btn-default" data-idorg="'+idorg+'" data-nombreorg="'+$(self).data('nombreorg')+'" '+
+                            'data-seccion="'+parseInt(response[fila].SECCION)+'" title="Ver Integrantes"><span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></tr>';
+                }
+                $tabla += '</tbody></table>';
+            } else {
+                $tabla = 'Sin Integrantes'
+            }
+            $('#list_integrantes_alternas').html($tabla);
+            $('#list_integrantes_alternas a').click(listIntegratesFromSeccion);
+            $('#list_integrantes_alternas').toggle();
         });
     }
 
@@ -475,8 +542,6 @@ $(document).ready(function(){
                                 '<div class="well well-sm">'+$nombreCompleto+'</div>'+
                             '</div>'+
                         '</div>';
-
-                        $('#frmPersonDetails').append($tplFila);
 
                         for($fila in $datos) {
                             var valor = response[$datos[$fila].colum];
@@ -704,7 +769,7 @@ $(document).ready(function(){
         });
     });
 
-    $("#treeEstrucAlterna").fancytree({
+    /*$("#treeEstrucAlterna").fancytree({
         extensions: ["table"],
         table: {
             indentation: 50
@@ -729,15 +794,12 @@ $(document).ready(function(){
             } else {
                 $tdList.eq(1).html('<a href="#" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-user"></span></a>');
             }
-            /*$tdList.eq(1).delegate("a", "click", function(e){
-                e.stopPropagation();  // prevent fancytree activate for this row
-            });*/
             $tdList.eq(1).delegate("a", "click", verModalNodo);
         }
-    });
+    });*/
 
     var tree = $("#treeContainer").fancytree("getTree");
-    var treeEstrucAlterna = $("#treeEstrucAlterna").fancytree("getTree");
+    //var treeEstrucAlterna = $("#treeEstrucAlterna").fancytree("getTree");
 
     $('#btnBuscar').click(function(){
         $parametros = '_csrf='+$('[name=_csrf]').val()+'&Municipio='+$('#municipio').val()+
@@ -1090,11 +1152,19 @@ $(document).ready(function(){
         $seccion_resumenNodo = $('#seccion_resumenNodo').clone().show();
         $seccion_resumenNodo.find('#tablaResumen').append( '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADANA</strong></td></tr>' );
         $seccion_resumenNodo.find('#tablaResumen').append( $('#tablaPromocion').find('tr:last').prepend('<td>PROMOCIÓN</td>') );
+        $seccion_estrucAlterna = $('#divTreeEstrucAlterna').clone().show();
+        $seccion_estrucAlterna.find('#list_integrantes_alternas').remove();
+        $seccion_estrucAlterna.find('#list_alternas tr th:last').remove();
+        $seccion_estrucAlterna.find('#list_alternas tr td:last').remove();
         $imprimible.find('.panel-body').append( '<div class="text-center col-xs-3">'+$('#imgPerson').parent().html()+'</div>');
         $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone().addClass('col-xs-9') );
         $imprimible.find('.panel-body').append( $('#indicadoresPuesto').clone() );
         $imprimible.find('.panel-body').append( $('#seccion_coordinados').clone().show() );
         $imprimible.find('.panel-body').append( $seccion_resumenNodo );
+        if ($('#infoEstrucAlterna span:first').text() != '0' ) {
+            $imprimible.find('.panel-body').append('<strong><h5>Estructura Alterna</h5></strong>');
+            $imprimible.find('.panel-body').append( $seccion_estrucAlterna );
+        }
         $imprimible.find('.panel-body').append( $('#fechaResumenNodo').clone() );
         $imprimible.find(' .btn.btn-app').blur();
         $imprimible.find('#verMasResumenNodo').remove();

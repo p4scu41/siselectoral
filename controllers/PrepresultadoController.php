@@ -160,15 +160,53 @@ class PrepresultadoController extends Controller
                 return [];
         }
 
+        $fechaCorte = '';
+
+        if (Yii::$app->request->post('fechaCorte') != '') {
+            $fechaHora = explode(' ', Yii::$app->request->post('fechaCorte'));
+            $fecha = explode('-', $fechaHora[0]);
+            $fechaCorte = $fecha[2].'-'.$fecha[1].'-'.$fecha[0].' '.($fechaHora[1]=='' ? '00:00' : $fechaHora[1]).':00.000';
+        }
+
         $result = PREPVoto::getResultados(
             $nameColum,
             (int)$valueColum,
             (int)Yii::$app->request->post('zona'),
             (int)Yii::$app->request->post('iniSeccion'),
-            (int)Yii::$app->request->post('finSeccion'));
+            (int)Yii::$app->request->post('finSeccion'),
+            $fechaCorte);
 
-        $candidatos = PREPCandidato::find()->select('id_candidato, id_partido, nombre')->orderBy('id_candidato')->where($nameColum.'='.(int)$valueColum)->andWhere('activo = 1')->all();
+        //$candidatos = PREPCandidato::find()->
+        //select('PREP_Candidato.id_candidato, PREP_Candidato.id_partido, PREP_Candidato.nombre, PREP_Partido.color')
+        //->joinWith('partido')->orderBy('id_candidato')
+        //->where($nameColum.'='.(int)$valueColum)
+        //->andWhere('activo = 1')->all();
+        $candidatos = Yii::$app->db->createCommand('SELECT
+                [PREP_Candidato].[id_candidato]
+                ,[PREP_Candidato].[id_partido]
+                ,[PREP_Candidato].[nombre]
+                ,[PREP_Partido].[color]
+            FROM [PREP_Candidato]
+            INNER JOIN [PREP_Partido] ON
+                [PREP_Partido].[id_partido] = [PREP_Candidato].[id_partido]
+            WHERE '.$nameColum.'='.(int)$valueColum.
+                ' AND activo = 1'.
+            ' ORDER BY id_candidato')->queryAll();
+
         $resultados = [];
+        $totalCasillas = PREPVoto::getCountTotalCasillas(
+            $nameColum,
+            (int)$valueColum,
+            (int)Yii::$app->request->post('zona'),
+            (int)Yii::$app->request->post('iniSeccion'),
+            (int)Yii::$app->request->post('finSeccion'));
+        $casillasConsideradas = PREPVoto::getCountCasillasConsideradas(
+            $nameColum,
+            (int)$valueColum,
+            (int)Yii::$app->request->post('zona'),
+            (int)Yii::$app->request->post('iniSeccion'),
+            (int)Yii::$app->request->post('finSeccion'),
+            $fechaCorte);
 
         foreach ($result as $fila) {
             $resultados[$fila['seccion']]['seccion'] = $fila['seccion'];
@@ -178,7 +216,9 @@ class PrepresultadoController extends Controller
 
         $respuesta = [
             'resultado' => $resultados,
-            'candidatos' => $candidatos
+            'candidatos' => $candidatos,
+            'totalCasillas' => $totalCasillas,
+            'casillasConsideradas' => $casillasConsideradas,
         ];
 
         return $respuesta;

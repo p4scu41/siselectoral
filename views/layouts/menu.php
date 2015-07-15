@@ -88,6 +88,11 @@ use app\helpers\PerfilUsuario;
                 <a href="<?= Url::to(['reporte/promovidos']) ?>" style="margin-left: 10px;"><i class="fa fa-users"></i> Promovidos</a>
             </li>
             <?PHP } ?>
+            <?PHP if (PerfilUsuario::hasPermiso('b3d614ee-f96d-4f42-8c36-2a6e4b6eabeb', 'R')) { ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'reporte/seccional') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['reporte/seccional']) ?>" style="margin-left: 10px;"><i class="fa fa-cubes"></i> Seccional</a>
+            </li>
+            <?PHP } ?>
         </ul>
     </li>
     <?PHP } ?>

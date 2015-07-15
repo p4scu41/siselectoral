@@ -1,7 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\helpers\Url;
+use yii\bootstrap\ActiveForm;
+
+$this->registerJs('getByMuni = "'.Url::toRoute('prepseccion/getbymuni').'"', \yii\web\View::POS_HEAD);
+$this->registerJsFile(Url::to('@web/js/prepcasillaseccion.js'));
 
 /* @var $this yii\web\View */
 /* @var $model app\models\PREPCasillaSeccionSearch */
@@ -13,36 +17,21 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
+        'layout' => 'inline'
     ]); ?>
 
-    <?= $form->field($model, 'id_casilla_seccion') ?>
-
-    <?= $form->field($model, 'id_seccion') ?>
-
-    <?= $form->field($model, 'id_casilla') ?>
-
-    <?= $form->field($model, 'descripcion') ?>
-
-    <?= $form->field($model, 'colonia') ?>
-
-    <?php // echo $form->field($model, 'domicilio') ?>
-
-    <?php // echo $form->field($model, 'cp') ?>
-
-    <?php // echo $form->field($model, 'localidad') ?>
-
-    <?php // echo $form->field($model, 'repre_gral') ?>
-
-    <?php // echo $form->field($model, 'tel_repre_gral') ?>
-
-    <?php // echo $form->field($model, 'repre_casilla') ?>
-
-    <?php // echo $form->field($model, 'tel_repre_casilla') ?>
-
-    <?php // echo $form->field($model, 'observaciones') ?>
+    <div class="form-group">
+        <label for="Municipio">Municipio: </label>
+        <?= Html::dropDownList('municipio', Yii::$app->request->get('municipio'), $municipios, ['prompt' => 'Seleccione un municipio', 'class' => 'form-control', 'id' => 'municipio']) ?>
+    </div>
 
     <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+        <label for="Municipio">Sección: </label>
+        <?= Html::activeDropDownList($model, 'id_seccion', $secciones, ['prompt' => 'Seleccione una sección', 'class' => 'form-control']) ?>
+    </div>
+
+    <div class="form-group">
+        <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?> &nbsp; 
         <?= Html::a('Cancelar', ['index'], ['class' => 'btn btn-default']) ?>
     </div>
 

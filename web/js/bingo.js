@@ -433,4 +433,16 @@ $(document).ready(function(){
         });
     });*/
 
+    $('#btnImprimirBingo').click(function(){
+        $imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson" style="margin-bottom: 1px !important;">'+
+                '<div class="panel-body">'+
+                '<h4 class="text-center">'+$('#modalBingo .modal-title').html()+'</h4>'+
+                ' '+ $('#modalBingo .modal-body').html()+
+                '</div></div></div>');
+
+        //console.log($imprimible.html());
+
+        $($imprimible).printArea({"mode":"popup","popClose":true});
+    });
+
 });

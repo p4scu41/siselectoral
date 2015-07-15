@@ -8,7 +8,8 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\PREPCasillaSeccion */
 /* @var $form yii\widgets\ActiveForm */
 
-$this->registerJs('getByMuni = "'.Url::toRoute('prepseccion/getbymuni').'"', \yii\web\View::POS_HEAD);
+$this->registerJs('getByMuni = "'.Url::toRoute('prepseccion/getbymuni').'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlChangeactivo = "'.Url::toRoute('prepcasillaseccion/changeactivo').'";', \yii\web\View::POS_HEAD);
 $this->registerJsFile(Url::to('@web/js/prepcasillaseccion.js'));
 ?>
 
@@ -44,6 +45,10 @@ $this->registerJsFile(Url::to('@web/js/prepcasillaseccion.js'));
     <?= $form->field($model, 'tel_repre_casilla')->textInput() ?>
 
     <?= $form->field($model, 'observaciones')->textInput() ?>
+
+    <?php if (!$model->isNewRecord) { ?>
+        <?= $form->field($model, 'activo')->checkbox() ?>
+    <?php } ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?> &nbsp; 

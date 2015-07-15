@@ -76,6 +76,25 @@ $(document).ready(function(){
         loadSecciones.apply(this);
     });
 
+    $('#fechaCorte').datetimepicker({
+		timeOnlyTitle: 'Elegir una hora',
+		timeText: 'Hora',
+		hourText: 'Horas',
+		minuteText: 'Minutos',
+		secondText: 'Segundos',
+		millisecText: 'Milisegundos',
+		microsecText: 'Microsegundos',
+		timezoneText: 'Uso horario',
+		currentText: 'Hoy',
+		closeText: 'Aceptar',
+		timeFormat: 'HH:mm',
+		timeSuffix: '',
+		amNames: ['a.m.', 'AM', 'A'],
+		pmNames: ['p.m.', 'PM', 'P'],
+		isRTL: false,
+        dateFormat: 'dd-mm-yy',
+	});
+
 });
 
 function loadCandidatos()
@@ -161,7 +180,11 @@ function getResultados()
         $('#loadIndicator').hide();
         $('#tabs_resultado').removeClass('hidden');
 
-        fecha = new Date();
+        if ($('#fechaCorte').val()) {
+            fecha = new Date($('#fechaCorte').val());
+        } else {
+            fecha = new Date();
+        }
 
         tabla = '<table border="1" cellpadding="1" cellspacing="1" id="" class="table table-condensed table-striped table-bordered table-hover">';
         thead = '<thead><tr><th></th><th>Meta Estimada</th>';
@@ -170,12 +193,35 @@ function getResultados()
         listSumVotos = [];
         listCandidatos = [];
         arrVotosCandidatos = [];
+        colores = [];
+                        /*{
+                            "rule":"%i == 0",
+                            "background-color":"black",
+                            "line-color":"black"
+                        },
+                        {
+                            "rule":"%i == 1",
+                            "background-color":"red",
+                            "line-color":"red"
+                        },
+                        {
+                            "rule":"%i == 2",
+                            "background-color":"yellow",
+                            "line-color":"yellow"
+                        },
+                    ]*/
         sumaTotal = 0;
 
         for (candidato in response.candidatos) {
+            console.log(candidato);
             thead += '<th>'+response.candidatos[candidato].nombre+'</th>';
             listCandidatos.push(response.candidatos[candidato].nombre);
             listSumVotos[response.candidatos[candidato].id_candidato] = 0;
+            colores.push({
+                "rule":"%i == "+candidato,
+                "background-color":response.candidatos[candidato].color,
+                "line-color":response.candidatos[candidato].color
+            });
         }
 
         thead += '<th>Total</th>';
@@ -218,6 +264,10 @@ function getResultados()
         thead += '</thead>';
         tbody += '</tbody>';
         tabla += thead+tbody+'</table>';
+
+        tabla += '<h4 class="text-center">Total de Casillas: '+response.totalCasillas+
+            ', Casillas Contabilizadas: '+response.casillasConsideradas+
+            ', Porcentaje Contabilizadas: '+(response.totalCasillas!=0 ? Math.round(response.casillasConsideradas/response.totalCasillas*100) : 0)+'%</h4>';
 
         $('#tabla_resultado').html(tabla);
 
@@ -275,7 +325,7 @@ function getResultados()
                     "border-top":"none"
                 },*/
                 "source":{
-                    "text":"Fecha de Corte: "+String("00000" + fecha.getDate()).slice(-2) + "-" + String("00000" + (fecha.getMonth()+1)).slice(-2) + "-" + fecha.getFullYear()+' '+fecha.getHours()+':'+fecha.getMinutes()
+                    "text":"Fecha de Corte: "+String("00000" + fecha.getDate()).slice(-2) + "-" + String("00000" + (fecha.getMonth()+1)).slice(-2) + "-" + fecha.getFullYear()+' '+String("00000" + fecha.getHours()).slice(-2)+':'+String("00000" + fecha.getMinutes()).slice(-2)
                 },
                 "border-width":1,
                 "border-color":"#CCCCCC",
@@ -289,7 +339,8 @@ function getResultados()
                         "background-color":"#000000",
                         "border-radius":5,
                         "bold":true
-                    }
+                    },
+                    "rules": colores
                 },
                 "tooltip":{
                     "background-color":"#000000",

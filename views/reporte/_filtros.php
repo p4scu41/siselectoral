@@ -37,9 +37,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal">
                                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Resumen
                                 </button> &nbsp;
-                                <button type="button" class="btn btn-success" id="btnReporteSeccional">
+                                <!--<button type="button" class="btn btn-success" id="btnReporteSeccional">
                                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Avance Seccional
-                                </button>
+                                </button>-->
                             </div>
                         </div>
                         <p>
