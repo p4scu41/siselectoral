@@ -173,6 +173,7 @@ $(document).ready(function(){
         $('#btnBuscar').trigger('click');
         $('#alertResult').html('');
         $('#loadIndicator').show();
+        $('#itemsBingo').html('<i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;"></i>')
 
         $.ajax({
             url: getPromovidosBySeccion,
