@@ -8,7 +8,7 @@ function buildSelect(id, result) {
         text = result[i].DescripcionEstructura;
 
         // Para el caso de promotores, agregar el nombre
-        if (result[i].Nivel == 7) {
+        if (result[i].Nivel == 7 || result[i].Nivel == 6) {
             text += ' ' + result[i].NOMBRECOMPLETO;
         }
 
@@ -28,6 +28,8 @@ function agregaPuesto(result, id) {
         $objFiltro = buildSelect(id, result);
         $objFiltro.find('select').change(agregaPuestoDepende);
 
+        $(this).parent().nextAll().not('.no-delete').remove();
+
         if($('#'+id).length) {
             $('#'+id).parent().replaceWith($objFiltro);
             $('#'+id).parent().nextAll().remove();
@@ -40,6 +42,7 @@ function agregaPuesto(result, id) {
 function agregaPuestoDepende() {
     nivel = $(this).data('nivel');
     seleccionado = $(this).val();
+    self = this;
 
     if( seleccionado!='' && seleccionado!=0) {
         $('#loadIndicator').show();
@@ -53,7 +56,7 @@ function agregaPuestoDepende() {
 
                     if (result.length>0) {
                         id = doId(result[0].DescripcionPuesto);
-                        agregaPuesto(result, id);
+                        agregaPuesto.call(self, result, id);
                     }
                 },
             "json").done(function(){ $('#loadIndicator').hide(); });
@@ -65,11 +68,16 @@ function agregaPuestoDepende() {
 $(document).ready(function(){
     $form = $('<form action="" method="post" target="_blank" style="display:none">'+
             '<input type="text" name="title" id="title">'+
+            '<input type="text" name="encabezado" id="encabezado">'+
             '<textarea name="content" id="content"></textarea>'+
             '<input type="hidden" name="_csrf" value="'+$('[name=_csrf]').val()+'"></form>');
 
     $('.btnExportPdf, .btnExportExcel').click(function(event){
         content = $('#reporteContainer').html();
+        thead = '<thead>'+$('#tabla_reporte thead').html()+'</thead><tbody>';
+        tabla = '<table class="table table-condensed table-bordered table-hover" border="1" cellpadding="1" cellspacing="1">';
+        content = content.replace(new RegExp('<tr><td> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td><td> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td></tr>', 'g'), '</tbody></table><pagebreak />'+tabla+thead);
+        content = content.replace(new RegExp('<tr><td> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td><td> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td></tr>', 'g'), '</tbody></table><pagebreak />'+tabla+thead);
 
         if ($(this).hasClass('btnExportExcel')) {
             content = $('#reporteContainer table').table2CSV({delivery: 'value'});
@@ -77,6 +85,7 @@ $(document).ready(function(){
 
         $form.find('#content').text( content );
         $form.find('#title').val( $('#titulo').html() );
+        $form.find('#encabezado').val( 'Mi encabezado perzonalizado' );
         $form.attr('action', $(this).data('url'));
         $('#formExport').html($form);
         $form.submit();
@@ -95,7 +104,8 @@ $(document).ready(function(){
         $("#bodyForm .nivelEstructura, #bodyForm .filtroEstructura").remove();
 
         if (idMuni != '') {
-            $.ajax({
+            // Construye la lista de secciones
+            /*$.ajax({
                 url: getSeccionesMuni,
                 type: 'POST',
                 data: '?_csrf='+$('[name=_csrf]').val()+'&municipio=' + $('#municipio').val(),
@@ -115,20 +125,20 @@ $(document).ready(function(){
                 $("#bodyForm").append(secciones);
                 $("#jefe-de-secion").change(agregaPuestoDepende);
                 $('#loadIndicator').hide();
-            });
+            });*/
             // Inicia la construccion dinamica de los selects de la estructura
-            /*$.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
+            $.getJSON(urlPuestos+'?_csrf='+$('[name=_csrf]').val()+'&idMuni='+idMuni, function(result) {
                 if (result.length>0) {
                     $("#bodyForm").append('<div class="form-group nivelEstructura"><label>Seleccione el nivel de estructura: </label><br></div>');
 
                     id = doId(result[0].Descripcion);
                     $.post(urlNodoDepend, '_csrf='+$('[name=_csrf]').val()+'&Municipio='+idMuni,
-                        function(result){ agregaPuesto(result, id); }, "json")
+                        function(result){ agregaPuesto.call(self, result, id); }, "json")
                         .done(function(){ $('#loadIndicator').hide(); });
                 } else {
                     $('#loadIndicator').hide();
                 }
-            });*/
+            });
         } else {
             $('#loadIndicator').hide();
         }
@@ -144,13 +154,15 @@ $(document).ready(function(){
             return false;
         }
 
-        /*if ($('[name=tipo_promovido]:checked').val() == undefined) {
-            $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                '<span aria-hidden="true">&times;</span></button>Debe seleccionar el tipo de reporte: '+
-                'Promovidos efectivos o Listado de Promoción</div>');
-            return false;
-        }*/
+        if ($('[name="tipo_promovido"][type="radio"]').length) {
+            if ($('[name=tipo_promovido]:checked').val() == undefined) {
+                $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                    '<span aria-hidden="true">&times;</span></button>Debe seleccionar el tipo de reporte: '+
+                    'Promovidos efectivos o Listado de Promoción</div>');
+                return false;
+            }
+        }
 
         $('#loadIndicator').show();
         $('#div_loading').show();

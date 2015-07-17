@@ -158,7 +158,7 @@ class PREPVoto extends \yii\db\ActiveRecord
                 [PREP_Seccion].['.$nameColum.'] = '.$valueColum.'
                 '.($zona ? ' AND [PREP_Seccion].[zona] = '.$zona : '').'
                 '.($iniSeccion ? ' AND [PREP_Seccion].[seccion] BETWEEN '.$iniSeccion.' AND '.$finSeccion : '').'
-                '.($fechaCorte != '' ? ' AND ([created_at] <= CONVERT(date, \''.$fechaCorte.'\', 111) OR [updated_at] <= CONVERT(date, \''.$fechaCorte.'\', 111))' : '').'
+                '.($fechaCorte != '' ? ' AND ([created_at] <= CONVERT(datetime, \''.$fechaCorte.'\', 111) OR [updated_at] <= CONVERT(datetime, \''.$fechaCorte.'\', 111))' : '').'
             GROUP BY
                 [PREP_Seccion].[seccion], [PREP_Voto].[id_candidato]
             ORDER BY
@@ -213,7 +213,7 @@ class PREPVoto extends \yii\db\ActiveRecord
                 [PREP_Seccion].['.$nameColum.'] = '.$valueColum.'
                 '.($zona ? ' AND [PREP_Seccion].[zona] = '.$zona : '').' 
                 '.($iniSeccion ? ' AND [PREP_Seccion].[seccion] BETWEEN '.$iniSeccion.' AND '.$finSeccion : '').'
-                '.($fechaCorte != '' ? ' AND ([created_at] <= CONVERT(date, \''.$fechaCorte.'\', 111) OR [updated_at] <= CONVERT(date, \''.$fechaCorte.'\', 111))' : '').'
+                '.($fechaCorte != '' ? ' AND ([created_at] <= CONVERT(datetime, \''.$fechaCorte.'\', 111) OR [updated_at] <= CONVERT(datetime, \''.$fechaCorte.'\', 111))' : '').'
             GROUP BY
                 [PREP_Seccion].[seccion], [PREP_Voto].[id_casilla_seccion]
             ORDER BY

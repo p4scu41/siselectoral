@@ -49,7 +49,7 @@ class PREPSeccionSearch extends PREPSeccion
 
         $this->load($params);
 
-        if (empty($this->municipio)) {
+        if (empty($params['PREPSeccionSearch'])) {
             $query->where('0=1');
             return $dataProvider;
         }
@@ -61,17 +61,13 @@ class PREPSeccionSearch extends PREPSeccion
         }
 
         $query->andFilterWhere([
-            'id_seccion' => $this->id_seccion,
             'municipio' => $this->municipio,
             'zona' => $this->zona,
             'seccion' => $this->seccion,
             'distrito_local' => $this->distrito_local,
             'distrito_federal' => $this->distrito_federal,
             'activo' => $this->activo,
-            'fecha_cierre' => $this->fecha_cierre,
         ]);
-
-        $query->andFilterWhere(['like', 'observaciones', $this->observaciones]);
 
         return $dataProvider;
     }

@@ -94,7 +94,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         $tree = '[';
 
-        if (PerfilUsuario::isCapturista()) {
+        if (PerfilUsuario::isCapturista() || PerfilUsuario::isLecturaZona()) {
             if (empty($filtros['IdPuestoDepende'])) {
                 $filtros['IdNodoEstructuraMov'] = Yii::$app->user->identity->getIdNodoEstructura();
             }

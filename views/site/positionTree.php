@@ -34,6 +34,7 @@ $this->registerJs('logIDPerfUsr = "'.strtolower(Yii::$app->user->identity->getPe
 $this->registerJs('IDPerfAdm = "'.strtolower(Yii::$app->params['idAdmin']).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('IDPerfAdmMuni = "'.strtolower(Yii::$app->params['idAdminMuni']).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('IDPerfCaptu = "'.strtolower(Yii::$app->params['idCapturista']).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('IDPerfLecturaZona = "'.strtolower(Yii::$app->params['IDPerfLecturaZona']).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlListInte="'.Url::toRoute('organizacion/listintegrantesfromseccion').'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlUpdatePersona="'.Url::toRoute('padron/update').'";', \yii\web\View::POS_HEAD);
 $this->registerJs('getSeccionesMuni="'.Url::toRoute('seccion/getjsmuni', true).'";', \yii\web\View::POS_HEAD);

@@ -14,6 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJsFile(Url::to('@web/js/prepvoto.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.numeric.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/zingchart/zingchart.min.js'), ['position' => yii\web\View::POS_BEGIN]);
 $this->registerJs('zingchart.MODULESDIR = "'.Url::to('@web/js/plugins/zingchart/modules').'"', yii\web\View::POS_BEGIN);
 $this->registerJs('urlVotar = "'.Url::toRoute('prepvoto/votar').'"', yii\web\View::POS_HEAD);
@@ -94,7 +95,12 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
                         <p>
                             <button type="button" class="btn btn-success" id="btnAceptar">
                                 <i class="fa fa-building-o"></i> Aceptar
+                            </button> &nbsp;
+                            <?PHP if (!empty($_POST)) { ?>
+                            <button type="button" class="btn btn-success" id="btnImprimirVotos">
+                                <i class="fa fa-print"></i> Imprimir
                             </button>
+                            <?php } ?>
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
                     <?php ActiveForm::end(); ?>
@@ -106,7 +112,7 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
     </div><!--/.col (left) -->
 
     <div class="col-lg-12">
-        <div class="table-responsive">
+        <div class="table-responsive" id="tablaVotos">
         <?php
         $tabla = '';
 

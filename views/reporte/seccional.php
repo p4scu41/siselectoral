@@ -9,6 +9,7 @@ $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";
 $this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlReporte="'.Url::toRoute('reporte/generar', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlResumen="'.Url::toRoute('site/getresumen', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlGetZonas = "'.Url::toRoute('prepseccion/getzonas').'"', yii\web\View::POS_HEAD);
 $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 
 /* @var $this yii\web\View */
@@ -32,12 +33,30 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'options' => ['class' => 'form-inline'],
                                 'id' => 'formBuscar',
                             ]); ?>
+
                         <div id="bodyForm">
                             <div class="form-group">
+                                <label for="tipoEleccion">Categoría: </label>
+                                <?= Html::dropDownList('tipoEleccion', null, [1=>'Municipio', 2=>'Distrito Local', 3=>'Distrito Federal'], ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'tipoEleccion']); ?>
+                            </div>
+                            <div class="form-group hidden">
                                 <label for="Municipio">Municipio</label>
-                                <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
+                                <?= Html::dropDownList('municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio']); ?>
+                            </div>
+                            <div class="form-group hidden">
+                                <label for="distritoLocal">Distrito Local: </label>
+                                <?= Html::dropDownList('distritoLocal', null, $distritosLocales, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'distritoLocal']); ?>
+                            </div>
+                            <div class="form-group hidden">
+                                <label for="distritoFederal">Distrito Federal: </label>
+                                <?= Html::dropDownList('distritoFederal', null, $distritosFederales, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'distritoFederal']); ?>
+                            </div>
+                            <div class="form-group hidden" id="div_zonas">
+                                <label>Zonas: </label>
+                                <?= Html::dropDownList('zona', null, [], ['prompt' => 'Todas', 'class' => 'form-control', 'id' => 'zona']); ?>
                             </div>
                         </div>
+                        <div id="alertResult"></div>
                         <p>
                             <button type="button" class="btn btn-success" id="btnReporteSeccional">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Reporte

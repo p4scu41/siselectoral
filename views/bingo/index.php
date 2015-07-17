@@ -16,6 +16,7 @@ $this->registerJs('setParticipacion="'.Url::toRoute('bingo/setparticipacion', tr
 $this->registerJs('getAvance="'.Url::toRoute('bingo/getavance', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('getInfoPromo="'.Url::toRoute('bingo/getinfopromotor', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlReportepdf="'.Url::toRoute('reporte/pdf', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlStatussecciones="'.Url::toRoute('bingo/statussecciones', true).'";', \yii\web\View::POS_HEAD);
 
 /* @var $this yii\web\View */
 $this->title = 'Bingo';
@@ -60,6 +61,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             </button> &nbsp; 
                             <button type="button" class="btn btn-success" id="btnVerRCs">
                                 <i class="fa fa-building-o"></i> Ver RCs
+                            </button>
+                            <button type="button" class="btn btn-success" id="btnStatusSecciones">
+                                <i class="fa fa-building-o"></i> Status Secciones
                             </button>
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
@@ -127,6 +131,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             </div>
             <div class="modal-footer">
+                <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadSetBingo"></i>
                 <button type="button" class="btn btn-success" id="btnAceptarBingo">Aceptar</button>
                 <button type="button" class="btn btn-info" id="btnImprimirBingo">Imprimir</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
@@ -143,6 +148,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 <h4 class="modal-title">Listado</h4>
             </div>
             <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" class="btn btn-success" id="btnImprimirListado">Imprimir</button>-->
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-wide fade" id="modalStatusSecciones" tabindex='-1'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Status de las Secciones</h4>
+            </div>
+            <div class="modal-body">
+                <div class="bs-glyphicons">
+                    <ul class="bs-glyphicons-list" id="listStatusSecciones">
+                    </ul>
+                </div>
             </div>
             <div class="modal-footer">
                 <!--<button type="button" class="btn btn-success" id="btnImprimirListado">Imprimir</button>-->

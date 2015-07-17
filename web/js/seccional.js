@@ -22,22 +22,53 @@ $(document).ready(function(){
         return false;
     });
 
+    $('#tipoEleccion').change(function(){
+        $('#municipio').closest('div').addClass('hidden');
+        $('#distritoLocal').closest('div').addClass('hidden');
+        $('#distritoFederal').closest('div').addClass('hidden');
+        $('#div_zonas').closest('div').addClass('hidden');
+
+        $('#municipio option:first').prop('selected', true);
+        $('#distritoLocal option:first').prop('selected', true);
+        $('#distritoFederal option:first').prop('selected', true);
+        $('#zona option:not(:first)').remove();
+        $('#alertResult').html('');
+
+        switch ($(this).val()) {
+            case '1': // Presidencia Municipal
+                $('#municipio').closest('div').removeClass('hidden');
+                break;
+            case '2': // Diputación Local
+                $('#distritoLocal').closest('div').removeClass('hidden');
+                break;
+            case '3': // Diputación Federal
+                $('#distritoFederal').closest('div').removeClass('hidden');
+                break;
+        }
+    });
+
     $('#btnGenerarReporte, #btnReporteSeccional').click(function(event) {
         $('.alert').remove();
 
-        if ($('#municipio').val() == '') {
-            $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
-                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-                '<span aria-hidden="true">&times;</span></button>Debe seleccionar un municipio</div>');
-            return false;
-        }
-
-        tipoReporte = '';
-
-        if ($(this).prop('id') == 'btnReporteSeccional') {
-            tipoReporte = 1;
-        } else if ($(this).prop('id') == 'btnGenerarReporte') {
-            tipoReporte = 2;
+        switch ($('#tipoEleccion').val()) {
+            case '1': // Presidencia Municipal
+                    if ($('#municipio').val() == '' || typeof($('#municipio').val()) == 'undefined') {
+                        $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Municipio</div>');
+                        return false;
+                    }
+                break;
+            case '2': // Diputación Local
+                    if ($('#distritoLocal').val() == '' || typeof($('#distritoLocal').val()) == 'undefined') {
+                        $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Distrito Local</div>');
+                        return false;
+                    }
+                break;
+            case '3': // Diputación Federal
+                    if ($('#distritoFederal').val() == '' || typeof($('#distritoFederal').val()) == 'undefined') {
+                        $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Distrito Federal</div>');
+                        return false;
+                    }
+                break;
         }
 
         $('#loadIndicator').show();
@@ -46,7 +77,7 @@ $(document).ready(function(){
         $.ajax({
             type: 'POST',
             url: urlReporte,
-            data: $('#formBuscar').serialize()+'&tipoReporte='+tipoReporte,
+            data: $('#formBuscar').serialize()+'&tipoReporte=1',
             dataType: 'json',
             success: function(result) {
                 $('#titulo').html(result.titulo);
@@ -64,4 +95,32 @@ $(document).ready(function(){
         });
     });
 
+    $('#municipio, #distritoLocal, #distritoFederal').change(function(){
+        //loadCandidatos.apply(this);
+        loadZonas.apply(this);
+    });
+
 });
+
+function loadZonas()
+{
+    $('#loadIndicator').show();
+
+    $.ajax({
+        url: urlGetZonas,
+        method: 'POST',
+        dataType: 'json',
+        data: $('#formBuscar').serialize()
+    }).done(function(response) {
+        $('#loadIndicator').hide();
+        $('#div_zonas').removeClass('hidden');
+
+        $('#zona option:not(:first)').remove();
+
+        if (response.length) {
+            for (zona in response) {
+                $('#zona').append('<option value="'+response[zona].zona+'">'+response[zona].zona+'</option>');
+            }
+        }
+    });
+}

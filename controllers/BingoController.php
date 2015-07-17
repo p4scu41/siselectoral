@@ -118,4 +118,14 @@ class BingoController extends \yii\web\Controller
 
         return $promotor;
     }
+    
+    public function actionStatussecciones()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $result = Promocion::statusSeccionesBingo(Yii::$app->getRequest()->post('muni'));
+
+        return $result;
+    }
+
 }

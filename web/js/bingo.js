@@ -246,6 +246,7 @@ $(document).ready(function(){
             });
 
             $('#loadIndicator').show();
+            $('#loadSetBingo').show();
             $.ajax({
                 url: setParticipacion,
                 type: 'POST',
@@ -254,6 +255,8 @@ $(document).ready(function(){
             }).done(function(response){
                 $('#btnGenerarBingo').trigger('click');
                 $('#list-jefe-de-seccion').trigger('change');
+                $('#loadIndicator').hide();
+                $('#loadSetBingo').hide();
 
                 restante = parseInt($('.list-group-item.active').find('.badge').text()) - participacion;
 
@@ -266,7 +269,10 @@ $(document).ready(function(){
         }
     });
 
-    $('#btnGenerarListado').click(function(){
+    $('#btnGenerarListado').click(function(event){
+        event.stopPropagation();
+        event.preventDefault();
+
         if ($('#municipio').val() == 0 || typeof($('#municipio').val()) == 'undefined') {
             $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar un Municipio</div>');
             return false;
@@ -305,8 +311,8 @@ $(document).ready(function(){
 
             $.fileDownload(urlReportepdf, {
                 //'prepareCallback': function(url){ $('body').prepend('<div class="loading"></div>'); },
-                'successCallback': function(url){ $('#loadIndicator').hide(); },
-                'failCallback': function(responseHtml, url){ $('#alertResult').html('<div class="alert alert-danger">Error al intentar descargar el archivo.</div>'); },
+                successCallback: function(url){ $('#loadIndicator').hide(); },
+                failCallback: function(responseHtml, url){ $('#alertResult').html('<div class="alert alert-danger">Error al intentar descargar el archivo.</div>'); },
                 httpMethod: "POST",
                 data: {
                     'title': 'Listado de promovidos de la Sección '+$('#list-jefe-de-seccion option:selected').text(),
@@ -314,7 +320,9 @@ $(document).ready(function(){
                     'columns': 3,
                     '_csrf': $('[name=_csrf]').val(),
                 }
-            });
+            }).done(function () { $('#loadIndicator').hide(); });
+            
+            setTimeout(function(){$('#loadIndicator').hide();}, 19000);
             //$('#modalListado').modal('show');
             
         });
@@ -443,6 +451,36 @@ $(document).ready(function(){
         //console.log($imprimible.html());
 
         $($imprimible).printArea({"mode":"popup","popClose":true});
+    });
+
+    $('#btnStatusSecciones').click(function(){
+        if ($('#municipio').val() == 0 || typeof($('#municipio').val()) == 'undefined') {
+            $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar un Municipio</div>');
+            return false;
+        }
+
+        $('#alertResult').html('');
+        $('#loadIndicator').show();
+
+        $.ajax({
+            url: urlStatussecciones,
+            type: 'POST',
+            data: '_csrf='+$('[name=_csrf]').val()+'&muni=' + $('#municipio').val(),
+            dataType: 'json'
+        }).done(function(response){
+            $('#listStatusSecciones').html('');
+
+            for (seccion in response) {
+                item = '<li class="liBingo '+(response[seccion].participacionFaltantes==0 ? '' : 'red')+'">'+
+                    '<span class="glyphicon">'+response[seccion].NumSector+'</span>'+
+                    '<span class="glyphicon-class">'+response[seccion].participacionFaltantes+'</span>'+
+                '</li>';
+                $('#listStatusSecciones').append(item);
+            }
+
+            $('#loadIndicator').hide();
+            $('#modalStatusSecciones').modal('show');
+        });
     });
 
 });

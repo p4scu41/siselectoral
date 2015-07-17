@@ -31,10 +31,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->cmunicipio->DescMunicipio;
                 },
             ],
-            'zona',
             'seccion',
-            //'distrito_local',
-            // 'distrito_federal',
+            'zona',
+            'distrito_local',
+             'distrito_federal',
             // 'observaciones',
             'activo:boolean',
             // 'fecha_cierre',

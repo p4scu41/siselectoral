@@ -258,8 +258,41 @@ class Promocion extends \yii\db\ActiveRecord
         INNER JOIN [PadronGlobal] AS padronPromotor ON
             padronPromotor.CLAVEUNICA = [Promocion].[IdPersonaPromueve]
         WHERE
-            [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'
+            [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\' 
+            OR [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo.'
         ORDER BY [PadronGlobal].APELLIDO_PATERNO, [PadronGlobal].APELLIDO_MATERNO, [PadronGlobal].NOMBRE';
+
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+
+        /*foreach ($result as $index => $promovido) {
+            $result[$index]['foto'] = PadronGlobal::getFotoByUID($result['CLAVEUNICA'], $result['SEXO']);
+        }*/
+
+        return $result;
+    }
+
+    public static function statusSeccionesBingo($muni)
+    {
+        $sql = 'SELECT
+            [CSeccion].[NumSector],
+            (SELECT COUNT([Promocion].[IdpersonaPromovida])
+            FROM [Promocion]
+            INNER JOIN [DetalleEstructuraMovilizacion] ON
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = [Promocion].[IdPuesto]
+            WHERE
+                ([DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|\'+CAST(arbolEstructura.[IdNodoEstructuraMov] AS VARCHAR)+\'|%\' OR
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = arbolEstructura.[IdNodoEstructuraMov]) AND
+                [Promocion].[Participacion] IS NULL) AS participacionFaltantes
+        FROM
+            [DetalleEstructuraMovilizacion] AS arbolEstructura
+        INNER JOIN [CSeccion] ON
+            arbolEstructura.[Municipio] = [CSeccion].[IdMunicipio] AND
+            arbolEstructura.[IdSector] = [CSeccion].[IdSector]
+        WHERE
+            arbolEstructura.[IdPuesto] = 5 AND
+            arbolEstructura.[Municipio] = '.$muni.'
+        ORDER BY
+            [CSeccion].[NumSector]';
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();
 

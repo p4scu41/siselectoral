@@ -43,7 +43,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
                                 <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'required'=>'true']); ?>
                             </div>
                             <?php //if (PerfilUsuario::isAdminGeneral() || PerfilUsuario::isAdminMunicipal()) { ?>
-                            <div class="form-group">
+                            <div class="form-group no-delete">
                                 <div class="checkbox">
                                     <label>
                                         <input type="checkbox" name="incluir_domicilio" id="incluir_domicilio" value="1"> Incluir domicilio en el reporte
@@ -52,14 +52,14 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
                             </div>
                             <?php //}
                             if (PerfilUsuario::isAdminGeneral()) {?>
-                                <label class="radio-inline">
+                                <label class="radio-inline no-delete">
                                     <input type="radio" name="tipo_promovido" value="1"> Promovidos Efectivos
                                 </label>
-                                <label class="radio-inline">
+                                <label class="radio-inline no-delete">
                                     <input type="radio" name="tipo_promovido" value="2"> Listado de Promoción
                                 </label><br>
                             <?php } else { ?>
-                                <input type="hidden" name="tipo_promovido" value="1"/>
+                                <input type="hidden" name="tipo_promovido" value="1" class="no-delete"/>
                             <?php } ?>
                         </div>
                         <p>

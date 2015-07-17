@@ -50,6 +50,15 @@ class PerfilUsuario
         return false;
     }
 
+    public static function isLecturaZona()
+    {
+        if (isset(Yii::$app->user->identity)) {
+            return (strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idLecturaZona']));
+        }
+
+        return false;
+    }
+
     public static function hasPermiso($modulo, $permiso)
     {
         if (isset(Yii::$app->user->identity)) {

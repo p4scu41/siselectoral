@@ -16,7 +16,7 @@ class Reporte extends \yii\db\ActiveRecord
      * @param Int $idMuni
      * @return Array
      */
-    public static function avanceSeccional($idMuni)
+    public static function avanceSeccional($nameColumn, $valueColumn, $zona)
     {
         /*$sql = 'SELECT
             [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
@@ -70,12 +70,34 @@ class Reporte extends \yii\db\ActiveRecord
             [CSeccion].[IdSector] = arbolEstructura.[IdSector]
         LEFT JOIN [PadronGlobal] ON
             [PadronGlobal].[CLAVEUNICA] = arbolEstructura.[IdPersonaPuesto]
+        INNER JOIN [PREP_Seccion] ON
+            [PREP_Seccion].[seccion] = [CSeccion].[NumSector] AND
+            [PREP_Seccion].[municipio] = [CSeccion].[IdMunicipio]
         WHERE
-            arbolEstructura.[Municipio] = '.$idMuni.' AND
+            [PREP_Seccion].['.$nameColumn.'] = '.$valueColumn.' AND
+            '.($zona!='' && $zona!=0 ? ' [PREP_Seccion].[zona] = '.$zona.' AND ' : '').'
             arbolEstructura.[IdPuesto] = 5
         ORDER BY [CSeccion].[NumSector]';
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();
+        $sumaMeta = 0;
+        $sumaAvance = 0;
+
+        foreach ($result as $fila) {
+            $sumaMeta += $fila['Meta'];
+            $sumaAvance += $fila['Avance'];
+        }
+
+        if (count($result)) {
+            array_push($result, [
+                'Sección' => '',
+                'Responsable' => 'TOTAL',
+                'Meta' => number_format($sumaMeta),
+                'Avance' => number_format($sumaAvance),
+                'Tel Móvil' => '',
+                'Domicilio' => ''
+            ]);
+        }
 
         return $result;
     }
@@ -223,7 +245,12 @@ class Reporte extends \yii\db\ActiveRecord
             $metaEstructura['avance'] = $datosEstructura[1]['MetaEstructura'];
         }
 
-        $sqlDatosPromocion = 'SELECT
+        $metaPromocion = [
+            'meta' => DetalleEstructuraMovilizacion::getMetaByPromotor($idNodo),
+            'avance' => DetalleEstructuraMovilizacion::getCountPromovidos($idNodo)
+        ];
+
+        /*$sqlDatosPromocion = 'SELECT
                     \'MetaPromocion\' AS Meta,
                     SUM([Meta]) AS MetaPromocion
                 FROM
@@ -244,19 +271,14 @@ class Reporte extends \yii\db\ActiveRecord
                     [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo.'  OR
                     [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'';
 
-        $metaPromocion = [
-            'meta' => '',
-            'avance' => ''
-        ];
-
         $datosPromocion = Yii::$app->db->createCommand($sqlDatosPromocion)->queryAll();
 
         if (count($datosPromocion)) {
             $metaPromocion['meta'] = $datosPromocion[1]['MetaPromocion'];
-            /*$metaPromocion['avance'] = ($datosPromocion[1]['MetaPromocion'] != 0 ?
-                round($datosPromocion[0]['MetaPromocion']/$datosPromocion[1]['MetaPromocion']*100) : 0);*/
+            //$metaPromocion['avance'] = ($datosPromocion[1]['MetaPromocion'] != 0 ?
+                //round($datosPromocion[0]['MetaPromocion']/$datosPromocion[1]['MetaPromocion']*100) : 0);
             $metaPromocion['avance'] = $datosPromocion[0]['MetaPromocion'];
-        }
+        }*/
 
         $agregarEspacios .= $espacios;
 
@@ -514,16 +536,16 @@ class Reporte extends \yii\db\ActiveRecord
             ,Promocion.IdpersonaPromovida
             ,DetalleEstructuraMovilizacion.Descripcion
             ,(tblPersonaPuesto.NOMBRE+\' \'+tblPersonaPuesto.APELLIDO_PATERNO+\' \'+
-                tblPersonaPuesto.APELLIDO_PATERNO) AS personaPuesto
+                tblPersonaPuesto.APELLIDO_MATERNO) AS personaPuesto
             ,CSeccion.NumSector
             ,tblPersonaPuesto.TELCASA
             ,tblPersonaPuesto.TELMOVIL
             ,tblEstructuraPromotor.Descripcion as puestoPromotor
             ,(tblPersonaPromueve.NOMBRE+\' \'+tblPersonaPromueve.APELLIDO_PATERNO+\' \'+
-                tblPersonaPromueve.APELLIDO_PATERNO) AS personaPromueve
+                tblPersonaPromueve.APELLIDO_MATERNO) AS personaPromueve
             ,(tblPersonaPromovida.NOMBRE+\' \'+tblPersonaPromovida.APELLIDO_PATERNO+\' \'+
-                tblPersonaPromovida.APELLIDO_PATERNO) AS personaPromovida
-            ,(tblPersonaPromovida.DOMICILIO+\', #\'+tblPersonaPromovida.NUM_INTERIOR+\', \'+tblPersonaPromovida.COLONIA) AS Domicilio
+                tblPersonaPromovida.APELLIDO_MATERNO) AS personaPromovida
+            ,(tblPersonaPromovida.DOMICILIO+\', #\'+tblPersonaPromovida.NUM_INTERIOR) AS Domicilio
             ,(tblPersonaPromovida.COLONIA) AS Colonia
         FROM 
             Promocion
@@ -544,7 +566,7 @@ class Reporte extends \yii\db\ActiveRecord
         INNER JOIN DetalleEstructuraMovilizacion AS tblEstructuraPromotor ON
             tblEstructuraPromotor.IdPersonaPuesto = Promocion.IdPersonaPromueve
         ORDER BY 
-            personaPuesto, personaPromovida';
+            CSeccion.NumSector, personaPuesto, personaPromovida';
 
         $sqlOrganizacion = 'SELECT
                 Organizaciones.IdOrganizacion,
@@ -577,44 +599,40 @@ class Reporte extends \yii\db\ActiveRecord
                             .'"Tel. Celular": " &nbsp; ", '
                             .'"Tel. Casa": " &nbsp; ", '
                             .($incluir_domicilio ? '"Domicilio": " &nbsp; ", ' : '')
+                            .'"Colonia": " &nbsp; ",'
                             .'"Promovido Por": " &nbsp; ",'
                             .'"Organización": " &nbsp; " },';
                     }
-
-                    $listOrganizaciones = Yii::$app->db->createCommand($sqlOrganizacion.'\''.$promotor['IdPersonaPuesto'].'\'')->queryAll();
-                    $organizaciones = [];
-                    $organizaciones = ' &nbsp; ';
-
-                    if (count($listOrganizaciones)) {
-                        $organizaciones = implode(', ', ArrayHelper::map($listOrganizaciones, 'IdOrganizacion', 'Nombre'));
-                    }
+                    $infoPromotor = PadronGlobal::find()->where('CLAVEUNICA = \''.$promotor['IdPersonaPuesto'].'\'')->one();
                     
                     $reporte .= '{ "Nombre": "<b>'.$promotor['Descripcion'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPuesto'])).' - Sección '.$promotor['NumSector'].'</b>",'
-                        .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
-                        .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
-                        .($incluir_domicilio ? '"Domicilio": "<b>'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'</b>" ,' : '')
+                        .'"Tel. Celular": "<b>'.$infoPromotor->TELMOVIL.'</b>", '
+                        .'"Tel. Casa": "<b>'.$infoPromotor->TELCASA.'</b>", '
+                        .($incluir_domicilio ? '"Domicilio": "<b>'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $infoPromotor->DOMICILIO)).'</b>" ,' : '')
+                        .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $infoPromotor->COLONIA)).'",'
                         .'"Promovido Por": " &nbsp; ",'
-                        .'"Organización": "'.$organizaciones.'" },';
+                        .'"Organización": "" },';
 
                     $anteriorPromotor = $promotor['personaPuesto'];
                     $countPromovidos = 0;
-                } else {
-                    $countPromovidos++;
-                    $listOrganizaciones = Yii::$app->db->createCommand($sqlOrganizacion.'\''.$promotor['IdpersonaPromovida'].'\'')->queryAll();
-                    $organizaciones = [];
-                    $organizaciones = ' &nbsp; ';
-
-                    if (count($listOrganizaciones)) {
-                        $organizaciones = implode(', ', ArrayHelper::map($listOrganizaciones, 'IdOrganizacion', 'Nombre'));
-                    }
-
-                    $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromovida'])).'",'
-                        .'"Tel. Celular": "'.$promotor['TELMOVIL'].'", '
-                        .'"Tel. Casa": "'.$promotor['TELCASA'].'", '
-                        .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'",' : '')
-                        .'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
-                        .'"Organización": "'.$organizaciones.'" },';
                 }
+
+                $countPromovidos++;
+                $listOrganizaciones = Yii::$app->db->createCommand($sqlOrganizacion.'\''.$promotor['IdpersonaPromovida'].'\'')->queryAll();
+                $organizaciones = [];
+                $organizaciones = ' &nbsp; ';
+
+                if (count($listOrganizaciones)) {
+                    $organizaciones = implode(', ', ArrayHelper::map($listOrganizaciones, 'IdOrganizacion', 'Nombre'));
+                }
+
+                $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromovida'])).'",'
+                    .'"Tel. Celular": "'.$promotor['TELMOVIL'].'", '
+                    .'"Tel. Casa": "'.$promotor['TELCASA'].'", '
+                    .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'",' : '')
+                    .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Colonia'])).'",'
+                    .'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
+                    .'"Organización": "'.$organizaciones.'" },';
             }
 
             $reporte .= ']';
@@ -639,16 +657,16 @@ class Reporte extends \yii\db\ActiveRecord
             ,DetallePromocion.IdPersonaPromovida
             ,DetalleEstructuraMovilizacion.Descripcion
             ,(tblPersonaPuesto.NOMBRE+\' \'+tblPersonaPuesto.APELLIDO_PATERNO+\' \'+
-                tblPersonaPuesto.APELLIDO_PATERNO) AS personaPuesto
+                tblPersonaPuesto.APELLIDO_MATERNO) AS personaPuesto
             ,CSeccion.NumSector
             ,tblPersonaPuesto.TELCASA
             ,tblPersonaPuesto.TELMOVIL
             ,tblEstructuraPromotor.Descripcion as puestoPromotor
             ,(tblPersonaPromueve.NOMBRE+\' \'+tblPersonaPromueve.APELLIDO_PATERNO+\' \'+
-                tblPersonaPromueve.APELLIDO_PATERNO) AS personaPromueve
+                tblPersonaPromueve.APELLIDO_MATERNO) AS personaPromueve
             ,(tblPersonaPromovida.NOMBRE+\' \'+tblPersonaPromovida.APELLIDO_PATERNO+\' \'+
-                tblPersonaPromovida.APELLIDO_PATERNO) AS personaPromovida
-            ,(tblPersonaPromovida.DOMICILIO+\', #\'+tblPersonaPromovida.NUM_INTERIOR+\', \'+tblPersonaPromovida.COLONIA) AS Domicilio
+                tblPersonaPromovida.APELLIDO_MATERNO) AS personaPromovida
+            ,(tblPersonaPromovida.DOMICILIO+\', #\'+tblPersonaPromovida.NUM_INTERIOR) AS Domicilio
             ,(tblPersonaPromovida.COLONIA) AS Colonia
         FROM
             DetallePromocion
@@ -669,7 +687,7 @@ class Reporte extends \yii\db\ActiveRecord
         INNER JOIN DetalleEstructuraMovilizacion AS tblEstructuraPromotor ON
             tblEstructuraPromotor.IdPersonaPuesto = DetallePromocion.IdPErsonaPromueve
         ORDER BY
-            personaPuesto, personaPromovida';
+            CSeccion.NumSector, personaPuesto, personaPromovida';
 
         $sqlOrganizacion = 'SELECT
                 Organizaciones.IdOrganizacion,
@@ -698,42 +716,40 @@ class Reporte extends \yii\db\ActiveRecord
                             .'"Tel. Celular": " &nbsp; ", '
                             .'"Tel. Casa": " &nbsp; ", '
                             .($incluir_domicilio ? '"Domicilio": " &nbsp; ", ' : '')
+                            .'"Colonia": " &nbsp; ",'
                             .'"Promovido Por": " &nbsp; ",'
                             .'"Organización": " &nbsp; " },';
                     }
 
-                    $listOrganizaciones = Yii::$app->db->createCommand($sqlOrganizacion.'\''.$promotor['IdPErsonaPromueve'].'\'')->queryAll();
-                    $organizaciones = ' &nbsp; ';
-
-                    if (count($listOrganizaciones)) {
-                        $organizaciones = implode(', ', ArrayHelper::map($listOrganizaciones, 'IdOrganizacion', 'Nombre'));
-                    }
+                    $infoPromotor = PadronGlobal::find()->where('CLAVEUNICA = \''.$promotor['IdPErsonaPromueve'].'\'')->one();
 
                     $reporte .= '{ "Nombre": "<b>'.$promotor['Descripcion'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPuesto'])).' - Sección '.$promotor['NumSector'].'</b>",'
-                        .'"Tel. Celular": "<b>'.$promotor['TELMOVIL'].'</b>", '
-                        .'"Tel. Casa": "<b>'.$promotor['TELCASA'].'</b>", '
-                        .($incluir_domicilio ? '"Domicilio": "<b>'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'</b>" ,' : '')
+                        .'"Tel. Celular": "<b>'.$infoPromotor->TELMOVIL.'</b>", '
+                        .'"Tel. Casa": "<b>'.$infoPromotor->TELCASA.'</b>", '
+                        .($incluir_domicilio ? '"Domicilio": "<b>'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $infoPromotor->DOMICILIO)).'</b>" ,' : '')
+                        .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $infoPromotor->COLONIA)).'",'
                         .'"Promovido Por": " &nbsp; ",'
-                        .'"Organización": "'.$organizaciones.'" },';
+                        .'"Organización": "" },';
 
                     $anteriorPromotor = $promotor['personaPuesto'];
                     $countPromovidos = 0;
-                } else {
-                    $countPromovidos++;
-                    $listOrganizaciones = Yii::$app->db->createCommand($sqlOrganizacion.'\''.$promotor['IdPErsonaPromueve'].'\'')->queryAll();
-                    $organizaciones = ' &nbsp; ';
-
-                    if (count($listOrganizaciones)) {
-                        $organizaciones = implode(', ', ArrayHelper::map($listOrganizaciones, 'IdOrganizacion', 'Nombre'));
-                    }
-
-                    $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromovida'])).'",'
-                        .'"Tel. Celular": "'.$promotor['TELMOVIL'].'", '
-                        .'"Tel. Casa": "'.$promotor['TELCASA'].'", '
-                        .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'",' : '')
-                        .'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
-                        .'"Organización": "'.$organizaciones.'" },';
                 }
+
+                $countPromovidos++;
+                $listOrganizaciones = Yii::$app->db->createCommand($sqlOrganizacion.'\''.$promotor['IdPErsonaPromueve'].'\'')->queryAll();
+                $organizaciones = ' &nbsp; ';
+
+                if (count($listOrganizaciones)) {
+                    $organizaciones = implode(', ', ArrayHelper::map($listOrganizaciones, 'IdOrganizacion', 'Nombre'));
+                }
+
+                $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromovida'])).'",'
+                    .'"Tel. Celular": "'.$promotor['TELMOVIL'].'", '
+                    .'"Tel. Casa": "'.$promotor['TELCASA'].'", '
+                    .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'",' : '')
+                    .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Colonia'])).'",'
+                    .'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
+                    .'"Organización": "'.$organizaciones.'" },';
             }
 
             $reporte .= ']';

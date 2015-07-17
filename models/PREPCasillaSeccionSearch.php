@@ -55,6 +55,12 @@ class PREPCasillaSeccionSearch extends PREPCasillaSeccion
             $sql .= ' AND [PREP_Casilla_Seccion].[id_seccion] = '.$params['PREPCasillaSeccionSearch']['id_seccion'];
         }
 
+        if (isset($params['PREPCasillaSeccionSearch']['activo']) && $params['PREPCasillaSeccionSearch']['activo']!=-1) {
+            $sql .= ' AND [PREP_Casilla_Seccion].[activo] = '.$params['PREPCasillaSeccionSearch']['activo'];
+        }
+
+        $sql .= ' ORDER BY [PREP_Seccion].[seccion], [PREP_Casilla_Seccion].[descripcion]';
+
         $query = PREPCasillaSeccion::findBySql($sql);
 
         $dataProvider = new ActiveDataProvider([

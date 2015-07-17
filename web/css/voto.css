@@ -58,3 +58,16 @@ transform: rotate(45deg);
 bottom: -20px;
 top: auto;
 }
+@media print {
+    table {
+        font-size: 10px !important;
+    }
+    input[type="number"],
+    input[type="text"]{
+        width: 30px;
+        border: none;
+    }
+    .mini_grafica > div {
+        width: 55px !important;
+    }
+}

@@ -185,7 +185,41 @@ $(document).ready(function(){
         $this.sparkline('html', $this.data());
     });*/
 
-    creaGraficas()
+    creaGraficas();
+
+    $('#btnImprimirVotos').click(function(){
+        fecha = new Date();
+        titulo = '';
+
+        switch ($('#tipoEleccion').val()) {
+            case '1': // Presidencia Municipal
+                    titulo = 'de '+$('#municipio option:selected').text();
+                break;
+            case '2': // Diputación Local
+                    titulo = 'del Distrito Local '+$('#distritoLocal').val();
+                break;
+            case '3': // Diputación Federal
+                    titulo = 'del Distrito Federal '+$('#distritoFederal').val();
+                break;
+        }
+
+        if ($('#zona').val()) {
+            titulo += ', Zona '+$('#zona').val();
+        }
+
+        if ($('#iniSeccion').val()) {
+            titulo += ', Secciones '+$('#iniSeccion').val()+' - '+$('#finSeccion').val();
+        }
+
+        $imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson" style="margin-bottom: 1px !important;">'+
+                '<div class="panel-body">'+
+                '<h4 class="text-center">Registro de votos '+titulo+'</h4>'+
+                ' '+ $('#tablaVotos').html()+
+                ' <div class="pull-right">Fecha de corte: '+String("00000" + fecha.getDate()).slice(-2) + "-" + String("00000" + (fecha.getMonth()+1)).slice(-2) + "-" + fecha.getFullYear()+' '+String("00000" + fecha.getHours()).slice(-2)+':'+String("00000" + fecha.getMinutes()).slice(-2)+'</div>'+
+                '</div></div></div>');
+
+        $($imprimible).printArea({"mode":"popup","popClose":true});
+    });
 
 });
 
@@ -200,7 +234,7 @@ function creaGraficas()
             id: $(this).attr('id'),
             data: datos_grafica,
             height: 120,
-            width: 80
+            width: 70
         });
     });
 }

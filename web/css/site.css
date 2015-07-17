@@ -680,3 +680,6 @@ modalPerson #tablaResumen tr:last-child {
         width: 120px;
     }
 }
+.zc-license {
+    display: none;
+}

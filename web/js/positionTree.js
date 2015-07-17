@@ -141,6 +141,10 @@ $(document).ready(function(){
             $('#divAsignarPersona').html('');
         }
 
+        if (IDPerfLecturaZona == logIDPerfUsr) {
+            $('#divAsignarPersona').html('');
+        }
+
         if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
             $('#loadIndicator').hide();
             $('#titulo_puesto').html(node.title.replace(' - ', '<br>').replace(/\[\d+\]/,''));

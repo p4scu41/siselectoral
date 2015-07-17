@@ -252,6 +252,32 @@ class SiteController extends Controller
                 $log->accion = SeguimientoCambios::UPDATE;
                 $log->fecha = date('Y-m-d H:i:s');
 
+                if ($nodoEstructura->IdPersonaPuesto!='00000000-0000-0000-0000-000000000000' && $nodoEstructura->IdPersonaPuesto!='') {
+                    // Actualiza también la promoción para que coincida con los datos
+                    // del árbol de estructura
+                    $sqlUpdatePromocion = 'UPDATE [Promocion]
+                        SET [IdPersonaPuesto] = \''.$claveunica.'\'
+                        WHERE [IdPuesto] = '.$nodoEstructura->IdNodoEstructuraMov;
+
+                    Yii::$app->db->createCommand($sqlUpdatePromocion)->execute();
+
+                    // Actualiza también la promoción para que coincida con los datos
+                    // del árbol de estructura
+                    $sqlUpdatePromocion = 'UPDATE [Promocion]
+                        SET [IdPersonaPromueve] = \''.$claveunica.'\'
+                        WHERE [IdPersonaPromueve] = \''.$nodoEstructura->IdPersonaPuesto.'\'';
+
+                    Yii::$app->db->createCommand($sqlUpdatePromocion)->execute();
+
+                    // Actualiza también el detalle promoción para que coincida con los datos
+                    // de la promoción
+                    $sqlUpdateDetallePromocion = 'UPDATE [DetallePromocion]
+                        SET [IdPErsonaPromueve] = \''.$claveunica.'\'
+                        WHERE [IdPErsonaPromueve] = \''.$nodoEstructura->IdPersonaPuesto.'\'';
+
+                    Yii::$app->db->createCommand($sqlUpdateDetallePromocion)->execute();
+                }
+
                 $nodoEstructura->IdPersonaPuesto = $claveunica;
                 $nodoEstructura->save();
                 $log->save();

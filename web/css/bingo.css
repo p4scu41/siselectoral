@@ -107,12 +107,19 @@ top: auto;
         overflow: visible;
     }
     .bs-glyphicons .glyphicon {
-        font-size: 13px;
+        font-size: 12px;
     }
     .bs-glyphicons li {
         padding: initial;
-        width: 6%;
-        height: 50px;
+        width: 5%;
+        height: 43px;
         border: 1px solid #CCC;
     }
+    input[type="radio"],
+    input[type="checkbox"] {
+          margin: initial;
+    }
+}
+.liBingo.red {
+    background-color: #F7D3D2;
 }

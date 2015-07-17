@@ -9,6 +9,7 @@ use yii\helpers\ArrayHelper;
 use app\models\CMunicipio;
 use app\models\Reporte;
 use app\models\DetalleEstructuraMovilizacion;
+use app\models\PREPSeccion;
 use app\helpers\MunicipiosUsuario;
 use app\helpers\PerfilUsuario;
 
@@ -51,13 +52,37 @@ class ReporteController extends \yii\web\Controller
             'titulo' => ''
         ];
 
-        if (Yii::$app->request->post('Municipio')) {
-            $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
-
+        if (Yii::$app->request->post('Municipio') || Yii::$app->request->post('tipoEleccion')) {
             if (Yii::$app->request->post('tipoReporte') == 1) { // Avance Seccional
-                $reporteDatos = Reporte::avanceSeccional(Yii::$app->request->post('Municipio'));
+                $titulo = 'Avance de Promoción Seccional ';
+                $nameColum = '';
+                $valueColum = '';
+
+                switch (Yii::$app->request->post('tipoEleccion')) {
+                    case '1': // Presidencia Municipal
+                        $nameColum = 'municipio';
+                        $valueColum = Yii::$app->request->post('municipio');
+                        $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('municipio')])->one();
+                        $titulo .= ' de '.$municipio->DescMunicipio.(Yii::$app->request->post('zona') ? ', Zona '.Yii::$app->request->post('zona') : '');
+                        break;
+                    case '2': // Diputación Local
+                        $nameColum = 'distrito_local';
+                        $valueColum = Yii::$app->request->post('distritoLocal');
+                        $titulo .= ' del Distrito Local '.$valueColum.(Yii::$app->request->post('zona') ? ', Zona '.Yii::$app->request->post('zona') : '');
+                        break;
+                    case '3': // Diputación Federal
+                        $nameColum = 'distrito_federal';
+                        $valueColum = Yii::$app->request->post('distritoFederal');
+                        $titulo .= ' del Distrito Federal '.$valueColum.(Yii::$app->request->post('zona') ? ', Zona '.Yii::$app->request->post('zona') : '');
+                        break;
+                    default:
+                        return [];
+                }
+                $respuesta['datos'] = $nameColum.'-'.$valueColum;
+
+                $reporteDatos = Reporte::avanceSeccional($nameColum, $valueColum, Yii::$app->request->post('zona'));
                 $omitirCentrado = array(2);
-                $respuesta['titulo'] = 'Avance de Promoción Seccional de '.$municipio->DescMunicipio;
+                $respuesta['titulo'] = $titulo;
             } elseif (Yii::$app->request->post('tipoReporte') == 2) { // Estructura
                 $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
                 $nodo = null;
@@ -110,12 +135,15 @@ class ReporteController extends \yii\web\Controller
             'orientation' => $orientation,
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
             //'cssFile' => '@web/css/kv-mpdf-bootstrap.css',
-            'cssInline' => 'body { font-size: 8px !important; } a { font-size: 6px !important; text-decoration: none; } ',
+            'cssInline' => 'body { font-size: 7px !important; line-height: 1 !important; } '.
+                'a { font-size: 6px !important; text-decoration: none; } '.
+                '.table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td { padding: 3px !important; } '.
+                '.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td { line-height: 1 !important; }',
             'options' => [
                 'title' => $titulo,
                 'subject' => 'SIRECI - '.date("d-m-Y h:i:s A")
             ],
-            'defaultFontSize' => 8,
+            'defaultFontSize' => 7,
             'methods' => [
                 'SetHeader' => ['|'.$titulo.'|'],
                 'SetFooter' => ['|Pagina {PAGENO}|'],
@@ -207,9 +235,17 @@ class ReporteController extends \yii\web\Controller
         }
 
         $municipios = MunicipiosUsuario::getMunicipios();
+        $distritosLocales = ArrayHelper::map(
+            PREPSeccion::find()->select('distrito_local')->groupBy('distrito_local')->orderBy('distrito_local')->all(),
+            'distrito_local', 'distrito_local');
+        $distritosFederales = ArrayHelper::map(
+            PREPSeccion::find()->select('distrito_federal')->groupBy('distrito_federal')->orderBy('distrito_federal')->all(),
+            'distrito_federal', 'distrito_federal');
 
         return $this->render('seccional', [
-            'municipios' => $municipios
+            'municipios' => $municipios,
+            'distritosLocales' => $distritosLocales,
+            'distritosFederales' => $distritosFederales,
         ]);
     }
 }

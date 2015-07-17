@@ -26,8 +26,13 @@ $this->registerJsFile(Url::to('@web/js/prepcasillaseccion.js'));
     </div>
 
     <div class="form-group">
-        <label for="Municipio">Sección: </label>
+        <label for="id_seccion">Sección: </label>
         <?= Html::activeDropDownList($model, 'id_seccion', $secciones, ['prompt' => 'Seleccione una sección', 'class' => 'form-control']) ?>
+    </div>
+
+    <div class="form-group">
+        <label for="activo">Activo: </label>
+        <?= Html::activeDropDownList($model, 'activo', [-1=>'Todos', 0=>'Inactivo', 1=>'Activo'], ['class' => 'form-control']) ?>
     </div>
 
     <div class="form-group">

@@ -4,9 +4,12 @@ $(document).ready(function(){
         $('#municipio').closest('div').addClass('hidden');
         $('#distritoLocal').closest('div').addClass('hidden');
         $('#distritoFederal').closest('div').addClass('hidden');
+        $('#div_zonas').closest('div').addClass('hidden');
+
         $('#municipio option:first').prop('selected', true);
         $('#distritoLocal option:first').prop('selected', true);
         $('#distritoFederal option:first').prop('selected', true);
+        $('#zona option:not(:first)').remove();
         $('#alertResult').html('');
 
         switch ($(this).val()) {
@@ -32,21 +35,18 @@ $(document).ready(function(){
 
         switch ($('#tipoEleccion').val()) {
             case '1': // Presidencia Municipal
-                    //eleccionPresidenciaMunicipal();
                     if ($('#municipio').val() == '' || typeof($('#municipio').val()) == 'undefined') {
                         $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Municipio</div>');
                         return false;
                     }
                 break;
             case '2': // Diputación Local
-                    //eleccionDiputacionLocal();
                     if ($('#distritoLocal').val() == '' || typeof($('#distritoLocal').val()) == 'undefined') {
                         $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Distrito Local</div>');
                         return false;
                     }
                 break;
             case '3': // Diputación Federal
-                    //eleccionDiputacionFederal();
                     if ($('#distritoFederal').val() == '' || typeof($('#distritoFederal').val()) == 'undefined') {
                         $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Distrito Federal</div>');
                         return false;
@@ -181,7 +181,10 @@ function getResultados()
         $('#tabs_resultado').removeClass('hidden');
 
         if ($('#fechaCorte').val()) {
-            fecha = new Date($('#fechaCorte').val());
+            inputFecha = $('#fechaCorte').val();
+            arrayFecha = inputFecha.split(' ');
+            fechaFull = arrayFecha[0].split('-');
+            fecha = new Date(fechaFull[2]+'-'+fechaFull[1]+'-'+fechaFull[0]+' '+arrayFecha[1]);
         } else {
             fecha = new Date();
         }
@@ -213,7 +216,6 @@ function getResultados()
         sumaTotal = 0;
 
         for (candidato in response.candidatos) {
-            console.log(candidato);
             thead += '<th>'+response.candidatos[candidato].nombre+'</th>';
             listCandidatos.push(response.candidatos[candidato].nombre);
             listSumVotos[response.candidatos[candidato].id_candidato] = 0;
@@ -270,6 +272,10 @@ function getResultados()
             ', Porcentaje Contabilizadas: '+(response.totalCasillas!=0 ? Math.round(response.casillasConsideradas/response.totalCasillas*100) : 0)+'%</h4>';
 
         $('#tabla_resultado').html(tabla);
+
+        for (index in listCandidatos) {
+            listCandidatos[index] = listCandidatos[index].replace(/\s+/g, '\n');
+        }
 
         var datos_grafica =
         {
@@ -342,6 +348,9 @@ function getResultados()
                     },
                     "rules": colores
                 },
+                "plotarea": {
+                    "margin": "65px 65px 120px 80px"
+                },
                 "tooltip":{
                     "background-color":"#000000",
                     "border-radius":5,
@@ -352,11 +361,15 @@ function getResultados()
                 },
                 "scaleX":{
                     "label":{
-                        "text":"Candidatos"
+                        "text":"Candidatos",
+                        "padding-top": "30px",
+                        //"padding-bottom": "0px"
                     },
                     "values":listCandidatos,
                     "item":{
-                        "font-size":"9px"
+                        "font-size":"9px",
+                        "auto-align":true,
+                        //"font-angle": -48
                     }
                 },
                 "scaleY":{
@@ -386,7 +399,7 @@ function getResultados()
             id: "grafica_resultado",
             data: datos_grafica,
             height: 400,
-            width: "80%"
+            width: "100%"
         });
         
     });
