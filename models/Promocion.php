@@ -273,7 +273,8 @@ class Promocion extends \yii\db\ActiveRecord
 
     public static function statusSeccionesBingo($muni)
     {
-        $sql = 'SELECT
+        /*$sql = 'SELECT
+            [CSeccion].[ZonaMunicipal],
             [CSeccion].[NumSector],
             (SELECT COUNT([Promocion].[IdpersonaPromovida])
             FROM [Promocion]
@@ -282,7 +283,15 @@ class Promocion extends \yii\db\ActiveRecord
             WHERE
                 ([DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|\'+CAST(arbolEstructura.[IdNodoEstructuraMov] AS VARCHAR)+\'|%\' OR
                 [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = arbolEstructura.[IdNodoEstructuraMov]) AND
-                [Promocion].[Participacion] IS NULL) AS participacionFaltantes
+                [Promocion].[Participacion] IS NULL) AS participacionFaltantes,
+            (SELECT COUNT([Promocion].[IdpersonaPromovida])
+            FROM [Promocion]
+            INNER JOIN [DetalleEstructuraMovilizacion] ON
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = [Promocion].[IdPuesto]
+            WHERE
+                ([DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|\'+CAST(arbolEstructura.[IdNodoEstructuraMov] AS VARCHAR)+\'|%\' OR
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = arbolEstructura.[IdNodoEstructuraMov]) AND
+                [Promocion].[Participacion] = 1) AS participacionEfectivos
         FROM
             [DetalleEstructuraMovilizacion] AS arbolEstructura
         INNER JOIN [CSeccion] ON
@@ -292,15 +301,79 @@ class Promocion extends \yii\db\ActiveRecord
             arbolEstructura.[IdPuesto] = 5 AND
             arbolEstructura.[Municipio] = '.$muni.'
         ORDER BY
-            [CSeccion].[NumSector]';
+            [CSeccion].[ZonaMunicipal] ASC,[CSeccion].[NumSector] ASC';*/
+
+        $sql = 'SELECT
+            [CSeccion].[ZonaMunicipal],
+            [CSeccion].[NumSector],
+            (SELECT
+                COUNT(*)
+            FROM [Promocion]
+            INNER JOIN [PadronGlobal] ON
+                [Promocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+            INNER JOIN [DetalleEstructuraMovilizacion] ON
+                [Promocion].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+            INNER JOIN [PadronGlobal] AS padronPromotor ON
+                padronPromotor.CLAVEUNICA = [Promocion].[IdPersonaPromueve]
+            WHERE
+                ([DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|\'+CAST(arbolEstructura.[IdNodoEstructuraMov] AS VARCHAR)+\'|%\'
+                OR [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = arbolEstructura.[IdNodoEstructuraMov]) AND [Promocion].Participacion IS NULL) AS participacionFaltantes,
+            (SELECT
+                COUNT(*)
+            FROM [Promocion]
+            INNER JOIN [PadronGlobal] ON
+                [Promocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+            INNER JOIN [DetalleEstructuraMovilizacion] ON
+                [Promocion].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+            INNER JOIN [PadronGlobal] AS padronPromotor ON
+                padronPromotor.CLAVEUNICA = [Promocion].[IdPersonaPromueve]
+            WHERE
+                ([DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|\'+CAST(arbolEstructura.[IdNodoEstructuraMov] AS VARCHAR)+\'|%\'
+                OR [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = arbolEstructura.[IdNodoEstructuraMov]) AND [Promocion].Participacion = 1) AS participacionEfectivos
+        FROM
+            [DetalleEstructuraMovilizacion] AS arbolEstructura
+        INNER JOIN [CSeccion] ON
+            arbolEstructura.[Municipio] = [CSeccion].[IdMunicipio] AND
+            arbolEstructura.[IdSector] = [CSeccion].[IdSector]
+        WHERE
+            arbolEstructura.[IdPuesto] = 5 AND
+            arbolEstructura.[Municipio] = '.$muni.'
+        ORDER BY
+            [CSeccion].[ZonaMunicipal] ASC,[CSeccion].[NumSector] ASC';
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();
 
-        /*foreach ($result as $index => $promovido) {
-            $result[$index]['foto'] = PadronGlobal::getFotoByUID($result['CLAVEUNICA'], $result['SEXO']);
-        }*/
-
         return $result;
     }
-    
+
+    /**
+     * Obtiene el número de promovidos a un determinado nodo de la estructura
+     *
+     * @param INT $idNodoPadre
+     * @return INT Número de promovidos
+     */
+    public static function getCountPromovidosBingo($idNodoPadre)
+    {
+        $sql = "SELECT
+                COUNT(*) AS promovidos
+            FROM [Promocion]
+            INNER JOIN [PadronGlobal] ON
+                [Promocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+            INNER JOIN [DetalleEstructuraMovilizacion] ON
+                [Promocion].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+            INNER JOIN [PadronGlobal] AS padronPromotor ON
+                padronPromotor.CLAVEUNICA = [Promocion].[IdPersonaPromueve]
+            WHERE
+                ([DetalleEstructuraMovilizacion].[Dependencias] LIKE '%|".$idNodoPadre."|%'
+                OR [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = ".$idNodoPadre.")";
+
+        $countPromocion = Yii::$app->db->createCommand($sql)->queryOne();
+
+        if (!$countPromocion) {
+            return 0;
+        } else {
+            return $countPromocion['promovidos'];
+        }
+    }
+
 }

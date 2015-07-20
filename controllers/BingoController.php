@@ -90,7 +90,8 @@ class BingoController extends \yii\web\Controller
 
         $avanceBingo = Promocion::getAvanceBingo($idNodo);
         $nodo = DetalleEstructuraMovilizacion::getInfoNodo($idNodo);
-        $metaPromo = DetalleEstructuraMovilizacion::getMetaByPromotor($idNodo);
+        //$metaPromo = DetalleEstructuraMovilizacion::getCountPromovidos($idNodo);
+        $metaPromo = Promocion::getCountPromovidosBingo($idNodo);
 
         $procentaje_avance = !empty($metaPromo['MetaByPromotor']) ? round($avanceBingo['total_participacion']/$metaPromo['MetaByPromotor']*100) : 0;
 

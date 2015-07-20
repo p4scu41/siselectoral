@@ -95,6 +95,10 @@ $(document).ready(function(){
         dateFormat: 'dd-mm-yy',
 	});
 
+    setInterval(function(){
+        $('#btnAceptar').trigger('click');
+    }, 60000);
+
 });
 
 function loadCandidatos()

@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 $this->registerJsFile(Url::to('@web/js/bingo.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.fileDownload.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
 $this->registerCssFile(Url::to('@web/css/bingo.css'),  ['depends' => [\yii\bootstrap\BootstrapAsset::className()]]);
 $this->registerJs('getSeccionesMuni="'.Url::toRoute('seccion/getjsmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('getPromotoresBySeccion="'.Url::toRoute('seccion/getpromotores', true).'";', \yii\web\View::POS_HEAD);
@@ -17,6 +18,8 @@ $this->registerJs('getAvance="'.Url::toRoute('bingo/getavance', true).'";', \yii
 $this->registerJs('getInfoPromo="'.Url::toRoute('bingo/getinfopromotor', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlReportepdf="'.Url::toRoute('reporte/pdf', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlStatussecciones="'.Url::toRoute('bingo/statussecciones', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlReporteExcel="'.Url::toRoute(['reporte/excel'], true).'";', \yii\web\View::POS_HEAD);
+
 
 /* @var $this yii\web\View */
 $this->title = 'Bingo';
@@ -61,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             </button> &nbsp; 
                             <button type="button" class="btn btn-success" id="btnVerRCs">
                                 <i class="fa fa-building-o"></i> Ver RCs
-                            </button>
+                            </button> &nbsp; 
                             <button type="button" class="btn btn-success" id="btnStatusSecciones">
                                 <i class="fa fa-building-o"></i> Status Secciones
                             </button>
@@ -171,9 +174,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div class="modal-footer">
-                <!--<button type="button" class="btn btn-success" id="btnImprimirListado">Imprimir</button>-->
+                <button type="button" class="btn btn-success" id="btnImprimirStatusSecciones">Imprimir</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
+
+<form action="<?= Url::to(['reporte/excel'], true) ?>" method="POST" class="hidden" id="frmSendStatusSecciones" target="_blank">
+    <input type="text" name="title" id="title" value="Status de las Secciones">
+    <textarea name="content" id="content"></textarea>
+    <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>">
+</form>

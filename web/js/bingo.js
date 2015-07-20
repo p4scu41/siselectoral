@@ -470,18 +470,95 @@ $(document).ready(function(){
             dataType: 'json'
         }).done(function(response){
             $('#listStatusSecciones').html('');
+            tablaStatusSecciones = '<table class="table table-condensed table-striped table-bordered table-hover">'+
+                '<thead><tr><th>Zona</th><th>Seccion</th><th>Total Promovidos</th><th>Total Participacion</th></tr></thead>'+
+                '<tbody>';
+            sumaTotal = 0;
+            sumaZona = 0;
+            zonaActual = 0;
 
             for (seccion in response) {
+                sumaTotal += (parseInt(response[seccion].participacionFaltantes)+parseInt(response[seccion].participacionEfectivos));
+                sumaZona += (parseInt(response[seccion].participacionFaltantes)+parseInt(response[seccion].participacionEfectivos));
+
+                tablaStatusSecciones += '<tr><td>'+response[seccion].ZonaMunicipal+
+                    '</td><td>'+response[seccion].NumSector+
+                    '</td><td>'+(parseInt(response[seccion].participacionFaltantes)+parseInt(response[seccion].participacionEfectivos))+
+                    '</td><td>'+response[seccion].participacionEfectivos+'</td></tr>';
+
                 item = '<li class="liBingo '+(response[seccion].participacionFaltantes==0 ? '' : 'red')+'">'+
                     '<span class="glyphicon">'+response[seccion].NumSector+'</span>'+
-                    '<span class="glyphicon-class">'+response[seccion].participacionFaltantes+'</span>'+
+                    '<span class="glyphicon-class">'+response[seccion].participacionEfectivos+' / '+response[seccion].participacionFaltantes+'</span>'+
                 '</li>';
+
                 $('#listStatusSecciones').append(item);
             }
+
+            tablaStatusSecciones += '</tbody></tabla>';
+
+            //http://jsfiddle.net/terryyounghk/KPEGU/
+            var $rows = $(tablaStatusSecciones).find('tr:has(th), tr:has(td)'),
+
+            // Temporary delimiter characters unlikely to be typed by keyboard
+            // This is to avoid accidentally splitting the actual contents
+            tmpColDelim = String.fromCharCode(11), // vertical tab character
+            tmpRowDelim = String.fromCharCode(0), // null character
+
+            // actual delimiter characters for CSV format
+            colDelim = '","',
+            rowDelim = '"\r\n"',
+
+            // Grab text from table into CSV formatted string
+            tablaCSV = '"' + $rows.map(function (i, row) {
+                var $row = $(row),
+                    $cols = $row.find('th, td');
+
+                return $cols.map(function (j, col) {
+                    var $col = $(col),
+                        text = $col.text();
+
+                    return text.replace('"', '""'); // escape double quotes
+
+                }).get().join(tmpColDelim);
+
+            }).get().join(tmpRowDelim)
+                .split(tmpRowDelim).join(rowDelim)
+                .split(tmpColDelim).join(colDelim) + '"';
+
+            $('#content').val(tablaCSV);
 
             $('#loadIndicator').hide();
             $('#modalStatusSecciones').modal('show');
         });
     });
+
+    $('#btnImprimirStatusSecciones').click(function(event){
+        $('#frmSendStatusSecciones').trigger('submit');
+        /*$imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson" style="margin-bottom: 1px !important;">'+
+                '<div class="panel-body">'+
+                '<h4 class="text-center">'+$('#tblStatusSecciones').val()+'</h4>'+
+                ' '+ $('#modalBingo .modal-body').html()+
+                '</div></div></div>');
+
+        $($imprimible).printArea({"mode":"popup","popClose":true});*/
+    });
+
+    /*
+     * Pantalla Windows 730 Document 780
+     * Lap Lopez Juan Windows 947 Document 997
+     **/
+    if ($(window).height() > 940) {
+        $('.modal-wide').each(function(){
+            $(this).find('.modal-body').css('height', '780px');
+            $(this).find('#listStatusSecciones').css('max-height', '750px');
+            $(this).find('#itemsBingo').css('max-height', '750px');
+        });
+    } else if ($(window).height() > 720) {
+        $('.modal-wide').each(function(){
+            $(this).find('.modal-body').css('height', '555px');
+            $(this).find('#listStatusSecciones').css('max-height', '515px');
+            $(this).find('#itemsBingo').css('max-height', '515px');
+        });
+    }
 
 });
