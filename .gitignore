@@ -23,9 +23,13 @@ composer.phar
 
 # phpunit itself is not needed
 phpunit.phar
+
 # local phpunit config
 /phpunit.xml
 
 # DW Dreamweaver added files
 _notes
 dwsync.xml
+
+# Thumbnails Mac
+._*

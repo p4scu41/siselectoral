@@ -201,6 +201,7 @@ class ReporteController extends \yii\web\Controller
         $headers->add('Last-Modified', gmdate('D, d M Y H:i:s').' GMT'); // always modified
         $headers->add('Cache-Control', 'cache, must-revalidate'); // HTTP/1.1
         $headers->add('Pragma', 'public'); // HTTP/1.0
+        $headers->add('Set-Cookie', 'fileDownload=true; path=/');
 
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         ob_start();
