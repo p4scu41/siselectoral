@@ -364,7 +364,7 @@ $(document).ready(function(){
 
             if (response.length) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
-                    '<thead><tr><th>Nombre</th><th>Beneficiarios</th><th>Sección</th></tr></thead><tbody>';
+                    '<thead><tr><th>Nombre</th><th class="text-center">Beneficiarios</th><th class="text-center">Sección</th></tr></thead><tbody>';
 
                 for(fila in response) {
                     if (response[fila].Integrantes != 0) {
@@ -403,7 +403,7 @@ $(document).ready(function(){
 
             if (response.length) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
-                    '<thead><tr><th>Nombre</th><th>Beneficiarios</th><th>Sección</th></tr></thead><tbody>';
+                    '<thead><tr><th>Nombre</th><th class="text-center">Beneficiarios</th><th class="text-center">Sección</th></tr></thead><tbody>';
 
                 for(fila in response) {
                     if (response[fila].Integrantes != 0) {
@@ -1149,9 +1149,11 @@ $(document).ready(function(){
     $('#printResumenNodo').click(function(){
         $imprimible = $('<div class="box box-primary box-success"><div class="panel panel-success" id="containerPerson" style="margin-bottom: 1px !important;">'+
                 '<div class="panel-body">'+
-                '<h3 class="text-center" style="margin-top: 1px !important;"><strong>SIRECI</strong></h3>'+
-                '<h4 class="text-center">ESTRATEGIA DE PROMOCIÓN CIUDADANA</h4>'+
-                '<h5 class="text-center">STATUS DE LA ESTRUCTURA Y AVANCE MUNICIPAL DE '+$('#municipio option:selected').text()+'</h5>'+
+                '<div class="text-center" style="margin-top: 1px !important;">'+
+                    '<h3 style="display: inline"><strong>SIRECI</strong> </h3>'+
+                    '<h4 style="display: inline"> ESTRATEGIA DE PROMOCIÓN CIUDADANA</h4>'+
+                '</div>'+
+                '<h5 class="text-center">STATUS DE LA ESTRUCTURA Y AVANCE MUNICIPAL</h5>'+ // DE '+$('#municipio option:selected').text()+'
                 '</div></div></div>');
         $seccion_resumenNodo = $('#seccion_resumenNodo').clone().show();
         $seccion_resumenNodo.find('#tablaResumen').append( '<tr><td colspan="5"><strong>AVANCE DE LA META DE PROMOCIÓN CIUDADANA</strong></td></tr>' );
@@ -1159,23 +1161,33 @@ $(document).ready(function(){
         $seccion_estrucAlterna = $('#divTreeEstrucAlterna').clone().show();
         $seccion_estrucAlterna.find('#list_integrantes_alternas').remove();
         $seccion_estrucAlterna.find('#list_alternas tr th:last').remove();
-        $seccion_estrucAlterna.find('#list_alternas tr td:last').remove();
+        $seccion_estrucAlterna.find('#list_alternas tr').find('td:last').remove();
         $imprimible.find('.panel-body').append( '<div class="text-center col-xs-3">'+$('#imgPerson').parent().html()+'</div>');
         $imprimible.find('.panel-body').append( $('#frmPersonDetails').clone().addClass('col-xs-9') );
         $imprimible.find('.panel-body').append( $('#indicadoresPuesto').clone() );
         $imprimible.find('.panel-body').append( $('#seccion_coordinados').clone().show() );
         $imprimible.find('.panel-body').append( $seccion_resumenNodo );
         if ($('#infoEstrucAlterna span:first').text() != '0' ) {
-            $imprimible.find('.panel-body').append('<strong><h5>Estructura Alterna</h5></strong>');
+            $imprimible.find('.panel-body').append('<div class="col-xs-12 col-sm-12 col-md-12"><strong>ESTRUCTURA ALTERNA</strong></div>');
             $imprimible.find('.panel-body').append( $seccion_estrucAlterna );
         }
+
+        if ($('#btn_programas span:first').text() != '0' ) {
+            $seccion_programas = $('#seccion_programas').clone().show();
+            $seccion_programas.find('#list_programas tr th:last').remove();
+            $seccion_programas.find('#list_programas tr').find('td:last').remove();
+            $seccion_programas.find('span:first').remove();
+            $imprimible.find('.panel-body').append('<div class="col-xs-12 col-sm-12 col-md-12"><strong>ESTRUCTURA DE PROGRAMAS</strong></div>');
+            $imprimible.find('.panel-body').append( $seccion_programas );
+        }
+
         $imprimible.find('.panel-body').append( $('#fechaResumenNodo').clone() );
         $imprimible.find(' .btn.btn-app').blur();
         $imprimible.find('#verMasResumenNodo').remove();
         $imprimible.find('#btnAsignarPersona').remove();
 
         //console.log($imprimible.html());
-
+        //$('#containerPerson').html($imprimible);
         $($imprimible).printArea({"mode":"popup","popClose":true});
     });
 

@@ -65,7 +65,7 @@
     width: 90px;
 }
 #containerPerson .well {
-    margin-bottom: 0 !important;
+    margin-bottom: 2px !important;
 }
 .skin-blue .sidebar > .sidebar-menu > li > a:hover,
 .skin-blue .sidebar > .sidebar-menu > li.active > a {
@@ -410,7 +410,7 @@
 	border-top-left-radius: 0;
 	right: 0
 }
-.btn.btn-app.btn-light, .btn.btn-app.btn-yellow {
+.btn.btn-app.btn-light {
 	-webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, .08)inset!important;
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, .08)inset!important;
 }
@@ -666,7 +666,7 @@ modalPerson #tablaResumen tr:last-child {
         width: 80px;
         font-size: 12px;
         line-height: 1.2;
-        border: solid 1px grey;
+        border: solid 1px lightgray;
     }
     #list_coordinados {
         max-height: initial;
@@ -678,6 +678,36 @@ modalPerson #tablaResumen tr:last-child {
     .imgPerson {
         height: 140px;
         width: 120px;
+    }
+    #frmPersonDetails {
+        line-height: 0.7;
+        padding-top: 10px;
+    }
+    #frmPersonDetails .well {
+        min-height: 8px;
+    }
+    #frmPersonDetails .well-sm {
+        padding: 5px;
+    }
+    #frmPersonDetails .form-group,
+    #frmPersonDetails label {
+        margin-top: 5px;
+        margin-bottom: 2px;
+    }
+    #containerPerson {
+        font-size: 12px;
+    }
+    .thumbnail {
+        min-height: 170px;
+        padding: 0px;
+        padding-top: 2px;
+    }
+    #list_programas {
+        max-height: initial;
+    }
+    #indicadoresPuesto {
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
 }
 .zc-license {

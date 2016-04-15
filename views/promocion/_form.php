@@ -92,7 +92,7 @@ SCRIPT;
                             'data' => new JsExpression('function(term,page) { '
                                 . 'return { puesto:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
-                                . 'seccion: $("#seccion_promocion").val() }; '
+                                //. 'seccion: $("#seccion_promocion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],
@@ -132,7 +132,7 @@ SCRIPT;
                             'data' => new JsExpression('function(term,page) { '
                                 . 'return { nombre:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
-                                . 'seccion: $("#seccion_promocion").val() }; '
+                                //. 'seccion: $("#seccion_promocion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],
@@ -223,7 +223,7 @@ SCRIPT;
                                 . 'return { nombre:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
                                 . 'puesto: "PR", '
-                                . 'seccion: $("#seccion_promocion").val() }; '
+                                //. 'seccion: $("#seccion_promocion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],

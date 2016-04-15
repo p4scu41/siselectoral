@@ -222,28 +222,28 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         </span>
                                                     </div><br>
 
-                                                    <div id="seccion_coordinados" style="display: none;">
+                                                    <div id="seccion_coordinados" style="display: none;" class="col-xs-12 col-sm-12 col-md-12">
                                                         <strong>Coordina a:</strong>
                                                         <div class="row" id="list_coordinados"></div>
                                                     </div>
 
-                                                    <div id="seccion_promocion" style="display: none;">
+                                                    <div id="seccion_promocion" style="display: none;" class="col-xs-12 col-sm-12 col-md-12">
                                                     </div>
 
-                                                    <div id="seccion_vacantes" style="display: none;">
+                                                    <div id="seccion_vacantes" style="display: none;" class="col-xs-12 col-sm-12 col-md-12">
                                                         Puestos inmediatos vacantes:
                                                         <ul id="list_vacantes"></ul>
                                                     </div>
 
-                                                    <div id="seccion_programas" style="display: none;">
-                                                        Programas disponibles en el municipio:
+                                                    <div id="seccion_programas" style="display: none;" class="col-xs-12 col-sm-12 col-md-12">
+                                                        <span>Programas disponibles en el municipio:</span>
                                                         <div id="total_benefi_progra"></div>
                                                         <div id="list_programas"></div>
                                                         <div id="list_integrantes" class="tblListIntegrantesBySeccion" style="display: none;"></div>
                                                     </div>
 
-                                                    <div id="seccion_resumenNodo" style="display: none;">
-                                                        Status de la Estructura dependiente del puesto seleccionado:
+                                                    <div id="seccion_resumenNodo" style="display: none;" class="col-xs-12 col-sm-12 col-md-12">
+                                                        <strong>AVANCE DE LA ESTRUCTURA DE PROMOCIÓN O ACTIVISMO</strong>
                                                         <div class="panel hidden-lg hidden-md hidden-sm" id="verMasResumenNodo">
                                                             <div class="hidden-lg hidden-md hidden-sm col-xm-12">
                                                                 Si no logra ver toda la tabla deslice hacia la derecha <i class="fa fa-arrow-circle-right"></i>
@@ -254,7 +254,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         </div>
                                                     </div>
 
-                                                    <div id="divTreeEstrucAlterna" style="display: none">
+                                                    <div id="divTreeEstrucAlterna" style="display: none;" class="col-xs-12 col-sm-12 col-md-12">
                                                         <div id="total_benefi_alterna"></div>
                                                         <div id="list_alternas"></div>
                                                         <div id="list_integrantes_alternas" class="tblListIntegrantesBySeccion" style="display: none;"></div>
