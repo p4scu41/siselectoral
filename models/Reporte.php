@@ -119,7 +119,8 @@ class Reporte extends \yii\db\ActiveRecord
         $omitirColumnas = [],
         $metadatos = [],
         $class = 'table table-condensed table-bordered table-hover',
-        $options = 'border="1" cellpadding="1" cellspacing="1"'
+        $options = 'border="1" cellpadding="1" cellspacing="1"',
+        $header = []
     ) {
         $htmlTable = '<table class="'.$class.'" '.$options.'><thead><tr>';
 
@@ -127,9 +128,13 @@ class Reporte extends \yii\db\ActiveRecord
             $htmlTable .= '<th class="text-center">No se encontrados datos en la búsqueda</th></tr></thead><tbody>';
         } else {
             // Encabezado
-            $primeraFila = array_shift($arrayDatos);
-            $encabezado = array_keys($primeraFila);
-            array_unshift($arrayDatos, $primeraFila);
+            if (!empty($header)) {
+                $encabezado = $header;
+            } else {
+                $primeraFila = array_shift($arrayDatos);
+                $encabezado = array_keys($primeraFila);
+                array_unshift($arrayDatos, $primeraFila);
+            }
 
             foreach ($encabezado as $columna) {
                 $htmlTable .= '<th class="text-center">'.(mb_check_encoding($columna, 'UTF-8') ?

@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 use kartik\datecontrol\DateControl;
 use kartik\widgets\Select2;
@@ -35,6 +36,7 @@ SCRIPT;
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
+        'id' => 'frmSearchPromocion'
     ]); ?>
 
     <div class="form-group">
@@ -112,8 +114,11 @@ SCRIPT;
                     ?>
             </div>
             <div class="col-md-12">
-                <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
+                <?= Html::submitButton('Buscar', ['class' => 'btn bg-darkred']) ?>
                 <?= Html::a('Limpiar', ['index'], ['class' => 'btn btn-danger']) ?>
+                <a href="#" id="btnExportPdf" data-url="<?= Url::to(['promocion/pdf'], true) ?>" class="btn btn-default">
+                    <i class="fa fa-file-pdf-o"></i> Exportar a pdf
+                </a>
             </div>
         </div>
     </div>

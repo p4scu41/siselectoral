@@ -23,8 +23,8 @@ if (PerfilUsuario::hasPermiso('7cf41ceb-f4a5-4fd8-88c6-3f991348d250', 'R')) {
         echo Html::label('Municipio'). ' &nbsp; '
         . Html::dropDownList('Municipio', $selectMunicipio,
             $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio', 'disabled'=>$readonly])
-        . ' &nbsp; <button type="button" class="btn btn-primary" id="btnVerResumen"><i class="fa fa-newspaper-o"></i> Ver resumen</button>'
-        . ' &nbsp; <button type="button" class="btn btn-primary" id="btnVerEstructura"><i class="fa fa-sitemap"></i> Ver estructura</button>';
+        . ' &nbsp; <button type="button" class="btn bg-darkred" id="btnVerResumen"><i class="fa fa-newspaper-o"></i> Ver resumen</button>'
+        . ' &nbsp; <button type="button" class="btn bg-darkred" id="btnVerEstructura"><i class="fa fa-sitemap"></i> Ver estructura</button>';
     ActiveForm::end();
 }
 ?>

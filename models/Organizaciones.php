@@ -212,6 +212,40 @@ class Organizaciones extends \yii\db\ActiveRecord
         return $count['total'];
     }
 
+    /**
+     * Obtiene el número de integrantes promovidos de la organización
+     *
+     * @param Int $idOrganicacion
+     * @return Int Cantidad de integrantes de la organización
+     */
+    public static function getCountIntegrantesPromovidos($idOrganicacion, $idMuni, $seccion = null)
+    {
+        $sqlCount = 'SELECT
+                    COUNT([PadronGlobal].[CLAVEUNICA]) AS total
+                    FROM
+                        [IntegrantesOrganizaciones]
+                    INNER JOIN [PadronGlobal] ON
+                        [IntegrantesOrganizaciones].[IdPersonaIntegrante] = [PadronGlobal].[CLAVEUNICA]
+                    INNER JOIN [Promocion] ON
+                        [Promocion].[IdpersonaPromovida] = [IntegrantesOrganizaciones].[IdPersonaIntegrante]
+                    WHERE
+                        [IntegrantesOrganizaciones].[IdOrganizacion] = '.$idOrganicacion.' AND ';
+
+        if ($seccion!=null) {
+            if (is_array($seccion)) {
+                $sqlCount .= ' [PadronGlobal].[SECCION] IN ('.implode(',',$seccion).') AND ';
+            } else {
+                $sqlCount .= ' [PadronGlobal].[SECCION] = '.$seccion.' AND ';
+            }
+        }
+
+        $sqlCount .= ' [PadronGlobal].[MUNICIPIO] = '.$idMuni;
+
+        $count = Yii::$app->db->createCommand($sqlCount)->queryOne();
+
+        return $count['total'];
+    }
+
     public function getTotalIntegrantes()
     {
         $sqlCount = 'SELECT

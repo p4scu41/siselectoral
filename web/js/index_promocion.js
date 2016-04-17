@@ -13,4 +13,18 @@ jQuery(document).ready(function($){
         
         $('#modalOrganizaciones').modal('show');
     });
+
+
+    $('#btnExportPdf').click(function(event) {
+        $form = $('#frmSearchPromocion').clone();
+
+        $form.attr('action', $(this).data('url'));
+        $form.attr('target', '_blank');
+        $('#formExport').html($form);
+        $form.submit();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+    });
 });

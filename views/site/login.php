@@ -12,7 +12,7 @@ $this->title = 'Iniciar Sesión';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="form-box" id="login-box">
-    <div class="header">Iniciar Sesi&oacute;n</div>
+    <div class="header">&nbsp;</div>
     <div class="body bg-gray">
         <?php $form = ActiveForm::begin([
             'id' => 'login-form',
@@ -29,8 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="form-group">
             <div>
-                <button type="submit" class="btn bg-olive btn-block">Iniciar</button><br>
-                <a href="#" class="pull-right">Recuperar Contrase&ntilde;a</a>
+                <button type="submit" class="btn bg-darkred btn-block">Iniciar</button><br>
+                <a href="#" class="pull-right text-danger text-center">Recuperar Contrase&ntilde;a</a>
             </div>
         </div>
 

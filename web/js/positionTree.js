@@ -1,7 +1,7 @@
 $(document).ready(function(){
     var CookieParams = null;
     var btnAsignarPersona = $('<div class="text-center">'+
-        '<button type="button" class="btn btn-success" id="btnAsignarPersona"><i class="fa fa-user-plus"></i> Asignar persona</button>'+
+        '<button type="button" class="btn bg-darkred" id="btnAsignarPersona"><i class="fa fa-user-plus"></i> Asignar persona</button>'+
         ' &nbsp; <a href="" class="btn btn-default" id="btnEditarPersona"><i class="fa fa-edit"></i> Editar Datos</a>'+
         '</div>');
 
@@ -403,12 +403,12 @@ $(document).ready(function(){
 
             if (response.length) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
-                    '<thead><tr><th>Nombre</th><th class="text-center">Beneficiarios</th><th class="text-center">Sección</th></tr></thead><tbody>';
+                    '<thead><tr><th>Nombre</th><th class="text-center">Beneficiarios</th><th class="text-center">Promovidos</th><th class="text-center">Sección</th></tr></thead><tbody>';
 
                 for(fila in response) {
                     if (response[fila].Integrantes != 0) {
                     total_benefi_progra += parseInt(response[fila].Integrantes);
-                        $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes.format(0, 3, ',')+'</td><td class="text-center">'+
+                        $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes.format(0, 3, ',')+'</td><td class="text-center">'+response[fila].Promovidos.format(0, 3, ',')+'</td><td class="text-center">'+
                                 '<a class="btn btn-default" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'" title="Desplegar detalles">'+
                                 '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></td></tr>';
                         count++;
@@ -760,7 +760,7 @@ $(document).ready(function(){
             if (node.data.persona == '00000000-0000-0000-0000-000000000000') {
                 $tdList.eq(1).html('<a href="#" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-user"></span></a>');
             } else {
-                $tdList.eq(1).html('<a href="#" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-user"></span></a>');
+                $tdList.eq(1).html('<a href="#" class="btn bg-darkred btn-sm"><span class="glyphicon glyphicon-user"></span></a>');
             }
 
             $tdList.eq(1).delegate("a", "click", verModalNodo);

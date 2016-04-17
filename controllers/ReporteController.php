@@ -51,6 +51,7 @@ class ReporteController extends \yii\web\Controller
             'reporteHTML' => '',
             'titulo' => ''
         ];
+        $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
 
         if (Yii::$app->request->post('Municipio') || Yii::$app->request->post('tipoEleccion')) {
             if (Yii::$app->request->post('tipoReporte') == 1) { // Avance Seccional
@@ -62,7 +63,7 @@ class ReporteController extends \yii\web\Controller
                     case '1': // Presidencia Municipal
                         $nameColum = 'municipio';
                         $valueColum = Yii::$app->request->post('municipio');
-                        $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('municipio')])->one();
+                        $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
                         $titulo .= ' de '.$municipio->DescMunicipio.(Yii::$app->request->post('zona') ? ', Zona '.Yii::$app->request->post('zona') : '');
                         break;
                     case '2': // Diputación Local

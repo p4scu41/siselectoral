@@ -4,15 +4,22 @@ $(document).ready(function () {
     $('#personaPromovida').css('cursor', 'pointer');
 
     $('#personaPromovida').on('click, focus', function () {
-       $('#municipio option[value='+$('#municipio_promocion').val()+']').attr('selected', true);
-       $('#municipio').trigger('change');
-       $('#modalBuscarPersona').modal('show');
+        $('#municipio option[value='+$('#municipio_promocion').val()+']').attr('selected', true);
+        $('#municipio').trigger('change');
+
+        setTimeout(function () {
+            if ($('#seccion_promocion').val() != ''){
+                $('#seccion').find('option[value='+$('#seccion_promocion').val()+']').prop('selected', true);
+            } 
+        }, 1000)
+
+        $('#modalBuscarPersona').modal('show');
     });
 
     $('#municipio_promocion').on('change', function () {
-       $('#municipio option[value='+$(this).val()+']').attr('selected', true);
-       $('#municipio').trigger('change');
-       $('#resultValidacion').html('');
+        $('#municipio option[value='+$(this).val()+']').attr('selected', true);
+        $('#municipio').trigger('change');
+        $('#resultValidacion').html('');
 
        $.ajax({
             url: getSeccionesMuni,

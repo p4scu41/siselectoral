@@ -7,6 +7,8 @@ use app\models\Promocion;
 use app\models\PromocionSearch;
 use app\models\CMunicipio;
 use app\models\DetallePromocion;
+use app\models\Reporte;
+use kartik\mpdf\Pdf;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -26,10 +28,10 @@ class PromocionController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones', 'pdf'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones', 'pdf'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -202,5 +204,73 @@ class PromocionController extends Controller
         $result = Promocion::getOrganizaciones(Yii::$app->getRequest()->post('id'));
 
         return $result;
+    }
+
+    public function actionPdf()
+    {
+        $searchModel = new PromocionSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->setPagination(false);
+        $titulo = 'Avance de la estructura de promoción o activismo';
+        $content = '<h3 class="text-center">'.$titulo.'</h3>'.
+            Reporte::arrayToHtml(ArrayHelper::toArray($dataProvider->getModels(), [
+                'app\models\Promocion' => [
+                    /*'seccion' => function ($model) {
+                        return intval($model->seccion);
+                    },*/
+                    'IdPersonaPromueve' => function ($model) {
+                        return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto;
+                    },
+                    'IdPuesto' => function ($model) {
+                        return $model->puesto->Descripcion.' '.$model->personaPuesto->nombreCompleto;;
+                    },
+                    'IdpersonaPromovida' => function ($model) {
+                        return $model->personaPromovida->nombreCompleto;
+                    },
+                    'FechaPromocion',
+                ]
+            ]), [2,3,4], 
+            [],
+            [],
+            'table table-condensed table-bordered table-hover',
+            'border="1" cellpadding="1" cellspacing="1"',
+            ['Persona que promueve', 'Puesto en donde promueve', 'Persona Promovida', 'Fecha de Promoción']);
+        $orientation = Pdf::ORIENT_PORTRAIT;
+
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_CORE,
+            'format' => Pdf::FORMAT_LETTER ,
+            'content' => $content,
+            'filename' => $titulo.'.pdf',
+            'destination' => Pdf::DEST_DOWNLOAD,
+            'orientation' => $orientation,
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/assets/kv-mpdf-bootstrap.min.css',
+            //'cssFile' => '@web/css/kv-mpdf-bootstrap.css',
+            'cssInline' => 'body { font-size: 7px !important; line-height: 1 !important; } '.
+                'a { font-size: 6px !important; text-decoration: none; } '.
+                '.table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td { padding: 3px !important; } '.
+                '.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td { line-height: 1 !important; }',
+            'options' => [
+                'title' => $titulo,
+                'subject' => 'SIRECI - '.date("d-m-Y h:i:s A")
+            ],
+            'defaultFontSize' => 7,
+            'methods' => [
+                'SetHeader' => ['|'.$titulo.'|'],
+                'SetFooter' => ['|Pagina {PAGENO}|'],
+                'SetColumns' => [1]
+            ]
+        ]);
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        $headers = Yii::$app->response->headers;
+        $headers->add('Content-Type', 'application/pdf');
+        $headers->add('Set-Cookie', 'fileDownload=true; path=/');
+        $headers->add('Cache-Control', 'max-age=60, must-revalidate');
+
+        $pdfApi = $pdf->getApi();
+        $pdfApi->SetProtection(['print']);
+
+        return $pdf->render();
     }
 }

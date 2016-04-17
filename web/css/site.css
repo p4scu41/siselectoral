@@ -1,44 +1,44 @@
 /* skin-blue navbar */
 .skin-blue .navbar {
-    background-image: -webkit-linear-gradient(top,#B3CF95 0,#809667 100%);
-    background-image: -o-linear-gradient(top,#B3CF95 0,#809667 100%);
-    background-image: -webkit-gradient(linear,left top,left bottom,from(#B3CF95),to(#809667));
-    background-image: linear-gradient(to bottom,#B3CF95 0,#809667 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B3CF95', endColorstr='#809667', GradientType=0);
+    background-image: -webkit-linear-gradient(top,#550309 0,#8C0118 100%);
+    background-image: -o-linear-gradient(top,#550309 0,#8C0118 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#550309),to(#8C0118));
+    background-image: linear-gradient(to bottom,#550309 0,#8C0118 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#550309', endColorstr='#8C0118', GradientType=0);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
     background-repeat: repeat-x;
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
-    background-color: #809667;
+    background-color: #8C0118;
 }
 /* skin-blue logo */
 .skin-blue .logo {
-    background-image: -webkit-linear-gradient(top,#B3CF95 0,#809667 100%);
-    background-image: -o-linear-gradient(top,#B3CF95 0,#809667 100%);
-    background-image: -webkit-gradient(linear,left top,left bottom,from(#B3CF95),to(#809667));
-    background-image: linear-gradient(to bottom,#B3CF95 0,#809667 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B3CF95', endColorstr='#809667', GradientType=0);
+    background-image: -webkit-linear-gradient(top,#550309 0,#8C0118 100%);
+    background-image: -o-linear-gradient(top,#550309 0,#8C0118 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#550309),to(#8C0118));
+    background-image: linear-gradient(to bottom,#550309 0,#8C0118 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#550309', endColorstr='#8C0118', GradientType=0);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
     background-repeat: repeat-x;
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
-    background-color: #809667;
+    background-color: #550309;
     color: #f9f9f9;
 }
 .skin-blue .logo:hover {
-    background: #00a65a;
+    background: #550309;
 }
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header {
-    background-image: -webkit-linear-gradient(top,#B3CF95 0,#809667 100%);
-    background-image: -o-linear-gradient(top,#B3CF95 0,#809667 100%);
-    background-image: -webkit-gradient(linear,left top,left bottom,from(#B3CF95),to(#809667));
-    background-image: linear-gradient(to bottom,#B3CF95 0,#809667 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#B3CF95', endColorstr='#809667', GradientType=0);
+    background-image: -webkit-linear-gradient(top,#550309 0,#8C0118 100%);
+    background-image: -o-linear-gradient(top,#550309 0,#8C0118 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#550309),to(#8C0118));
+    background-image: linear-gradient(to bottom,#550309 0,#8C0118 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#550309', endColorstr='#8C0118', GradientType=0);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
     background-repeat: repeat-x;
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 5px rgba(0,0,0,.075);
-    background-color: #B3CF95;
+    background-color: #550309;
     height: 175px;
     padding: 10px;
     text-align: center;
@@ -70,20 +70,20 @@
 .skin-blue .sidebar > .sidebar-menu > li > a:hover,
 .skin-blue .sidebar > .sidebar-menu > li.active > a {
     color: #222;
-    background: #dff0d8;
+    background: #ddd;
 }
 .skin-blue .sidebar > .sidebar-menu > li.treeview.active > a {
     color: black;
-    background-color: #E5E5E5;
+    background-color: #ddd;
 }
 .skin-blue .treeview-menu > li.active,
 .skin-blue .treeview-menu > li:hover {
-    background: #dff0d8;
+    background: #ddd;
 }
 
 .skin-blue .treeview-menu > li.active,
 .skin-blue .treeview-menu > li:hover {
-    background: #dff0d8;
+    background: #ddd;
 }
 .sidebar .sidebar-menu .treeview-menu > li > a {
     padding: 9px 5px 9px 15px;
@@ -423,14 +423,14 @@
     min-height: 200px;
 }
 a {
-  color: #297E4A;
+  color: #a94442;
 }
 a:hover,
 a:active,
 a:focus {
   outline: none;
   text-decoration: none;
-  color: #21B65C;
+  color: #550309;
 }
 .pagination > .active > a,
 .pagination > .active > span,
@@ -441,7 +441,7 @@ a:focus {
   background-color: #297E4A;
 }
 
-// Doble scroll http://jsfiddle.net/TBnqw/2096/
+/* Doble scroll http://jsfiddle.net/TBnqw/2096/ */
 .responsive_table {
     width: 100%;
     display: inline-table;
@@ -462,15 +462,17 @@ body > .header .logo span {
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
     color: #555;
     cursor: default;
-    background-color: #dff0d8;
-    border: 1px solid #d6e9c6;
+    background-color: #f2dede;
+    border: 1px solid #ddd;
     border-bottom-color: transparent;
+    color: #a94442;
 }
 #titulo_puesto {
     font-weight: bold;
 }
 .nav-tabs > li > a {
     background-color: #f3f4f5;
+    color: #a94442;
 }
 #nombreCompleto {
     font-weight: bold;
@@ -666,19 +668,24 @@ modalPerson #tablaResumen tr:last-child {
         width: 80px;
         font-size: 12px;
         line-height: 1.2;
-        border: solid 1px lightgray;
+        border: solid 1px lightgray !important;
     }
     #list_coordinados {
         max-height: initial;
     }
     #list_coordinados .imgPerson {
-        height: 80px;
-        width: 70px;
+        height: 75px;
+        width: 65px;
     }
-    .imgPerson {
+    #list_coordinados .col-xs-3 {
+        width: 20%;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+    /*.imgPerson {
         height: 140px;
         width: 120px;
-    }
+    }*/
     #frmPersonDetails {
         line-height: 0.7;
         padding-top: 10px;
@@ -698,9 +705,14 @@ modalPerson #tablaResumen tr:last-child {
         font-size: 12px;
     }
     .thumbnail {
-        min-height: 170px;
+        min-height: 155px;
         padding: 0px;
         padding-top: 2px;
+        font-size: 10px;
+        margin-bottom: 10px;
+    }
+    .thumbnail .caption {
+        padding: 9px 4px;
     }
     #list_programas {
         max-height: initial;
@@ -712,4 +724,28 @@ modalPerson #tablaResumen tr:last-child {
 }
 .zc-license {
     display: none;
+}
+.form-box .header {
+    background-image: url(../img/inicio.jpg);
+    background-color: #650511;
+    /*background-repeat: no-repeat;*/
+}
+.bg-darkred,
+.bg-darkred:hover,
+.bg-darkred:active,
+.bg-darkred:focus {
+    background-color: #650511;
+    color: white;
+}
+.box.box-success {
+    border-top-color: #f56954 !important;
+}
+.panel-success > .panel-heading {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+.btn.btn-success {
+    background-color: #650511 !important;
+    border-color: #8C0118 !important;
 }

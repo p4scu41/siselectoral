@@ -334,12 +334,14 @@ class SiteController extends Controller
         foreach ($programas as $key => $value) {
             $prog = Organizaciones::find()->where(['IdOrganizacion'=>$value['IdOrganizacion']])->one();
             $count = 0;
+            $promovidos = 0;
             if ($prog) {
                 //$count = Organizaciones::getCountIntegrantes($value['IdOrganizacion'], $idMuni, $seccion);
                 $count = Organizaciones::getCountIntegrantes($value['IdOrganizacion'], $idMuni, $secciones);
+                $promovidos = Organizaciones::getCountIntegrantesPromovidos($value['IdOrganizacion'], $idMuni, $secciones);
             }
 
-            $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count]);
+            $programas[$key] = array_merge($programas[$key], ['Integrantes'=>$count, 'Promovidos' => $promovidos]);
         }
 
         return json_encode($programas);

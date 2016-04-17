@@ -16,6 +16,10 @@ use Yii;
  */
 class Promocion extends \yii\db\ActiveRecord
 {
+    public $zona;
+    public $seccion;
+    public $NOMBRE_COMPLETO;
+
     /**
      * @inheritdoc
      */
@@ -75,6 +79,8 @@ class Promocion extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'zona' => 'Zona',
+            'seccion' => 'Sección',
             'IdEstructuraMov' => 'Id Estructura Mov',
             'IdpersonaPromovida' => 'Persona Promovida',
             'IdPuesto' => 'Puesto en donde promueve',

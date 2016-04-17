@@ -65,9 +65,9 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
         <div id="tablaPrueba"></div>
 
         <!-- general form elements -->
-        <div class="box box-primary box-success">
+        <div class="box box-primary box-danger">
 
-            <div class="panel panel-success" id="panelBuscar">
+            <div class="panel panel-danger" id="panelBuscar">
                 <div class="panel-heading">
                     <h3 class="panel-title">Buscar</h3>
                 </div>
@@ -97,11 +97,11 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                             <input type="hidden" name="IdPuesto" id="puesto" value="0">
                         </div>
                         <div id="listJefeSeccion"></div>
-                        <p><button type="button" class="btn btn-success" id="btnBuscar">
+                        <p><button type="button" class="btn bg-darkred" id="btnBuscar">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Buscar
                             </button> &nbsp;
                             <?php if (PerfilUsuario::isAdminGeneral() || PerfilUsuario::isAdminMunicipal()) { ?>
-                            <button type="button" class="btn btn-success" id="btnResumen" href="#modalResumen" data-toggle="modal" style="display: none;">
+                            <button type="button" class="btn bg-darkred" id="btnResumen" href="#modalResumen" data-toggle="modal" style="display: none;">
                                 <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Status
                             </button> &nbsp;
                             <?php } ?>
@@ -179,7 +179,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                     <!-- Tab panes -->
                                     <div class="tab-content">
                                         <div role="tabpanel" class="tab-pane active" id="tabPuesto">
-                                            <div class="panel panel-success">
+                                            <div class="panel panel-danger">
                                                 <div class="panel-body">
                                                     <div id="indicadoresPuesto" class="text-center col-xs-12 col-sm-12 col-md-12">
                                                         <span class="btn btn-app btn-sm btn-primary" id="meta_proyec">
@@ -280,7 +280,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                             </div>
                                         </div>
                                         <div role="tabpanel" class="tab-pane" id="tabPersona">
-                                            <div class="panel panel-success">
+                                            <div class="panel panel-danger">
                                                 <div class="panel-body">
                                                     <form class="form-horizontal" method="POST" id="frmPersonDetails"></form>
                                                     <div id="divAsignarPersona"></div>
