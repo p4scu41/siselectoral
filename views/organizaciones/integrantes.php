@@ -23,7 +23,6 @@ $this->registerJs('var getOtrasOrgs = "'.Url::toRoute('organizaciones/getotrasor
 
     <div>
         <?php $numIntegrantes = count($integrantes); ?>
-        Total de integrantes: <strong><?= $numIntegrantes ?></strong> &nbsp;
         <a href="#" class="btn btn-success" id="btnAddIntegrante">Agregar nuevo integrante</a> &nbsp; 
         <a href="<?= Url::toRoute('organizaciones/index', true) ?>" class="btn btn-default">Regresar al listado de organizaciones</a>
         <br><br>
@@ -51,11 +50,19 @@ $this->registerJs('var getOtrasOrgs = "'.Url::toRoute('organizaciones/getotrasor
             <i class="fa fa-file-excel-o"></i> Exportar a Excel
         </a>-->
     </div>
-    <h3 class="text-center" id="titulo">Integrantes de la organización</h3>
+    <h3 class="text-center" id="titulo">Organización <?= $model->Nombre ?></h3>
+    <div class="text-center">
+        <div class="btn btn-default">
+            Total: Beneficiarios: <strong> <?= number_format($numIntegrantes) ?> </strong>, 
+                Promovidos: <strong><?= number_format($model->getTotalIntegrantesPromovidos()) ?></strong>, 
+                Duplicados: <strong><?= number_format($totalDuplicados) ?></strong>
+        </div>
+    </div>
     <div class="table-responsive" id="resultTblIntegrantes">
         <table id="tblIntegrantes" class="table table-condensed table-bordered table-hover">
             <thead>
                 <tr>
+                    <th class="text-center">No</th>
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Sección</th>
                     <th class="text-center">Colonia</th>
@@ -68,6 +75,7 @@ $this->registerJs('var getOtrasOrgs = "'.Url::toRoute('organizaciones/getotrasor
                 <?PHP
                 for ($count=0; $count<$numIntegrantes; $count++) {
                     echo '<tr>'
+                        . '<td>' . ($count + 1) . '</td>'
                         . '<td>' . $integrantes[$count]['NombreCompleto'] . '</td>'
                         . '<td class="seccion"> ' . (int)$integrantes[$count]['SECCION'] . ' </td>'
                         . '<td>' . $integrantes[$count]['Domicilio'] . '</td>'

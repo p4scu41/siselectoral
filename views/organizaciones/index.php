@@ -20,7 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="text-center">
         <div class="btn btn-default">
-            Total de Organizaciones: <strong><?= $countOrganizaciones?></strong>, Total de Beneficiarios: <strong> <?= $totalBeneficiarios ?> </strong>
+            Total: Organizaciones: <strong> <?= $countOrganizaciones?> </strong>, 
+                Beneficiarios: <strong> <?= number_format($totalBeneficiarios) ?> </strong>, 
+                Promovidos: <strong><?= number_format($totalPromovidos) ?></strong>, 
+                Duplicados: <strong><?= number_format($totalDuplicados) ?></strong>
         </div>
     </div>
 
@@ -66,10 +69,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'header' => 'No. de Beneficiarios',
+                'header' => 'Beneficiarios',
                 'format' => 'html',
                 'value' => function ($model, $key, $index, $column) {
                     return '<div class="text-center">'.$model->getTotalIntegrantes().'</div>';
+                }
+            ],
+            [
+                'header' => 'Promovidos',
+                'format' => 'html',
+                'value' => function ($model, $key, $index, $column) {
+                    return '<div class="text-center">'.$model->getTotalIntegrantesPromovidos().'</div>';
                 }
             ],
             [

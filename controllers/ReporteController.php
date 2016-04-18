@@ -123,6 +123,9 @@ class ReporteController extends \yii\web\Controller
         $orientation = Pdf::ORIENT_PORTRAIT;
         $colums = (Yii::$app->request->post('columns') ? Yii::$app->request->post('columns') : 1);
 
+        $content = str_replace('<i class="fa fa-check-square-o fa-lg"></i>', 'Si', $content);
+        $content = str_replace('<i class="fa fa-square-o fa-lg"></i>', 'No', $content);
+
         if (strpos($titulo, 'Estructura Municipal') !== false) {
             $orientation = Pdf::ORIENT_LANDSCAPE;
         }
@@ -160,8 +163,8 @@ class ReporteController extends \yii\web\Controller
 
         $pdfApi = $pdf->getApi();
         $pdfApi->SetProtection(['print']);
-        $pdfApi->SetWatermarkText('FV', 0.08);
-        $pdfApi->showWatermarkText = true;
+        //$pdfApi->SetWatermarkText('FV', 0.08);
+        //$pdfApi->showWatermarkText = true;
 
         return $pdf->render();
     }

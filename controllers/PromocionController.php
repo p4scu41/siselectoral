@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Promocion;
+use app\models\PadronGlobal;
 use app\models\PromocionSearch;
 use app\models\CMunicipio;
 use app\models\DetallePromocion;
@@ -208,19 +209,23 @@ class PromocionController extends Controller
 
     public function actionPdf()
     {
+        $IdPersonaPromueve = Yii::$app->request->get('PromocionSearch')['IdPersonaPromueve'];
+        $personaPromueve = $IdPersonaPromueve ? PadronGlobal::findOne(['CLAVEUNICA'=>$IdPersonaPromueve]) : null;
         $searchModel = new PromocionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->setPagination(false);
-        $titulo = 'Avance de la estructura de promoción o activismo';
-        $content = '<h3 class="text-center">'.$titulo.'</h3>'.
-            Reporte::arrayToHtml(ArrayHelper::toArray($dataProvider->getModels(), [
+        $nombrePersonaPromueve = !empty($personaPromueve) ? ' de '.$personaPromueve->nombreCompleto : '';
+        $titulo = 'Avance de la estructura de promoción '.$nombrePersonaPromueve;
+        $cont = 1;
+        $content = Reporte::arrayToHtml(ArrayHelper::toArray($dataProvider->getModels(), [
                 'app\models\Promocion' => [
-                    /*'seccion' => function ($model) {
+                    'no',
+                    'seccion' => function ($model) {
                         return intval($model->seccion);
-                    },*/
-                    'IdPersonaPromueve' => function ($model) {
-                        return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto;
                     },
+                    /*'IdPersonaPromueve' => function ($model) {
+                        return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto;
+                    },*/
                     'IdPuesto' => function ($model) {
                         return $model->puesto->Descripcion.' '.$model->personaPuesto->nombreCompleto;;
                     },
@@ -229,12 +234,12 @@ class PromocionController extends Controller
                     },
                     'FechaPromocion',
                 ]
-            ]), [2,3,4], 
+            ]), [1, 2,3,4], 
             [],
             [],
             'table table-condensed table-bordered table-hover',
             'border="1" cellpadding="1" cellspacing="1"',
-            ['Persona que promueve', 'Puesto en donde promueve', 'Persona Promovida', 'Fecha de Promoción']);
+            ['No.', 'Sección', 'Puesto en donde promueve', 'Persona Promovida', 'Fecha de Promoción']);
         $orientation = Pdf::ORIENT_PORTRAIT;
 
         $pdf = new Pdf([

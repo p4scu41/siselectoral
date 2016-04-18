@@ -364,12 +364,12 @@ $(document).ready(function(){
 
             if (response.length) {
                 $tabla = '<table border="1" cellpadding="1" cellspacing="1" class="table table-condensed table-striped table-bordered table-hover">'+
-                    '<thead><tr><th>Nombre</th><th class="text-center">Beneficiarios</th><th class="text-center">Sección</th></tr></thead><tbody>';
+                    '<thead><tr><th>Nombre</th><th class="text-center">Beneficiarios</th><th class="text-center">Promovidos</th><th class="text-center">Sección</th></tr></thead><tbody>';
 
                 for(fila in response) {
                     if (response[fila].Integrantes != 0) {
                     total_benefi_progra += parseInt(response[fila].Integrantes);
-                        $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes.format(0, 3, ',')+'</td><td class="text-center">'+
+                        $tabla += '<tr><td>'+response[fila].Nombre+'</td><td class="text-center">'+response[fila].Integrantes.format(0, 3, ',')+'</td><td class="text-center">'+response[fila].Promovidos.format(0, 3, ',')+'</td><td class="text-center">'+
                                 '<a class="btn btn-default" data-idnodo="'+node.key+'" data-idorg="'+response[fila].IdOrganizacion+'" data-nombreorg="'+response[fila].Nombre+'" title="Desplegar detalles">'+
                                 '<span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></td></tr>';
                         count++;
@@ -506,7 +506,7 @@ $(document).ready(function(){
                 for(fila in response) {
                     $tabla += '<tr><td>'+response[fila].NOMBRE+'</td><td>'+response[fila].SEXO+'</td>'+
                         '<td>'+response[fila].FECHANACIMIENTO+'</td><td>'+response[fila].COLONIA+'</td>'+
-                        '<td class="text-center"><i class="fa fa-'+(response[fila].IdPErsonaPromueve == null ? '' : 'check-')+'square-o"></i></td>'+
+                        '<td class="text-center"><i class="fa fa-'+(response[fila].IdPersonaPromueve == null ? '' : 'check-')+'square-o"></i></td>'+
                         '<td class="text-center"><a href="#" class="btnDetallesBeneficiario" data-id="'+response[fila].CLAVEUNICA+'"><i class="fa fa-newspaper-o"></i></a></td></tr>';
                 }
                 $tabla += '</tbody></table>';

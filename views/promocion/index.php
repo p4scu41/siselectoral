@@ -28,13 +28,13 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
             ['class' => 'yii\grid\SerialColumn'],
 
             //'IdEstructuraMov',
-            /*'zona',
+            //'zona',
             [
                 'attribute' => 'seccion',
                 'value' => function ($model, $key, $index, $column) {
                     return intval($model->seccion);
                 }
-            ],*/
+            ],
             [
                 'attribute' => 'IdPersonaPromueve',
                 'value' => function ($model, $key, $index, $column) {

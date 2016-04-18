@@ -138,10 +138,16 @@ class Organizaciones extends \yii\db\ActiveRecord
             $sqlIntegrantes .= ' AND [PadronGlobal].[MUNICIPIO] = '.Yii::$app->user->identity->persona->MUNICIPIO.' ';
         }
 
+        // Se aplica OUTER APPLY sobre DetallePromocion porque existen personas que han sido
+        // promovidos mas de una vez, por eso al hacer el cruze con la tabla promovidos
+        // algunos registros se duplican, por eso se aplica el TOP 1
         $sqlIntegrantes .= ' INNER JOIN [CMunicipio] ON
                     [PadronGlobal].[MUNICIPIO] = [CMunicipio].[IdMunicipio]
-            LEFT JOIN [DetallePromocion] ON
-                [DetallePromocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+            OUTER APPLY (
+                SELECT TOP 1 *
+                FROM [DetallePromocion]
+                WHERE [DetallePromocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+            ) DetallePromocion
             LEFT JOIN [PadronGlobal] AS [personaPromueve] ON
                 [personaPromueve].[CLAVEUNICA] = [DetallePromocion].[IdPErsonaPromueve]
             WHERE
@@ -252,6 +258,22 @@ class Organizaciones extends \yii\db\ActiveRecord
                 COUNT(*) AS total
             FROM
                 [IntegrantesOrganizaciones]
+            WHERE
+                [IdOrganizacion] = '.$this->IdOrganizacion;
+
+        $count = Yii::$app->db->createCommand($sqlCount)->queryOne();
+
+        return $count['total'];
+    }
+
+    public function getTotalIntegrantesPromovidos()
+    {
+        $sqlCount = 'SELECT
+                COUNT(*) AS total
+            FROM
+                [IntegrantesOrganizaciones]
+            INNER JOIN Promocion ON
+                IntegrantesOrganizaciones.IdPersonaIntegrante = Promocion.IdpersonaPromovida
             WHERE
                 [IdOrganizacion] = '.$this->IdOrganizacion;
 
@@ -461,5 +483,23 @@ class Organizaciones extends \yii\db\ActiveRecord
         $organizaciones = Yii::$app->db->createCommand($sql)->queryAll();
 
         return $organizaciones;
+    }
+
+    public static function countDuplicados($idOrg = null)
+    {
+        $sql = 'SELECT 
+            COUNT (*) AS duplicados 
+        FROM ( 
+            SELECT count([IdPersonaIntegrante]) AS integrante 
+            FROM [SIRECIDB].[dbo].[IntegrantesOrganizaciones] '.
+            ($idOrg != null ? ' WHERE IdOrganizacion = '.$idOrg : ' ').
+            'GROUP BY IdPersonaIntegrante 
+        ) AS resultado 
+        WHERE 
+            integrante > 1';
+
+        $count = Yii::$app->db->createCommand($sql)->queryOne();
+
+        return $count['duplicados'];
     }
 }

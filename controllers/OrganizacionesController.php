@@ -55,12 +55,14 @@ class OrganizacionesController extends Controller
         $dependencias = Organizaciones::getDependencias();
 
         $totalBeneficiarios = 0;
+        $totalPromovidos = 0;
         $dataProvider->setPagination(false);
         $allOrganizaciones = $dataProvider->getModels();
         $countOrganizaciones = 0;
 
         foreach ($allOrganizaciones as $org) {
             $totalBeneficiarios += $org->getTotalIntegrantes();
+            $totalPromovidos += $org->getTotalIntegrantesPromovidos();
             $countOrganizaciones++;
         }
 
@@ -72,7 +74,9 @@ class OrganizacionesController extends Controller
             'municipios' => $dependencias['municipios'],
             'tipos' => $dependencias['tipos'],
             'totalBeneficiarios' => $totalBeneficiarios,
+            'totalPromovidos' => $totalPromovidos,
             'countOrganizaciones' => $countOrganizaciones,
+            'totalDuplicados' => Organizaciones::countDuplicados(),
         ]);
     }
 
@@ -219,6 +223,7 @@ class OrganizacionesController extends Controller
                 'integrantes' => $integrantes,
                 'secciones' => $secciones,
                 'municipios' => $dependencias['municipios'],
+                'totalDuplicados' => Organizaciones::countDuplicados($idOrg),
             ]);
     }
 

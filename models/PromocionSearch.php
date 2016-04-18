@@ -43,8 +43,9 @@ class PromocionSearch extends Promocion
     public function search($params)
     {
         $query = Promocion::find()->select([
+            'ROW_NUMBER() OVER (ORDER BY CSeccion.NumSector ASC, FechaPromocion DESC) AS no',
             '{{Promocion}}.*',
-            'PadronGlobal.SECCION AS seccion',
+            'CSeccion.NumSector AS seccion',
             '(PadronGlobal.NOMBRE + \' \' + PadronGlobal.APELLIDO_PATERNO + \' \' + PadronGlobal.APELLIDO_MATERNO) AS NOMBRE_COMPLETO',
         ]);
         
@@ -63,6 +64,9 @@ class PromocionSearch extends Promocion
         $query->innerJoin('PadronGlobal', '[PadronGlobal].[CLAVEUNICA] = [Promocion].[IdpersonaPromovida] AND '
             . '[PadronGlobal].[MUNICIPIO] IN ('.implode(',',array_keys(MunicipiosUsuario::getMunicipios())).')');
 
+        $query->innerJoin('CSeccion', '[CSeccion].[IdSector] = [PadronGlobal].[SECCION] AND '
+            . '[CSeccion].[IdMunicipio] = [PadronGlobal].[MUNICIPIO]');
+
         if (empty($params)) {
             $query->where('0=1');
             return $dataProvider;
@@ -73,7 +77,7 @@ class PromocionSearch extends Promocion
         $query->andFilterWhere(['like', 'IdPersonaPromueve', $this->IdPersonaPromueve])
             ->andFilterWhere(['like', 'IdPersonaPuesto', $this->IdPersonaPuesto]);
 
-        $query->orderBy('PadronGlobal.SECCION ASC, FechaPromocion DESC');
+        $query->orderBy('CSeccion.NumSector ASC, FechaPromocion DESC');
 
         return $dataProvider;
     }

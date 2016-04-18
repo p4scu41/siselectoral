@@ -16,6 +16,7 @@ use Yii;
  */
 class Promocion extends \yii\db\ActiveRecord
 {
+    public $no;
     public $zona;
     public $seccion;
     public $NOMBRE_COMPLETO;

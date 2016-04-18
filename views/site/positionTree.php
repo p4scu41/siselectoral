@@ -193,7 +193,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         </span>
                                                         <span class="btn btn-app btn-sm btn-success" id="meta">
                                                             <span class="line-height-1 bigger-170" id="no_meta"></span>
-                                                            <br><span>Meta Estruc.</span>
+                                                            <br><span>Meta Est.</span>
                                                         </span>
                                                         <!--<span class="btn btn-app btn-sm btn-primary" id="vacantes">
                                                             <span class="line-height-1 bigger-170" id="no_vacantes"> 4 </span>
@@ -208,7 +208,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         <span class="btn btn-app btn-sm btn-pink" id="btn_programas">
                                                             <span class="line-height-1 bigger-170" id="no_programas"> 0 </span>
                                                             <br>
-                                                            <span class=""> Programas </span>
+                                                            <span class=""> Est. Política </span>
                                                         </span>
                                                         <!--<span class="btn btn-app btn-sm btn-grey">
                                                             <span class="line-height-1 bigger-170"> 0 </span>
@@ -218,7 +218,7 @@ $this->registerCssFile(Url::to('@web/css/fancytree/skin-win8-n/ui.fancytree.css'
                                                         <span class="btn btn-app btn-sm btn-info" id="infoEstrucAlterna">
                                                             <span class="line-height-1 bigger-170"> 0 </span>
                                                             <br>
-                                                            <span> Estruc. Alterna </span>
+                                                            <span> Est. Alterna </span>
                                                         </span>
                                                     </div><br>
 
