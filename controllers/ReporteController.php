@@ -106,7 +106,10 @@ class ReporteController extends \yii\web\Controller
                     $nodo = array_pop($nodos);
                 }
 
-                $respuesta['titulo'] = 'Listado Promotores - Promovidos';
+
+                $nodoEstructura = DetalleEstructuraMovilizacion::findOne(['IdNodoEstructuraMov' => $nodo]);
+                $descNodo = $nodoEstructura ? $nodoEstructura->Descripcion : '';
+                $respuesta['titulo'] = 'Listado Promotores - Promovidos de '.$descNodo;
                 $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('tipo_promovido'), Yii::$app->request->post('incluir_domicilio'));
             }
 
