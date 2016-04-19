@@ -6,7 +6,7 @@ use yii\helpers\Url;
 use app\helpers\PerfilUsuario;
 
 /* @var $this yii\web\View */
-$this->title = 'Estrategia Municipal';
+$this->title = 'Estrategia Política';
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->registerJs('urlTree="'.Url::toRoute('site/gettree', true).'";', \yii\web\View::POS_HEAD);

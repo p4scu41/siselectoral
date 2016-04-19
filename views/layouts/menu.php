@@ -15,7 +15,7 @@ use app\helpers\PerfilUsuario;
     <?PHP if (PerfilUsuario::hasPermiso('7cf41ceb-f4a5-4fd8-88c6-3f991348d250', 'R')) { ?>
     <li class="<?= Yii::$app->request->getPathInfo() == 'site/positiontree' ? 'active' : '' ?>">
         <a href="<?= Url::to(['site/positiontree']) ?>">
-            <i class="fa fa-sitemap"></i> <span>Estrategia Municipal</span>
+            <i class="fa fa-sitemap"></i> <span>Estrategia Política</span>
         </a>
     </li>
     <?PHP } ?>

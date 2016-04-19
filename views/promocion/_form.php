@@ -74,11 +74,11 @@ SCRIPT;
     <div class="form-group">
         <label>Persona que promueve</label>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <?PHP
                 echo Select2::widget([
                     'options' => [
-                        'placeholder' => 'Puesto que promueve (CM, CZ, CS, JS, CP, PR)',
+                        'placeholder' => 'Puesto que promueve (CR, CAM, CZM, SZM, COS, AUS, ACT, CZ)',
                         'id' => 'desc_puesto_promueve'
                     ],
                     'name' => 'desc_puesto_persona_promueve',
@@ -114,7 +114,7 @@ SCRIPT;
                 ]);
                 ?>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <?PHP
                 echo Select2::widget([
                     'options' => [
