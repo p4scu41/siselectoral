@@ -78,7 +78,7 @@ SCRIPT;
                 <?PHP
                 echo Select2::widget([
                     'options' => [
-                        'placeholder' => 'Puesto que promueve (CR, CAM, CZM, SZM, COS, AUS, ACT, CZ)',
+                        'placeholder' => 'Puesto que promueve (CAM, CZM, SZM, COS, AUS, ACT)',
                         'id' => 'desc_puesto_promueve'
                     ],
                     'name' => 'desc_puesto_persona_promueve',
@@ -208,7 +208,7 @@ SCRIPT;
                 <?PHP
                 echo Select2::widget([
                     'options' => [
-                        'placeholder' => 'Nombre del Promotor', //Persona asignada al Puesto en donde promueve
+                        'placeholder' => 'Nombre del Activista', //Persona asignada al Puesto en donde promueve
                         'id' => 'persona_puesto'
                     ],
                     'name' => 'persona_puesto',
@@ -222,7 +222,7 @@ SCRIPT;
                             'data' => new JsExpression('function(term,page) { '
                                 . 'return { nombre:term, '
                                 . 'municipio: $("#municipio_promocion").val(), '
-                                . 'puesto: "PR", '
+                                . 'puesto: "ACT", '
                                 . 'seccion: $("#seccion_promocion").val() }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),

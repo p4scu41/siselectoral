@@ -636,7 +636,8 @@ class Reporte extends \yii\db\ActiveRecord
                     .'"Tel. Casa": "'.$promotor['TELCASA'].'", '
                     .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'",' : '')
                     .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Colonia'])).'",'
-                    .'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
+                    //.'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
+                    .'"Promovido Por": "'.($promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve']))).'",'
                     .'"Organización": "'.$organizaciones.'" },';
             }
 
