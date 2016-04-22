@@ -426,7 +426,7 @@ class Reporte extends \yii\db\ActiveRecord
         if (count($promotores) == 0) {
             return json_decode('[]');
         } else {
-            $reporte = '[';
+            $reporte = '[{}';
 
             foreach ($promotores as $promotor) {
                 $reporte .= '{ "Nombre": "<b>'.$promotor['descripcionPuesto'].' '.str_replace('\\', 'Ñ', $promotor['nombrePersonaPromueve']).' - Sección '.$promotor['NumSector'].'</b>",'
@@ -592,7 +592,7 @@ class Reporte extends \yii\db\ActiveRecord
         if (count($promocion) == 0) {
             return json_decode('[]');
         } else {
-            $reporte = '[';
+            $reporte = '[{"total": "'.count($promocion).'"}, ';
             $anteriorPromotor = '';
             $countPromovidos = 0;
 
@@ -647,6 +647,44 @@ class Reporte extends \yii\db\ActiveRecord
         //echo (str_replace('},]', '}]', $reporte)).'**************************************';
 
         return json_decode(str_replace('},]', '}]', $reporte), true);
+    }
+
+    /**
+     * Obtiene el listad de promovidos duplicados
+     * 
+     * @param  int $idMuni
+     * @param  int $idNodo
+     * @return array
+     */
+    public static function promovidosDuplicados($idMuni, $idNodo = null)
+    {
+        $sqlDuplicados = 'SELECT 
+                *, COUNT(IdpersonaPromovida) AS duplicados 
+            FROM
+                (SELECT
+                    Promocion.IdpersonaPromovida
+                    ,(tblPersonaPromovida.NOMBRE+\' \'+tblPersonaPromovida.APELLIDO_PATERNO+\'  \'+
+                        tblPersonaPromovida.APELLIDO_MATERNO) AS personaPromovida
+                FROM 
+                    Promocion
+                INNER JOIN DetalleEstructuraMovilizacion ON
+                    DetalleEstructuraMovilizacion.IdNodoEstructuraMov = Promocion.IdPuesto AND
+                    DetalleEstructuraMovilizacion.Municipio = '.$idMuni.' 
+                    '.($idNodo != null ? 'AND (DetalleEstructuraMovilizacion.Dependencias LIKE \'%|'.$idNodo.'|%\'
+                    OR DetalleEstructuraMovilizacion.IdNodoEstructuraMov = '.$idNodo.')' : '').'
+                INNER JOIN PadronGlobal AS tblPersonaPromovida ON
+                    Promocion.IdpersonaPromovida = tblPersonaPromovida.CLAVEUNICA
+                INNER JOIN CSeccion ON
+                    DetalleEstructuraMovilizacion.IdSector = CSeccion.IdSector AND
+                    DetalleEstructuraMovilizacion.Municipio = CSeccion.IdMunicipio
+                INNER JOIN DetalleEstructuraMovilizacion AS tblEstructuraPromotor ON
+                    tblEstructuraPromotor.IdPersonaPuesto = Promocion.IdPersonaPromueve
+                ) AS promovidos
+            GROUP BY 
+                IdpersonaPromovida, personaPromovida
+            HAVING COUNT(IdpersonaPromovida) > 1';
+
+        return Yii::$app->db->createCommand($sqlDuplicados)->queryAll();
     }
 
     /**

@@ -78,6 +78,7 @@ $(document).ready(function(){
         tabla = '<table class="table table-condensed table-bordered table-hover" border="1" cellpadding="1" cellspacing="1">';
         content = content.replace(new RegExp('<tr><td> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td><td> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td></tr>', 'g'), '</tbody></table><pagebreak />'+tabla+thead);
         content = content.replace(new RegExp('<tr><td> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td><td> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td><td class="text-center"> &nbsp; </td></tr>', 'g'), '</tbody></table><pagebreak />'+tabla+thead);
+        content = content.replace(new RegExp('btn ', 'g'), '');
 
         if ($(this).hasClass('btnExportExcel')) {
             content = $('#reporteContainer table').table2CSV({delivery: 'value'});
@@ -178,6 +179,24 @@ $(document).ready(function(){
                 $('#loadIndicator').hide();
                 $('.opcionesExportar').show();
                 $('#div_loading').fadeOut('slow');
+            }
+        });
+    });
+
+    $('#tabla_reporte').on('click', '.btnPromovidosDuplicados', function(event) {
+        event.preventDefault();
+
+        $('#div_loading').show();
+
+        $.ajax({
+            type: 'POST',
+            url: urlPromovidosDuplicados,
+            data: $('#formBuscar').serialize()+'&tipoReporte=3',
+            dataType: 'json',
+            success: function(result) {
+                $('#div_loading').fadeOut('slow');
+                $('#modalPromovidosDuplicados .modal-body').html(result.reporteHTML);
+                $('#modalPromovidosDuplicados').modal('show');
             }
         });
     });

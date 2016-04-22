@@ -22,8 +22,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="btn btn-default">
             Total: Organizaciones: <strong> <?= $countOrganizaciones?> </strong>, 
                 Beneficiarios: <strong> <?= number_format($totalBeneficiarios) ?> </strong>, 
+                Duplicados: <strong><?= number_format($totalDuplicados) ?></strong>, 
+                Efectivos: <strong><?= number_format($totalBeneficiarios - $totalDuplicados) ?></strong>, 
                 Promovidos: <strong><?= number_format($totalPromovidos) ?></strong>, 
-                Duplicados: <strong><?= number_format($totalDuplicados) ?></strong>
         </div>
     </div>
 

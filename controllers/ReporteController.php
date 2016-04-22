@@ -20,10 +20,10 @@ class ReporteController extends \yii\web\Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'generar', 'pdf', 'excel', 'promovidos'],
+                'only' => ['index', 'generar', 'pdf', 'excel', 'promovidos', 'promovidosduplicados'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'generar', 'pdf', 'excel', 'promovidos'],
+                        'actions' => ['index', 'generar', 'pdf', 'excel', 'promovidos', 'promovidosduplicados'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -52,6 +52,7 @@ class ReporteController extends \yii\web\Controller
             'titulo' => ''
         ];
         $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
+        $extra = '';
 
         if (Yii::$app->request->post('Municipio') || Yii::$app->request->post('tipoEleccion')) {
             if (Yii::$app->request->post('tipoReporte') == 1) { // Avance Seccional
@@ -106,15 +107,41 @@ class ReporteController extends \yii\web\Controller
                     $nodo = array_pop($nodos);
                 }
 
-
                 $nodoEstructura = DetalleEstructuraMovilizacion::findOne(['IdNodoEstructuraMov' => $nodo]);
                 $descNodo = $nodoEstructura ? $nodoEstructura->Descripcion : '';
-                $respuesta['titulo'] = 'Listado Promotores - Promovidos de '.$descNodo;
+                $respuesta['titulo'] = 'Listado Promotores - Promovidos de '.$descNodo . '('.date('d-m-Y').')';
                 $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('tipo_promovido'), Yii::$app->request->post('incluir_domicilio'));
+                $totalPromovios = $reporteDatos ? array_shift($reporteDatos) : ['total' => 0];
+                $duplicados = Reporte::promovidosDuplicados(Yii::$app->request->post('Municipio'), $nodo);
+                $extra = '<div class="text-center">
+                            <div class="btn btn-default btnPromovidosDuplicados">'.
+                                'Total: Promovidos: '.$totalPromovios['total'].', '.
+                                'Duplicados: '.count($duplicados).
+                            '</div>'.
+                        '</div>';
             }
 
-            $respuesta['reporteHTML'] = Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
+            $respuesta['reporteHTML'] = $extra.Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
         }
+
+        return json_encode($respuesta);
+    }
+
+    public function actionPromovidosduplicados() 
+    {
+        $respuesta = [
+            'reporteHTML' => '',
+            'titulo' => 'Promovidos Duplicados'
+        ];
+
+        $nodos = Yii::$app->request->post('IdPuestoDepende') ? array_filter(Yii::$app->request->post('IdPuestoDepende')) : [];
+        $nodo = null;
+        if (count($nodos)) {
+            $nodo = array_pop($nodos);
+        }
+
+        $duplicados = Reporte::promovidosDuplicados(Yii::$app->request->post('Municipio'), $nodo);
+        $respuesta['reporteHTML'] = $extra.Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
 
         return json_encode($respuesta);
     }

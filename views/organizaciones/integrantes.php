@@ -54,8 +54,9 @@ $this->registerJs('var getOtrasOrgs = "'.Url::toRoute('organizaciones/getotrasor
     <div class="text-center">
         <div class="btn btn-default">
             Total: Beneficiarios: <strong> <?= number_format($numIntegrantes) ?> </strong>, 
+                Duplicados: <strong><?= number_format($totalDuplicados) ?></strong>, 
+                Efectivos: <strong><?= number_format($numIntegrantes - $totalDuplicados) ?></strong>, 
                 Promovidos: <strong><?= number_format($model->getTotalIntegrantesPromovidos()) ?></strong>, 
-                Duplicados: <strong><?= number_format($totalDuplicados) ?></strong>
         </div>
     </div>
     <div class="table-responsive" id="resultTblIntegrantes">

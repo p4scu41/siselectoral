@@ -13,6 +13,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
 $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlReporte="'.Url::toRoute('reporte/generar', true).'";', \yii\web\View::POS_HEAD);
+$this->registerJs('urlPromovidosDuplicados="'.Url::toRoute('reporte/promovidosduplicados', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlResumen="'.Url::toRoute('site/getresumen', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('getSeccionesMuni="'.Url::toRoute('seccion/getjsmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
@@ -104,6 +105,23 @@ echo '</div>';
     <!--<a href="#" data-url="<?= Url::to(['reporte/excel'], true) ?>" class="btn btn-default btnExportExcel">
         <i class="fa fa-file-excel-o"></i> Exportar a Excel
     </a>-->
+</div>
+
+<div class="modal fade" id="modalPromovidosDuplicados">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Promovidos Duplicados</h4>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="formExport"></div>
