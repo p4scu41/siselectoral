@@ -29,10 +29,10 @@ class PromocionController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones', 'pdf'],
+                'only' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones', 'pdf', 'findactivistaspromocion', 'findotrospromocion'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones', 'pdf'],
+                        'actions' => ['index', 'view', 'create', 'update', 'delete', 'getlistnodos', 'getorganizaciones', 'pdf', 'findactivistaspromocion', 'findotrospromocion'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -277,5 +277,19 @@ class PromocionController extends Controller
         $pdfApi->SetProtection(['print']);
 
         return $pdf->render();
+    }
+
+    public function actionFindactivistaspromocion()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return Promocion::findActivistasPromocion(Yii::$app->getRequest()->post('nombre'), Yii::$app->getRequest()->post('id'), Yii::$app->getRequest()->post('personaPromueve'));
+    }
+
+    public function actionFindotrospromocion()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return Promocion::findOtrosPromocion(Yii::$app->getRequest()->post('id'));
     }
 }

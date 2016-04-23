@@ -383,4 +383,45 @@ class Promocion extends \yii\db\ActiveRecord
         }
     }
 
+    public static function findActivistasPromocion($nombre, $id=false, $personaPromueve = false)
+    {
+        $sql = 'SELECT 
+                DISTINCT([Promocion].['.($personaPromueve ? 'IdPersonaPromueve' : 'IdPersonaPuesto').'])
+                ,[PadronGlobal].[CLAVEUNICA] AS id
+                ,[DetalleEstructuraMovilizacion].[Descripcion]
+                ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto
+            FROM 
+                [Promocion]
+            LEFT JOIN [PadronGlobal] ON
+                [PadronGlobal].[CLAVEUNICA] = [Promocion].['.($personaPromueve ? 'IdPersonaPromueve' : 'IdPersonaPuesto').']
+            LEFT JOIN [DetalleEstructuraMovilizacion] ON
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA]
+            WHERE 
+                ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) LIKE \'%'.$nombre.'%\''.
+                ($id ? ' AND [PadronGlobal].[CLAVEUNICA]=\''.$id.'\'' : '').'
+            ORDER BY NombreCompleto';
+
+            return Yii::$app->db->createCommand($sql)->queryAll();
+    }
+
+    public static function findOtrosPromocion($id)
+    {
+        $sql = 'SELECT 
+                [PadronGlobal].[CLAVEUNICA] AS id
+                ,[DetalleEstructuraMovilizacion].[Descripcion]
+                ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto
+            FROM 
+                [Promocion]
+            LEFT JOIN [PadronGlobal] ON
+                [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdPersonaPuesto]
+            LEFT JOIN [DetalleEstructuraMovilizacion] ON
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA]
+            WHERE 
+                [Promocion].[IdPersonaPromueve]=\''.$id.'\' AND
+                [Promocion].[IdPersonaPuesto] != [Promocion].[IdPersonaPromueve]
+            ORDER BY NombreCompleto';
+
+            return Yii::$app->db->createCommand($sql)->queryAll();
+    }
+
 }

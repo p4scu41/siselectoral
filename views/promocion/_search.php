@@ -11,7 +11,8 @@ use yii\web\JsExpression;
 /* @var $model app\models\PromocionSearch */
 /* @var $form yii\widgets\ActiveForm */
 
-$url = \yii\helpers\Url::to(['promocion/getlistnodos']);
+$url = \yii\helpers\Url::to(['promocion/findactivistaspromocion']);
+$this->registerJs('urlOtrosPromocion = "'.Url::toRoute('promocion/findotrospromocion').'";', \yii\web\View::POS_HEAD);
 
 // Script to initialize the selection based on the value of the select2 element
 $initScript = <<< SCRIPT
@@ -22,10 +23,12 @@ function (element, callback) {
         id = null;
     }
 
+    var persona_promueve = \$(element).attr("id") == "persona_promueve" ? true : false;
+
     \$.ajax("{$url}", {
         dataType: "json",
         method: "POST",
-        data: { id: id }
+        data: { id: id, personaPromueve: persona_promueve }
     }).done(function(data) { if (data.length > 0) { callback(data[0]); } });
 }
 SCRIPT;
@@ -41,7 +44,7 @@ SCRIPT;
 
     <div class="form-group">
         <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <?PHP
                 echo $form->field($model, 'IdPersonaPromueve')->widget(Select2::classname(), [
                     'options' => [
@@ -57,24 +60,25 @@ SCRIPT;
                             'type' => 'POST',
                             'dataType' => 'json',
                             'data' => new JsExpression('function(term,page) { '
-                                . 'return { nombre:term }; '
+                                . 'return { nombre:term, personaPromueve: true }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],
                         'initSelection' => new JsExpression($initScript),
-                        'formatResult' => new JsExpression('function (result) { return result.Descripcion + " " + result.NombreCompleto; }'),
+                        'formatResult' => new JsExpression('function (result) { return (result.Descripcion ? result.Descripcion : "") + " " + result.NombreCompleto; }'),
                         'formatSelection' => new JsExpression('function (selection) { '
-                            . 'return selection.Descripcion + " " + selection.NombreCompleto; '
+                            . 'cargaOtrasPromociones(selection.id); '
+                            . 'return (selection.Descripcion ? selection.Descripcion : "") + " " + selection.NombreCompleto; '
                             . '}')
                     ]
                 ]);
                 ?>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-6">
             <?PHP
             echo $form->field($model, 'IdPersonaPuesto')->widget(Select2::classname(), [
                 'options' => [
-                    'placeholder' => 'Nombre del promotor asignado',
+                    'placeholder' => 'Puesto en donde promueve',
                     'id' => 'persona_puesto'
                 ],
                 'name' => 'persona_puesto',
@@ -91,16 +95,18 @@ SCRIPT;
                         'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                     ],
                     'initSelection' => new JsExpression($initScript),
-                    'formatResult' => new JsExpression('function (result) { return result.Descripcion + " " + result.NombreCompleto; }'),
+                    'formatResult' => new JsExpression('function (result) { return (result.Descripcion ? result.Descripcion : "") + " " + result.NombreCompleto; }'),
                     'formatSelection' => new JsExpression('function (selection) { '
                         . ' $("#promocionsearch-idpersonapuesto").val(selection.CLAVEUNICA); '
-                        . 'return selection.Descripcion + " " + selection.NombreCompleto; '
+                        . 'return (selection.Descripcion ? selection.Descripcion : "") + " " + selection.NombreCompleto; '
                         . '}')
                 ],
             ]);
             ?>
             </div>
-            <div class="col-md-2">
+        </div>
+        <div class="row">
+            <div class="col-md-6">
             <?= $form->field($model, 'FechaPromocion')->widget(DateControl::classname(), [
                             'displayFormat' => 'dd/MM/yyyy',
                             'saveFormat' => 'yyyy-MM-dd',
@@ -112,6 +118,13 @@ SCRIPT;
                             ],
                         ]);
                     ?>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Puestos promovidos: </label>
+                    <select name="puestos_promovidos" id="puestos_promovidos" class="form-control">
+                    </select>
+                </div>
             </div>
             <div class="col-md-12">
                 <?= Html::submitButton('Buscar', ['class' => 'btn bg-darkred']) ?>

@@ -154,8 +154,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             }
 
             $count = $this->find()->where($where)->count();
-
-            $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' - '.$row->Descripcion.' '.
+            $persona = $row->personaPuesto;
+            $tree .= '{"key": "'.$row->IdNodoEstructuraMov.'", "title": "'.$puesto->Descripcion.' '.($persona ? ' - '.str_replace('\\', 'Ñ',$persona->nombreCompleto) : '').' '.
                         ($count > 0 ? '['.$count.']' : '').'", '.
                         '"data": { "IdPuesto": "'.$puesto->IdPuesto.'", "puesto": "'.$puesto->Descripcion.'", "persona": "'.$row->IdPersonaPuesto.'", "iconclass": ';
 
@@ -205,7 +205,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
                 $nombrePromotor = '';
                 // Para promotor y coordinador de promotores agregar el nombre
-                if (($puesto->IdPuesto == 7 || $puesto->IdPuesto == 6) && $row->IdPersonaPuesto!='00000000-0000-0000-0000-000000000000') {
+                //if (($puesto->IdPuesto == 7 || $puesto->IdPuesto == 6) && $row->IdPersonaPuesto!='00000000-0000-0000-0000-000000000000') {
+                if ($row->IdPersonaPuesto!='00000000-0000-0000-0000-000000000000') {
                     $persona = PadronGlobal::find()->where('[CLAVEUNICA] = \''.$row->IdPersonaPuesto.'\'')->one();
                     if ($persona != null) {
                         $nombrePromotor = $persona->getNombreCompleto();
@@ -248,7 +249,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 ->count();
 
         if ($count > 0) {
-            $tree .= '{"key": "'.$nodo->IdNodoEstructuraMov.'", "title": "'.$nodo->Descripcion.'",'.
+            $persona = $row->personaPuesto;
+            $tree .= '{"key": "'.$nodo->IdNodoEstructuraMov.'", "title": "'.$nodo->Descripcion.' '.($persona ? ' - '.str_replace('\\', 'Ñ',$persona->nombreCompleto) : '').'",'.
                      ' "folder": true, "lazy": true, "children": [';
             $child = $this->find()->where(['IdPuestoDepende' => $idNodo])->all();
 
@@ -1175,5 +1177,10 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $result = Yii::$app->db->createCommand($sql)->queryOne();
 
         return $result;
+    }
+
+    public function getPersonaPuesto()
+    {
+        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaPuesto']);
     }
 }
