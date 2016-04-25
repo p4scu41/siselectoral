@@ -4,6 +4,7 @@ use yii\helpers\Url;
 $this->registerJsFile(Url::to('@web/js/selectPuestos.js'));
 $this->registerJsFile(Url::to('@web/js/reporte.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
+$this->registerJsFile(Url::to('@web/js/plugins/moment.min.js'));
 $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlReporte="'.Url::toRoute('reporte/generar', true).'";', \yii\web\View::POS_HEAD);

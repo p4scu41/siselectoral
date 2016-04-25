@@ -903,4 +903,33 @@ class Reporte extends \yii\db\ActiveRecord
 
         return json_decode(str_replace('},]', '}]', $reporte), true);
     }*/
+
+    public static function auditoria($idMuni, $idNodo, $puestos)
+    {
+        $datos = Reporte::estructura($idMuni, $idNodo, $puestos, true);
+        $reporte = [];
+
+        foreach ($datos as $fila) {
+            $objAuditoria = AuditoriaEstructura::findOne(['IdNodoEstructuraMov' => $fila['id']]);
+            if ($objAuditoria) {
+                $fecha = new \DateTime($objAuditoria['Fecha']);
+            }
+
+            $rowAuditoria = [
+                'Puesto' => $fila['Puesto'],
+                'Descripción' => $fila['Descripción'],
+                'Nombre' => $fila['Nombre'],
+                'Estructura' => $objAuditoria ? ($objAuditoria['Puesto'] ? 'Si' : 'No') : '',
+                'Persona' => $objAuditoria ? ($objAuditoria['Persona'] ? 'Si' : 'No') : '',
+                'Sección' => $objAuditoria ? ($objAuditoria['Seccion'] ? 'Si' : 'No') : '',
+                'Celular' => $objAuditoria ? ($objAuditoria['Celular'] ? 'Si' : 'No') : '',
+                'Observaciones' => $objAuditoria ? $objAuditoria['Observaciones'] : '',
+                'Fecha' => $objAuditoria ? $fecha->format('d-m-Y h:i a') : '',
+            ];
+
+            $reporte[] = $rowAuditoria;
+        }
+
+        return $reporte;
+    }
 }

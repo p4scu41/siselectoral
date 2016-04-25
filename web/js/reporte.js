@@ -5,7 +5,13 @@ $(document).ready(function(){
             '<input type="hidden" name="_csrf" value="'+$('[name=_csrf]').val()+'"></form>');
 
     $('.btnExportPdf, .btnExportExcel').click(function(event){
-        content = $('#reporteContainer').html();
+        $content = $('#reporteContainer').clone();
+
+        if ($content.find('tr').find('td .btn').length != 0) {
+            $content.find('tr th:last').remove();
+            $content.find('tr').find('td:last').remove();
+        }
+        content = $content.prop('outerHTML');
 
         if ($(this).hasClass('btnExportExcel')) {
             content = $('#reporteContainer table').table2CSV({delivery: 'value'});
@@ -62,7 +68,7 @@ $(document).ready(function(){
         }
     });
 
-    $('#btnGenerarReporte, #btnReporteSeccional').click(function(event) {
+    $('#btnGenerarReporte, #btnReporteSeccional, #btnReporteAuditoria').click(function(event) {
         $('.alert').remove();
 
         if ($('#municipio').val() == '') {
@@ -79,6 +85,8 @@ $(document).ready(function(){
             tipoReporte = 1;
         } else if ($(this).prop('id') == 'btnGenerarReporte') {
             tipoReporte = 2;
+        } else if ($(this).prop('id') == 'btnReporteAuditoria') {
+            tipoReporte = 4;
         }
 
         $('#loadIndicator').show();
@@ -177,7 +185,8 @@ $(document).ready(function(){
             $('#formAuditoria [name=IdNodoEstructuraMov]').val(id);
 
             if (response.auditoria != null) {
-                $('#label_fecha').html(response.auditoria.Fecha);
+                var fecha = moment(response.auditoria.Fecha).format('DD-MM-YYYY hh:mm a');
+                $('#label_fecha').html(fecha);
 
                 if (response.auditoria.Puesto == 1) {
                     $('#formAuditoria [name=Puesto]').iCheck('check');

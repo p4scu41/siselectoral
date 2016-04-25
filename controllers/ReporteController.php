@@ -66,7 +66,7 @@ class ReporteController extends \yii\web\Controller
                     case '1': // Presidencia Municipal
                         $nameColum = 'municipio';
                         $valueColum = Yii::$app->request->post('municipio');
-                        $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
+                        $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('municipio')])->one();
                         $titulo .= ' de '.$municipio->DescMunicipio.(Yii::$app->request->post('zona') ? ', Zona '.Yii::$app->request->post('zona') : '');
                         break;
                     case '2': // Diputación Local
@@ -85,7 +85,7 @@ class ReporteController extends \yii\web\Controller
                 $respuesta['datos'] = $nameColum.'-'.$valueColum;
 
                 $reporteDatos = Reporte::avanceSeccional($nameColum, $valueColum, Yii::$app->request->post('zona'));
-                $omitirCentrado = array(2);
+                $omitirCentrado = array(2, 6);
                 $respuesta['titulo'] = $titulo;
             } elseif (Yii::$app->request->post('tipoReporte') == 2) { // Estructura
                 $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
@@ -113,8 +113,8 @@ class ReporteController extends \yii\web\Controller
                 }
 
                 $nodoEstructura = DetalleEstructuraMovilizacion::findOne(['IdNodoEstructuraMov' => $nodo]);
-                $descNodo = $nodoEstructura ? $nodoEstructura->Descripcion : '';
-                $respuesta['titulo'] = 'Listado Promotores - Promovidos de '.$descNodo . '('.date('d-m-Y').')';
+                $descNodo = $nodoEstructura ? $nodoEstructura->Descripcion : $municipio->DescMunicipio ;
+                $respuesta['titulo'] = 'Listado Promotores - Promovidos de '.$descNodo . ' ('.date('d-m-Y').')';
                 $reporteDatos = Reporte::promovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('tipo_promovido'), Yii::$app->request->post('incluir_domicilio'));
                 $totalPromovios = $reporteDatos ? array_shift($reporteDatos) : ['total' => 0];
                 $duplicados = Reporte::promovidosDuplicados(Yii::$app->request->post('Municipio'), $nodo);
@@ -124,7 +124,21 @@ class ReporteController extends \yii\web\Controller
                                 'Duplicados: '.count($duplicados).
                             '</div>'.
                         '</div>';
-            }
+            } elseif (Yii::$app->request->post('tipoReporte') == 4) { // Auditoria
+                $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
+                $nodo = null;
+                if (count($nodos)) {
+                    $nodo = array_pop($nodos);
+                }
+
+                $reporteDatos = Reporte::auditoria(
+                    Yii::$app->request->post('Municipio'),
+                    $nodo,
+                    Yii::$app->request->post('puestos')
+                );
+                $omitirCentrado = array(1, 2, 3, 8);
+                $respuesta['titulo'] = 'Estructura Municipal de '.$municipio->DescMunicipio. ' auditada';
+            } 
 
             $respuesta['reporteHTML'] = $extra.Reporte::arrayToHtml($reporteDatos, $omitirCentrado, $omitirColumnas, $metadatos);
         }
