@@ -73,6 +73,7 @@ $(document).ready(function(){
         }
 
         tipoReporte = '';
+        $this = $(this);
 
         if ($(this).prop('id') == 'btnReporteSeccional') {
             tipoReporte = 1;
@@ -93,9 +94,16 @@ $(document).ready(function(){
                 $('#tabla_reporte').html(result.reporteHTML);
 
                 $('#tabla_reporte tr td:nth-child(3)').css('cursor', 'pointer');
+                // Agrega el evento clic en el nombre de la persona asignada al puesto
                 $('#tabla_reporte tr td:nth-child(3)').on('click', function(event){
                     console.log($(this).text());
                 });
+
+                if ($this.prop('id') == 'btnGenerarReporte') {
+                    // Agrega la columna de auditoria
+                    $('#tabla_reporte thead tr').append('<th class="text-center">Auditoría</th>');
+                    $('#tabla_reporte tbody tr').append('<td class="text-center"><a class="btn btn-default btnAuditar" title="Auditar Datos"><span class="glyphicon glyphicon glyphicon-th-list" aria-hidden="true"></span></a></td>');
+                }
 
                 $('#loadIndicator').hide();
                 $('.opcionesExportar').show();
@@ -141,4 +149,82 @@ $(document).ready(function(){
         });
     });
 
+    $('#reporteContainer').on('click', '.btnAuditar', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        id = $(this).closest('tr').data('id');
+        $this = $(this);
+        iconCache = $(this).html();
+        $(this).html('<i class="fa fa-spinner fa-pulse"></i>');
+
+        $.ajax({
+            url: urlGetAuditoria,
+            dataType: "json",
+            data: {_csrf: $('[name=_csrf]').val() ,id: id},
+            type: "POST",
+        }).done(function(response){
+            $this.html(iconCache);
+            $('#formAuditoria').trigger('reset');
+            $('#label_fecha').html('');
+            $('#formAuditoria input[type="checkbox"]').each(function(){ this.checked = false; });
+            $('#formAuditoria .icheckbox_minimal').removeClass('checked');
+            $('#formAuditoria [name=Puesto]').iCheck('uncheck');
+            $('#formAuditoria [name=Persona]').iCheck('uncheck');
+            $('#formAuditoria [name=Seccion]').iCheck('uncheck');
+            $('#formAuditoria [name=Celular]').iCheck('uncheck');
+
+            $('#formAuditoria [name=IdNodoEstructuraMov]').val(id);
+
+            if (response.auditoria != null) {
+                $('#label_fecha').html(response.auditoria.Fecha);
+
+                if (response.auditoria.Puesto == 1) {
+                    $('#formAuditoria [name=Puesto]').iCheck('check');
+                }
+
+                if (response.auditoria.Persona == 1) {
+                    $('#formAuditoria [name=Persona]').iCheck('check');
+                }
+
+                if (response.auditoria.Seccion == 1) {
+                    $('#formAuditoria [name=Seccion]').iCheck('check');
+                }
+
+                if (response.auditoria.Celular == 1) {
+                    $('#formAuditoria [name=Celular]').iCheck('check');
+                }
+
+                $('#formAuditoria [name=Observaciones]').val(response.auditoria.Observaciones);
+            }
+
+            $('#label_puesto').html($('tr[data-id="'+id+'"]').find('td:nth-child(1)').text());
+            $('#label_descripcion').html($('tr[data-id="'+id+'"]').find('td:nth-child(2)').text());
+            $('#label_nombre').html($('tr[data-id="'+id+'"]').find('td:nth-child(3)').text());
+            $('#label_seccion').html($('tr[data-id="'+id+'"]').find('td:nth-child(4)').text());
+            $('#label_celular').html($('tr[data-id="'+id+'"]').find('td:nth-child(10)').text());
+
+            $('#modalAuditar').modal('show');
+        });
+    });
+
+    $('#modalAuditar').on('click', '.btn-success', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        $this = $(this);
+        iconCache = $(this).html();
+        $(this).html('<i class="fa fa-spinner fa-pulse"></i>');
+
+        $.ajax({
+            url: urlSetAuditoria,
+            dataType: "json",
+            data: $('#formAuditoria').serialize(),
+            type: "POST",
+        }).done(function(response){
+            $this.html(iconCache);
+            
+            $('#modalAuditar').modal('hide');
+        });
+    });
 });

@@ -53,6 +53,8 @@ class ReporteController extends \yii\web\Controller
         ];
         $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('Municipio')])->one();
         $extra = '';
+        $metadatos = [];
+        $omitirColumnas = [];
 
         if (Yii::$app->request->post('Municipio') || Yii::$app->request->post('tipoEleccion')) {
             if (Yii::$app->request->post('tipoReporte') == 1) { // Avance Seccional
@@ -95,9 +97,12 @@ class ReporteController extends \yii\web\Controller
                 $reporteDatos = Reporte::estructura(
                     Yii::$app->request->post('Municipio'),
                     $nodo,
-                    Yii::$app->request->post('puestos')
+                    Yii::$app->request->post('puestos'),
+                    true
                 );
                 $omitirCentrado = array(1, 2, 3, 9, 10, 11);
+                $metadatos = ['id'];
+                $omitirColumnas = [1];
                 $respuesta['titulo'] = 'Estructura Municipal de '.$municipio->DescMunicipio;
             } elseif (Yii::$app->request->post('tipoReporte') == 3) { // Promovidos
                 $omitirCentrado = array(1, 4);
@@ -121,7 +126,7 @@ class ReporteController extends \yii\web\Controller
                         '</div>';
             }
 
-            $respuesta['reporteHTML'] = $extra.Reporte::arrayToHtml($reporteDatos, $omitirCentrado);
+            $respuesta['reporteHTML'] = $extra.Reporte::arrayToHtml($reporteDatos, $omitirCentrado, $omitirColumnas, $metadatos);
         }
 
         return json_encode($respuesta);

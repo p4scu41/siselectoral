@@ -136,26 +136,40 @@ class Reporte extends \yii\db\ActiveRecord
                 array_unshift($arrayDatos, $primeraFila);
             }
 
+            $j = 1;
             foreach ($encabezado as $columna) {
-                $htmlTable .= '<th class="text-center">'.(mb_check_encoding($columna, 'UTF-8') ?
+                if (!in_array($j, $omitirColumnas)) {
+                    $htmlTable .= '<th class="text-center">'.(mb_check_encoding($columna, 'UTF-8') ?
                                     $columna : utf8_encode($columna)).'</th>';
+                }
+                $j++;
             }
 
             $htmlTable .= '</tr></thead><tbody>';
 
             // Cuerpo
             foreach ($arrayDatos as $fila) {
-                $htmlTable .= '<tr>';
+                $htmlTable .= '<tr ';
+                    if (count($metadatos)) {
+                        foreach ($metadatos as $columMetadato) {
+                            if (isset($fila[$columMetadato])) {
+                                $htmlTable .= ' data-'.$columMetadato.'="'.$fila[$columMetadato].'" ';
+                            }
+                        }
+                    }
+                $htmlTable .= '>';
                 $i = 1;
                 foreach ($fila as $columna) {
-                    if (count($omitirCentrado)) {
-                        if (in_array($i, $omitirCentrado)) {
-                            $htmlTable .= '<td>'.$columna.'</td>';
+                    if (!in_array($i, $omitirColumnas)) {
+                        if (count($omitirCentrado)) {
+                            if (in_array($i, $omitirCentrado)) {
+                                $htmlTable .= '<td>'.$columna.'</td>';
+                            } else {
+                                $htmlTable .= '<td class="text-center">'.$columna.'</td>';
+                            }
                         } else {
                             $htmlTable .= '<td class="text-center">'.$columna.'</td>';
                         }
-                    } else {
-                        $htmlTable .= '<td class="text-center">'.$columna.'</td>';
                     }
                     $i++;
                 }
@@ -174,7 +188,7 @@ class Reporte extends \yii\db\ActiveRecord
      * @param type $idNodo
      * @return type
      */
-    public static function nodoEstructuraJSON($idNodo, $puestos, $espacios = '')
+    public static function nodoEstructuraJSON($idNodo, $puestos, $espacios = '', $includeID = false)
     {
         $agregarEspacios = $espacios;
         $sqlNodo = 'SELECT
@@ -287,7 +301,8 @@ class Reporte extends \yii\db\ActiveRecord
 
         $agregarEspacios .= $espacios;
 
-        $estructura .= '{ "Puesto": "'.$agregarEspacios.$nodo['DescripcionPuesto'].'", '
+        $estructura .= '{ '.($includeID ? '"id": "'.$nodo['IdNodoEstructuraMov'].'", ' : '').'
+                        "Puesto": "'.$agregarEspacios.$nodo['DescripcionPuesto'].'", '
                         .'"Descripción": "'.$nodo['DescripcionNodo'].'",'
                         .'"Nombre": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $nodo['Responsable'])).'",'
                         .'"Sección": "'.$nodo['Seccion'].'",'
@@ -315,7 +330,7 @@ class Reporte extends \yii\db\ActiveRecord
 
         if (count($child) > 0) {
             foreach ($child as $row) {
-                $estructura .= self::nodoEstructuraJSON($row['IdNodoEstructuraMov'], $puestos, $agregarEspacios);
+                $estructura .= self::nodoEstructuraJSON($row['IdNodoEstructuraMov'], $puestos, $agregarEspacios, $includeID);
             }
         }
 
@@ -330,7 +345,7 @@ class Reporte extends \yii\db\ActiveRecord
      * @param Array Int $puestos
      * @return JSON
      */
-    public static function estructura($idMuni, $idNodo = null, $puestos = [])
+    public static function estructura($idMuni, $idNodo = null, $puestos = [], $includeID = false)
     {
         $nodos = '';
         if ($idNodo == null) {
@@ -359,7 +374,7 @@ class Reporte extends \yii\db\ActiveRecord
 
         if (count($nodos)) {
             foreach ($nodos as $nodo) {
-                $estructura .= self::nodoEstructuraJSON($nodo['IdNodoEstructuraMov'], $puestos, '&nbsp');
+                $estructura .= self::nodoEstructuraJSON($nodo['IdNodoEstructuraMov'], $puestos, '&nbsp', $includeID);
             }
         }
 
