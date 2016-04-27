@@ -687,7 +687,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $tablaResumen = Yii::$app->db->createCommand($sqlResumenNodo)->queryAll();
 
         if (count($tablaResumen) > 0) {
-            $metaPromovidosPromotor = static::getMetaByPromotor($idNodo);
+            $metaPromovidosPromotor = static::getMetaByPromotor($idNodo, $nodo['IdPuesto'] == 7);
             $cantidadPromovidosPromotor = static::getCountPromovidos($idNodo);
             $avancePromovidos = 0;
 
@@ -789,12 +789,12 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param INT $idNodoPadre
      * @return INT Meta para la estructura dependiente del nodoPadre
      */
-    public static function getMetaByPromotor($idNodoPadre)
+    public static function getMetaByPromotor($idNodoPadre, $includeNodo = false)
     {
         $sql = "SELECT SUM([Meta]) AS MetaByPromotor
             FROM [DetalleEstructuraMovilizacion]
-            WHERE ([IdPuesto] = 7 AND [Dependencias] LIKE '%|".$idNodoPadre."|%') OR
-                [IdNodoEstructuraMov] = ".$idNodoPadre;
+            WHERE ([IdPuesto] = 7 AND [Dependencias] LIKE '%|".$idNodoPadre."|%') "
+                .($includeNodo ? "OR [IdNodoEstructuraMov] = ".$idNodoPadre : ""); // Revisar el calculo de meta de promoción
 
         $meta = Yii::$app->db->createCommand($sql)->queryOne();
 

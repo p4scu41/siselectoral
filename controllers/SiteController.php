@@ -293,7 +293,7 @@ class SiteController extends Controller
 
     public function actionGetmetabypromotor($id)
     {
-        $meta = DetalleEstructuraMovilizacion::getMetaByPromotor($id);
+        $meta = DetalleEstructuraMovilizacion::getMetaByPromotor($id, true);
 
         return $meta;
     }
@@ -305,7 +305,7 @@ class SiteController extends Controller
         if ($puesto <= 5 || $puesto==8) {
             $meta = DetalleEstructuraMovilizacion::getMetaBySeccion($id);
         } else {
-            $meta = DetalleEstructuraMovilizacion::getMetaByPromotor($id);
+            $meta = DetalleEstructuraMovilizacion::getMetaByPromotor($id, true);
         }
 
         return $meta;

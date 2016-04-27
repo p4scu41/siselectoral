@@ -142,7 +142,7 @@ class PadronController extends Controller
             if ($estructura->IdPuesto <= 5) {
                 $no_meta_proyec = DetalleEstructuraMovilizacion::getMetaBySeccion($estructura->IdNodoEstructuraMov);
             } else {
-                $no_meta_proyec = DetalleEstructuraMovilizacion::getMetaByPromotor($estructura->IdNodoEstructuraMov);
+                $no_meta_proyec = DetalleEstructuraMovilizacion::getMetaByPromotor($estructura->IdNodoEstructuraMov, $estructura->IdPuesto == 7);
             }
 
             $no_meta_promocion = DetalleEstructuraMovilizacion::getAvanceMeta($estructura->IdNodoEstructuraMov);
