@@ -16,7 +16,7 @@ class Reporte extends \yii\db\ActiveRecord
      * @param Int $idMuni
      * @return Array
      */
-    public static function avanceSeccional($nameColumn, $valueColumn, $zona)
+    public static function avanceSeccional($nameColumn, $valueColumn, $zona, $muni = null)
     {
         /*$sql = 'SELECT
             [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
@@ -62,6 +62,7 @@ class Reporte extends \yii\db\ActiveRecord
             WHERE [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|\'+CAST(arbolEstructura.[IdNodoEstructuraMov] AS VARCHAR)+\'|%\' OR
             [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = arbolEstructura.[IdNodoEstructuraMov])
             ) AS Avance
+            ,\'\' as Duplicados
             ,[PadronGlobal].[TELMOVIL] AS \'Tel Móvil\'
             ,[PadronGlobal].[DOMICILIO]+\' \'+[PadronGlobal].[COLONIA] AS \'Domicilio\'
         FROM
@@ -82,8 +83,19 @@ class Reporte extends \yii\db\ActiveRecord
         $result = Yii::$app->db->createCommand($sql)->queryAll();
         $sumaMeta = 0;
         $sumaAvance = 0;
+        $sumaDuplicados = 0;
 
-        foreach ($result as $fila) {
+        foreach ($result as &$fila) {
+            $duplicados = 0;
+            $nodo = DetalleEstructuraMovilizacion::findOne(['Descripcion' => 'CZ' . str_pad($zona, 2, '0', STR_PAD_LEFT)]);
+
+            if ($nodo) {
+                $duplicados = count(Reporte::promovidosDuplicados($muni, $nodo->IdNodoEstructuraMov));
+            }
+
+            $sumaDuplicados +=  $duplicados;
+            $fila['Duplicados'] = $duplicados;
+
             $sumaMeta += $fila['Meta'];
             $sumaAvance += $fila['Avance'];
         }
@@ -94,6 +106,7 @@ class Reporte extends \yii\db\ActiveRecord
                 'Responsable' => 'TOTAL',
                 'Meta' => number_format($sumaMeta),
                 'Avance' => number_format($sumaAvance),
+                'Duplicados' => $sumaDuplicados,
                 'Tel Móvil' => '',
                 'Domicilio' => ''
             ]);

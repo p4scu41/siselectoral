@@ -1183,4 +1183,14 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaPuesto']);
     }
+
+    public static function getCoordinadorZona($zona)
+    {
+        $nodo = DetalleEstructuraMovilizacion::findOne(['Descripcion' => 'CZ' . str_pad($zona, 2, '0', STR_PAD_LEFT)]);
+
+        if ($nodo) {
+            return $nodo->personaPuesto;
+        }
+    }
+
 }

@@ -67,25 +67,34 @@ class ReporteController extends \yii\web\Controller
                         $nameColum = 'municipio';
                         $valueColum = Yii::$app->request->post('municipio');
                         $municipio = CMunicipio::find()->where(['IdMunicipio' => Yii::$app->request->post('municipio')])->one();
-                        $titulo .= ' de '.$municipio->DescMunicipio.(Yii::$app->request->post('zona') ? ', Zona '.Yii::$app->request->post('zona') : '');
+                        $titulo .= ' de '.$municipio->DescMunicipio.(Yii::$app->request->post('zona') ? ' Zona '.Yii::$app->request->post('zona') : '');
                         break;
                     case '2': // Diputación Local
                         $nameColum = 'distrito_local';
                         $valueColum = Yii::$app->request->post('distritoLocal');
-                        $titulo .= ' del Distrito Local '.$valueColum.(Yii::$app->request->post('zona') ? ', Zona '.Yii::$app->request->post('zona') : '');
+                        $titulo .= ' del Distrito Local '.$valueColum.(Yii::$app->request->post('zona') ? ' Zona '.Yii::$app->request->post('zona') : '');
                         break;
                     case '3': // Diputación Federal
                         $nameColum = 'distrito_federal';
                         $valueColum = Yii::$app->request->post('distritoFederal');
-                        $titulo .= ' del Distrito Federal '.$valueColum.(Yii::$app->request->post('zona') ? ', Zona '.Yii::$app->request->post('zona') : '');
+                        $titulo .= ' del Distrito Federal '.$valueColum.(Yii::$app->request->post('zona') ? ' Zona '.Yii::$app->request->post('zona') : '');
                         break;
                     default:
                         return [];
                 }
                 $respuesta['datos'] = $nameColum.'-'.$valueColum;
 
-                $reporteDatos = Reporte::avanceSeccional($nameColum, $valueColum, Yii::$app->request->post('zona'));
-                $omitirCentrado = array(2, 6);
+                $reporteDatos = Reporte::avanceSeccional($nameColum, $valueColum, Yii::$app->request->post('zona'), Yii::$app->request->post('municipio'));
+                $omitirCentrado = array(2, 7);
+
+                if (Yii::$app->request->post('zona')) {
+                    $coordinador = DetalleEstructuraMovilizacion::getCoordinadorZona(Yii::$app->request->post('zona'));
+
+                    if ($coordinador) {
+                        $titulo .= ' Coordinador '.$coordinador->nombreCompleto;
+                    }
+                }
+
                 $respuesta['titulo'] = $titulo;
             } elseif (Yii::$app->request->post('tipoReporte') == 2) { // Estructura
                 $nodos = array_filter(Yii::$app->request->post('IdPuestoDepende'));
