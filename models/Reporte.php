@@ -580,6 +580,7 @@ class Reporte extends \yii\db\ActiveRecord
                 tblPersonaPromovida.APELLIDO_MATERNO) AS personaPromovida
             ,(tblPersonaPromovida.DOMICILIO+\', #\'+tblPersonaPromovida.NUM_INTERIOR) AS Domicilio
             ,(tblPersonaPromovida.COLONIA) AS Colonia
+            ,PREP_Seccion.zona
         FROM 
             Promocion
         INNER JOIN DetalleEstructuraMovilizacion ON
@@ -598,6 +599,9 @@ class Reporte extends \yii\db\ActiveRecord
             DetalleEstructuraMovilizacion.Municipio = CSeccion.IdMunicipio
         INNER JOIN DetalleEstructuraMovilizacion AS tblEstructuraPromotor ON
             tblEstructuraPromotor.IdPersonaPuesto = Promocion.IdPersonaPromueve
+        LEFT JOIN PREP_Seccion ON
+            PREP_Seccion.municipio = tblPersonaPromueve.MUNICIPIO AND
+            PREP_Seccion.seccion = CSeccion.IdSector
         ORDER BY 
             CSeccion.NumSector, personaPuesto, personaPromovida';
 
@@ -665,7 +669,7 @@ class Reporte extends \yii\db\ActiveRecord
                     .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'",' : '')
                     .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Colonia'])).'",'
                     //.'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
-                    .'"Promovido Por": "'.($promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve']))).'",'
+                    .'"Promovido Por": "'.($promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve']))).' - Z '.$promotor['zona'].' - S '.$promotor['NumSector'].'",'
                     .'"Organización": "'.$organizaciones.'" },';
             }
 

@@ -50,7 +50,13 @@ class AuditoriaestructuraController extends \yii\web\Controller
             $auditoria = new AuditoriaEstructura();
         }
 
-        $auditoria->load(['AuditoriaEstructura' => Yii::$app->request->post()]);
+        $params = Yii::$app->request->post();
+        $params['Puesto'] = $params['Puesto'] ? $params['Puesto'] : 0;
+        $params['Persona'] = $params['Persona'] ? $params['Persona'] : 0;
+        $params['Seccion'] = $params['Seccion'] ? $params['Seccion'] : 0;
+        $params['Celular'] = $params['Celular'] ? $params['Celular'] : 0;
+
+        $auditoria->load(['AuditoriaEstructura' => $params]);
         $auditoria->Fecha = date('Y-m-d H:m:s');
 
         if (!$auditoria->save()) {

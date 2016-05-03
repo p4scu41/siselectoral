@@ -273,4 +273,24 @@ class PadronGlobal extends \yii\db\ActiveRecord
         return $this->hasOne(Puestos::className(), ['IdPuesto' => 'IdPuesto'])
             ->viaTable('DetalleEstructuraMovilizacion', ['IdPersonaPuesto' => 'CLAVEUNICA']);
     }
+
+    /**
+    * 
+    */
+    public function getSeccional()
+    {
+        $query = 'SELECT NumSector FROM CSeccion WHERE IdMunicipio = '.$this->MUNICIPIO.' AND IdSector = '.$this->SECCION;
+        
+        return Yii::$app->db->createCommand($query)->queryScalar();
+    }
+
+    /**
+    * 
+    */
+    public function getZona()
+    {
+        $query = 'SELECT [zona] FROM [PREP_Seccion] WHERE [municipio] = '.$this->MUNICIPIO.' AND [seccion] = '.$this->SECCION;
+        
+        return Yii::$app->db->createCommand($query)->queryScalar();
+    }
 }

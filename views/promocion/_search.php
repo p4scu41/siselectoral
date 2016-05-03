@@ -41,11 +41,31 @@ SCRIPT;
         'method' => 'get',
         'id' => 'frmSearchPromocion'
     ]); ?>
+ 
+    <!-- <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Zonas: </label>
+                <select name="zona" id="zona" class="form-control">
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Secciones: </label>
+                <select name="seccion" id="seccion" class="form-control">
+                </select>
+            </div>
+        </div>
+    </div> -->
 
     <div class="form-group">
         <div class="row">
             <div class="col-md-6">
                 <?PHP
+                echo '<input type="hidden" name="PromocionSearch[personaPromueveZona]" value="'.($model->personaPromueve ? $model->personaPromueve->zona : '').'">';
+                echo '<input type="hidden" name="PromocionSearch[personaPromueveSeccion]" value="'.($model->personaPromueve ? $model->personaPromueve->seccional : '').'">';
+
                 echo $form->field($model, 'IdPersonaPromueve')->widget(Select2::classname(), [
                     'options' => [
                         'placeholder' => 'Nombre Persona que promueve',

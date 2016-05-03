@@ -92,7 +92,10 @@ class PromocionController extends Controller
         $municipios = MunicipiosUsuario::getMunicipios();
         $request = Yii::$app->getRequest()->post('Promocion');
 
+        //print_r(Yii::$app->getRequest()->post());
+
         if ($request) {
+            //die();
             if (!DetallePromocion::existsDetallePromocion($request['IdpersonaPromovida'], $request['IdPersonaPromueve'])) {
                 $modelDetalle = new DetallePromocion();
                 $modelDetalle->IdPErsonaPromueve = $request['IdPersonaPromueve'];
@@ -108,7 +111,8 @@ class PromocionController extends Controller
                 $log->save();
             }
 
-            if (Promocion::existsPromocion($request['IdpersonaPromovida'])) {
+            if ($existsPromocion = Promocion::existsPromocion($request['IdpersonaPromovida'])) {
+                Yii::$app->session->setFlash('existsPromocion', 'La persona "'.$existsPromocion->personaPromovida->nombreCompleto.'" ya ha sido promovido por "'.$existsPromocion->personaPromueve->nombreCompleto.'"');
                 return $this->redirect(['index']);
             }
         }
@@ -215,6 +219,8 @@ class PromocionController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->setPagination(false);
         $nombrePersonaPromueve = !empty($personaPromueve) ? ' de '.$personaPromueve->nombreCompleto : '';
+        $nombrePersonaPromueve .= Yii::$app->request->get('PromocionSearch')['personaPromueveZona'] ? ' - Z '. Yii::$app->request->get('PromocionSearch')['personaPromueveZona'] : '';
+        $nombrePersonaPromueve .= Yii::$app->request->get('PromocionSearch')['personaPromueveSeccion'] ? ' - S '. Yii::$app->request->get('PromocionSearch')['personaPromueveSeccion'] : '';
         $titulo = 'Avance de la estructura de promoción '.$nombrePersonaPromueve;
         $cont = 1;
         $content = Reporte::arrayToHtml(ArrayHelper::toArray($dataProvider->getModels(), [

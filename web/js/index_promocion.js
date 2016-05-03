@@ -32,9 +32,9 @@ jQuery(document).ready(function($){
         cargaOtrasPromociones($(this).val());
     });
 
-    $('#persona_promueve').change(function(event) {
+    /*$('#persona_promueve').change(function(event) {
         cargaOtrasPromociones($(this).val());
-    });
+    });*/
 
     $('#puestos_promovidos').change(function(event) {
         console.log($(this).val());

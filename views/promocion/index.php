@@ -19,6 +19,10 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
+    <?= 
+    (Yii::$app->session->hasFlash('existsPromocion') ? '<div class="alert alert-danger">'.Yii::$app->session->getFlash('existsPromocion').'</div>' : '')
+    ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered table-hover'],
@@ -30,15 +34,15 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
             //'IdEstructuraMov',
             //'zona',
             [
-                'attribute' => 'seccion',
+                'attribute' => 'IdPersonaPromueve',
                 'value' => function ($model, $key, $index, $column) {
-                    return intval($model->seccion);
+                    return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto. ' - Z '.$model->personaPromueve->zona.' - S '.$model->personaPromueve->seccional;
                 }
             ],
             [
-                'attribute' => 'IdPersonaPromueve',
+                'attribute' => 'seccion',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto;
+                    return intval($model->seccion);
                 }
             ],
             [

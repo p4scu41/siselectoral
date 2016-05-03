@@ -150,13 +150,15 @@ class Promocion extends \yii\db\ActiveRecord
                 [IdPuesto] = '.$puestoPromueve.' AND
                 [IdPersonaPromueve] = "'.$promueve.'" AND
                 [IdPersonaPuesto] = "'.$personaPuestoPromueve.'"';*/
-        $sql = 'SELECT COUNT(*) AS TOTAL
+        /*$sql = 'SELECT COUNT(*) AS TOTAL
                 FROM [Promocion]
                 WHERE [IdpersonaPromovida] = \''.$promovido.'\'';
 
         $result = Yii::$app->db->createCommand($sql)->queryOne();
 
-        return $result['TOTAL'];
+        return $result['TOTAL'];*/
+
+        return Promocion::findOne(['IdpersonaPromovida' => $promovido]);
     }
 
     public function getCountOrganizaciones()
