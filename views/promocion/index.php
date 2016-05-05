@@ -36,7 +36,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
             [
                 'attribute' => 'IdPersonaPromueve',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto. ' - Z '.$model->personaPromueve->zona.' - S '.$model->personaPromueve->seccional;
+                    return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto. ' - Z '.$model->zona.' - S '.$model->seccional;
                 }
             ],
             [

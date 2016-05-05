@@ -23,7 +23,7 @@ function (element, callback) {
         id = null;
     }
 
-    var persona_promueve = \$(element).attr("id") == "persona_promueve" ? true : false;
+    var persona_promueve = \$(element).attr("id") == "persona_promueve" ? 1 : 0;
 
     \$.ajax("{$url}", {
         dataType: "json",
@@ -63,8 +63,8 @@ SCRIPT;
         <div class="row">
             <div class="col-md-6">
                 <?PHP
-                echo '<input type="hidden" name="PromocionSearch[personaPromueveZona]" value="'.($model->personaPromueve ? $model->personaPromueve->zona : '').'">';
-                echo '<input type="hidden" name="PromocionSearch[personaPromueveSeccion]" value="'.($model->personaPromueve ? $model->personaPromueve->seccional : '').'">';
+                echo '<input type="hidden" name="PromocionSearch[personaPromueveZona]" value="'.($model->personaPromueve ? $model->zona : '').'">';
+                echo '<input type="hidden" name="PromocionSearch[personaPromueveSeccion]" value="'.($model->personaPromueve ? $model->seccional : '').'">';
 
                 echo $form->field($model, 'IdPersonaPromueve')->widget(Select2::classname(), [
                     'options' => [
@@ -80,7 +80,7 @@ SCRIPT;
                             'type' => 'POST',
                             'dataType' => 'json',
                             'data' => new JsExpression('function(term,page) { '
-                                . 'return { nombre:term, personaPromueve: true }; '
+                                . 'return { nombre:term, personaPromueve: 1 }; '
                                 . '}'),
                             'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                         ],
@@ -110,7 +110,7 @@ SCRIPT;
                         'type' => 'POST',
                         'dataType' => 'json',
                         'data' => new JsExpression('function(term,page) { '
-                            . 'return { nombre:term }; '
+                            . 'return { nombre:term, personaPromueve: 0 }; '
                             . '}'),
                         'results' => new JsExpression('function(data,page) { return {results:data}; }'),
                     ],

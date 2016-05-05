@@ -226,14 +226,14 @@ class PromocionController extends Controller
         $content = Reporte::arrayToHtml(ArrayHelper::toArray($dataProvider->getModels(), [
                 'app\models\Promocion' => [
                     'no',
+                    /*'IdPersonaPromueve' => function ($model) {
+                        return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto. ' - Z '.$model->zona.' - S '.$model->seccional;
+                    },*/
                     'seccion' => function ($model) {
                         return intval($model->seccion);
                     },
-                    /*'IdPersonaPromueve' => function ($model) {
-                        return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto;
-                    },*/
                     'IdPuesto' => function ($model) {
-                        return $model->puesto->Descripcion.' '.$model->personaPuesto->nombreCompleto;;
+                        return $model->puesto->Descripcion.' '.$model->personaPuesto->nombreCompleto;
                     },
                     'IdpersonaPromovida' => function ($model) {
                         return $model->personaPromovida->nombreCompleto;

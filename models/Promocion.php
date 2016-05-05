@@ -17,7 +17,7 @@ use Yii;
 class Promocion extends \yii\db\ActiveRecord
 {
     public $no;
-    public $zona;
+    //public $zona;
     public $seccion;
     public $NOMBRE_COMPLETO;
 
@@ -47,7 +47,11 @@ class Promocion extends \yii\db\ActiveRecord
      */
     public function getPersonaPromueve()
     {
-        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaPromueve']);
+        if (!empty($this->IdPersonaPromueve)) {
+            return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaPromueve']);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -63,7 +67,11 @@ class Promocion extends \yii\db\ActiveRecord
      */
     public function getPersonaPuesto()
     {
-        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaPuesto']);
+        if (!empty($this->IdPersonaPromueve)) {
+            return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdPersonaPuesto']);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -71,7 +79,11 @@ class Promocion extends \yii\db\ActiveRecord
      */
     public function getPersonaPromovida()
     {
-        return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdpersonaPromovida']);
+        if (!empty($this->IdPersonaPromueve)) {
+            return $this->hasOne(PadronGlobal::className(), ['CLAVEUNICA' => 'IdpersonaPromovida']);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -80,7 +92,7 @@ class Promocion extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'zona' => 'Zona',
+            //'zona' => 'Zona',
             'seccion' => 'Sección',
             'IdEstructuraMov' => 'Id Estructura Mov',
             'IdpersonaPromovida' => 'Persona Promovida',
@@ -424,6 +436,38 @@ class Promocion extends \yii\db\ActiveRecord
             ORDER BY NombreCompleto';
 
             return Yii::$app->db->createCommand($sql)->queryAll();
+    }
+
+    /**
+    * 
+    */
+    public function getSeccional($personaPromueve = true)
+    {
+        $nodo = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => ($personaPromueve ? $this->IdPersonaPromueve : $this->IdPersonaPuesto)]);
+
+        if ($nodo) {
+            $query = 'SELECT NumSector FROM CSeccion WHERE IdMunicipio = '.$nodo->Municipio.' AND IdSector = '.$nodo->IdSector;
+            return Yii::$app->db->createCommand($query)->queryScalar();
+        }
+
+        return null;
+    }
+
+    /**
+    * 
+    */
+    public function getZona($personaPromueve = true)
+    {
+        $nodo = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => ($personaPromueve ? $this->IdPersonaPromueve : $this->IdPersonaPuesto)]);
+
+        if ($nodo) {
+            return $nodo->ZonaMunicipal;
+
+            /*$query = 'SELECT [zona] FROM [PREP_Seccion] WHERE [municipio] = '.$nodo->Municipio.' AND [seccion] = '.$nodo->IdSector;
+            return Yii::$app->db->createCommand($query)->queryScalar();*/
+        }
+
+        return null;
     }
 
 }
