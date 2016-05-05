@@ -663,13 +663,21 @@ class Reporte extends \yii\db\ActiveRecord
                     $organizaciones = implode(', ', ArrayHelper::map($listOrganizaciones, 'IdOrganizacion', 'Nombre'));
                 }
 
+                $nodoEstructura = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => $promotor['IdPersonaPromueve']]);
+                $seccional = '';
+
+                if ($nodoEstructura) {
+                    $querySeccional = 'SELECT NumSector FROM CSeccion WHERE IdMunicipio = '.$nodoEstructura->Municipio.' AND IdSector = '.$nodoEstructura->IdSector;
+                    $seccional = Yii::$app->db->createCommand($querySeccional)->queryScalar();
+                }
+
                 $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromovida'])).'",'
                     .'"Tel. Celular": "'.$promotor['TELMOVIL'].'", '
                     .'"Tel. Casa": "'.$promotor['TELCASA'].'", '
                     .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'",' : '')
                     .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Colonia'])).'",'
                     //.'"Promovido Por": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
-                    .'"Promovido Por": "'.($promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve']))).' - Z '.$promotor['zona'].' - S '.$promotor['NumSector'].'",'
+                    .'"Promovido Por": "'.($promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve']))).' - Z '.($nodoEstructura ? $nodoEstructura->ZonaMunicipal : '').' - S '.$seccional.'",'
                     .'"Organización": "'.$organizaciones.'" },';
             }
 
