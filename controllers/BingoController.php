@@ -101,6 +101,9 @@ class BingoController extends \yii\web\Controller
             'Avance' => $procentaje_avance,
             'TELMOVIL' => $nodo['TELMOVIL'],
             'TELCASA' => $nodo['TELCASA'],
+            'zona' => $nodo['ZonaMunicipal'],
+            'DOMICILIO' => $nodo['DOMICILIO'],
+            'CODIGO_POSTAL' => (int)$nodo['CODIGO_POSTAL'],
         ];
     }
 

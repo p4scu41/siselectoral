@@ -15,7 +15,7 @@ $(document).ready(function(){
                     '<option value="0">Jefes de Sección</option>';
 
             for (seccion in response) {
-                secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5">'+response[seccion].NumSector+' '+response[seccion].NOMBRECOMPLETO+'</option>';
+                secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5" data-zona="'+response[seccion].ZonaMunicipal+'">'+response[seccion].NumSector+' '+response[seccion].NOMBRECOMPLETO+'</option>';
             }
 
             secciones += '</select>';
@@ -45,7 +45,12 @@ $(document).ready(function(){
 
                     if (response != 'null') {
                         $('#resumen_promocion').html('<div class="alert alert-success" role="alert">'+
-                            '<p>Contacto del Jefe de Sección. Tel. Móvil: '+response.TELMOVIL+'</p>'+
+                            '<p>Contacto del Jefe de Sección:</p>'+
+                            '<ul>'+
+                            '<li>Domicilio: '+response.DOMICILIO+'</li>'+
+                            '<li>Código Postal: '+response.CODIGO_POSTAL+'</li>'+
+                            '<li>Tel. Móvil: '+response.TELMOVIL+'</li>'+
+                            '</ul>'+
                             '<strong>Meta: </strong> '+response.Meta+
                             ' &nbsp; &rarr; &nbsp; <strong>Avance: </strong> '+response.Promovidos+
                             ' &nbsp; &rarr; &nbsp; <strong>% Avance: </strong> '+response.Avance+
@@ -100,7 +105,7 @@ $(document).ready(function(){
             if (response.length == 0) {
                 $('#itemsBingo').html('<div class="jumbotron"><h1 class="text-center">Bingo!!!!</h1></div>');
                 $('#bingoListPromotores').html('');
-                $('#modalBingo .modal-title').html('Bingo - Sección '+$('#list-jefe-de-seccion option:selected').text());
+                $('#modalBingo .modal-title').html('Bingo - Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+$('#list-jefe-de-seccion option:selected').text());
                 $('#modalBingo').modal('show');
             } else {
                 listPromotores = '<ul class="list-group">';
@@ -143,7 +148,7 @@ $(document).ready(function(){
             } else {
                 promotor = '<div class="media">'+
                         '<div class="media-body">'+
-                            '<h5 class="media-heading"><label class="">' +
+                            '<h5 class="media-heading"><label id="activista">' +
                             response.NOMBRECOMPLETO+'</label></h5>' +
                             '<p>Domicilio: ' + response.DOMICILIO + '<p>' +
                             '<p>Código Postal: ' + parseInt(response.CODIGO_POSTAL) + '<p>' +
@@ -187,7 +192,7 @@ $(document).ready(function(){
 
             for (promovido in response) {
                 if (response[promovido].Participacion == null) {
-                    item = '<li class="liBingo" title="'+response[promovido].PROMOTOR+'">'+
+                    item = '<li class="liBingo" title="Promovido '+response[promovido].NOMBRECOMPLETO+' - Activista '+response[promovido].PROMOTOR+' ">'+
                         '<span class="glyphicon">'+contador+'</span>'+
                         '<span class="glyphicon-class"><input type="checkbox" name="chk_promovido" value="'+response[promovido].CLAVEUNICA+'"></span>'+
                     '</li>';
@@ -218,7 +223,7 @@ $(document).ready(function(){
             }
 
             $('#loadIndicator').hide();
-            $('#modalBingo .modal-title').html('Bingo - Sección '+$('#list-jefe-de-seccion option:selected').text());
+            $('#modalBingo .modal-title').html('Bingo - Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+$('#list-jefe-de-seccion option:selected').text());
             $('#modalBingo').modal('show');
         });
     });
@@ -316,7 +321,7 @@ $(document).ready(function(){
                 failCallback: function(responseHtml, url){ $('#alertResult').html('<div class="alert alert-danger">Error al intentar descargar el archivo.</div>'); },
                 httpMethod: "POST",
                 data: {
-                    'title': 'Listado de promovidos de la Sección '+$('#list-jefe-de-seccion option:selected').text(),
+                    'title': 'Listado de promovidos de la Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+$('#list-jefe-de-seccion option:selected').text(),
                     'content': $('#modalListado .modal-body').html(),
                     'columns': 3,
                     '_csrf': $('[name=_csrf]').val(),
@@ -345,9 +350,7 @@ $(document).ready(function(){
             return false;
         }
 
-        if ( !$('#modalListado').hasClass('modal-wide') ) {
-            $('#modalListado').addClass('modal-wide');
-        }
+        $('#modalListado').removeClass('modal-wide');
 
         $.ajax({
             url: getPromovidosByPromotor,
@@ -355,7 +358,9 @@ $(document).ready(function(){
             data: '_csrf='+$('[name=_csrf]').val()+'&promotor=' + $('.list-group-item.active').data('id'),
             dataType: 'json'
         }).done(function(response){
+            var seccion = $('#list-jefe-de-seccion option:selected').text().split(' ');
             $('#modalListado .modal-body').html('<ul></ul>');
+            $('#modalListado .modal-title').html('Promovidos en espera Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+seccion[0]+' Activista '+$('#activista').text());
 
             for (item in response) {
                 if (response[item].Participacion == null) {
@@ -390,6 +395,7 @@ $(document).ready(function(){
             dataType: 'json'
         }).done(function(response){
             $('#modalListado .modal-body').html('');
+            $('#modalListado .modal-title').html('Representantes de Casilla Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+$('#list-jefe-de-seccion option:selected').text());
 
             tabla = '<table class="table table-condensed table-striped table-bordered table-hover">'+
                 '<thead><tr><th>Casilla</th><th>Representante</th><th>Tel.</th></tr></thead>'+

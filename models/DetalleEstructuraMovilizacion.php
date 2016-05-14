@@ -590,7 +590,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      *
      * @return Array Nodos
      */
-    public static function getNodosDependientes($parametros, $withFoto=false)
+    public static function getNodosDependientes($parametros, $withFoto=false, $withEstrucAlter=false)
     {
         $filtros = http_build_query($parametros, '', ' AND ');
 
@@ -613,7 +613,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 [DetalleEstructuraMovilizacion]
             INNER JOIN [Puestos]
                 ON [DetalleEstructuraMovilizacion].[IdPuesto] = [Puestos].[IdPuesto]
-            WHERE [IdOrganizacion] = -1 AND
+            WHERE '.($withEstrucAlter ? '' : '[IdOrganizacion] = -1 AND ').'
                 '.$filtros.'
             ORDER BY [Puestos].[Nivel]';
 
@@ -964,6 +964,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         $sqlSecciones = 'SELECT
                 [IdNodoEstructuraMov]
                 ,[NumSector]
+                ,[CSeccion].[ZonaMunicipal]
                 ,CASE
                 WHEN [PadronGlobal].[CLAVEUNICA] IS NULL
                     THEN \'NO ASIGNADO\'
@@ -1169,6 +1170,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             ,[IdPuestoDepende]
             ,[IdSector]
             ,[Meta]
+            ,[ZonaMunicipal]
         FROM [DetalleEstructuraMovilizacion]
         INNER JOIN [PadronGlobal] ON
             [PadronGlobal].[CLAVEUNICA] = [DetalleEstructuraMovilizacion].[IdPersonaPuesto]
