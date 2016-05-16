@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '<div class="text-center"> {view} &nbsp; {update} </div>'
+                'template' => '<div class="text-center"> {view} &nbsp; {update} &nbsp; {delete} </div>'
             ]
         ],
     ]); ?>

@@ -7,7 +7,9 @@ $this->registerJsFile(Url::to('@web/js/bingo.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.fileDownload.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/jquery.printarea.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
-$this->registerCssFile(Url::to('@web/css/bingo.css'),  ['depends' => [\yii\bootstrap\BootstrapAsset::className()]]);
+$this->registerJsFile(Url::to('@web/js/plugins/tooltipster/js/jquery.tooltipster.min.js'));
+$this->registerCssFile(Url::to('@web/css/bingo.css'), ['depends' => [\yii\bootstrap\BootstrapAsset::className()]]);
+$this->registerCssFile(Url::to('@web/js/plugins/tooltipster/css/tooltipster.css'),  ['depends' => [\yii\bootstrap\BootstrapAsset::className()]]);
 $this->registerJs('getSeccionesMuni="'.Url::toRoute('seccion/getjsmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('getPromotoresBySeccion="'.Url::toRoute('seccion/getpromotores', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('getPromovidosByPromotor="'.Url::toRoute('bingo/getpromovidos', true).'";', \yii\web\View::POS_HEAD);
@@ -50,6 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ?>
                                 <?= Html::dropDownList('Municipio', null, $municipios, ['prompt' => 'Elija una opción', 'class' => 'form-control', 'id' => 'municipio']); ?>
                             </div>
+                            <div class="form-group" id="listZonas"></div>
                             <div class="form-group" id="listJefeSeccion"></div>
                         </div>
                         <div id="alertResult"></div>

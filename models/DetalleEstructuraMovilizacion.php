@@ -1195,4 +1195,27 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         }
     }
 
+    public static function getCoordZonaFromMuni($muni)
+    {
+        $sql = 'SELECT 
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
+                ,[DetalleEstructuraMovilizacion].[IdPersonaPuesto]
+                ,[DetalleEstructuraMovilizacion].[Meta]
+                ,[DetalleEstructuraMovilizacion].[ZonaMunicipal]
+                ,[DetalleEstructuraMovilizacion].[Descripcion]
+                ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NOMBRE
+            FROM [DetalleEstructuraMovilizacion]
+            INNER JOIN [PadronGlobal] ON
+                [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA]
+            WHERE 
+                [DetalleEstructuraMovilizacion].[IdPuesto] = 8 AND 
+                [DetalleEstructuraMovilizacion].[Municipio] = '.$muni;
+
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+
+        $result = ArrayHelper::index($result, 'ZonaMunicipal');
+
+        return $result;
+    }
+
 }

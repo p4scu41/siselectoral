@@ -269,6 +269,8 @@ class Promocion extends \yii\db\ActiveRecord
             [PadronGlobal].[CASILLA],
             ([PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC]) AS COLONIA,
             [PadronGlobal].[SEXO],
+            [DetalleEstructuraMovilizacion].[ZonaMunicipal],
+            [DetalleEstructuraMovilizacion].[IdSector],
             [Participacion],
             REPLACE((padronPromotor.NOMBRE+\' \'+padronPromotor.APELLIDO_PATERNO+\' \'+padronPromotor.APELLIDO_MATERNO), \'\\\', \'Ñ\') AS PROMOTOR
         FROM [Promocion]
@@ -360,7 +362,7 @@ class Promocion extends \yii\db\ActiveRecord
             arbolEstructura.[IdPuesto] = 5 AND
             arbolEstructura.[Municipio] = '.$muni.'
         ORDER BY
-            [CSeccion].[ZonaMunicipal] ASC,[CSeccion].[NumSector] ASC';
+            [CSeccion].[NumSector] ASC';
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();
 

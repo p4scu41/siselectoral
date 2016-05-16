@@ -123,3 +123,7 @@ top: auto;
 .liBingo.red {
     background-color: #F7D3D2;
 }
+.liBingo.tooltip  {
+    position: relative;
+    opacity: 1;
+}

@@ -41,7 +41,7 @@ class PREPCasillaSeccionSearch extends PREPCasillaSeccion
      */
     public function search($params)
     {
-        $sql = 'SELECT [PREP_Casilla_Seccion].*
+        /*$sql = 'SELECT [PREP_Casilla_Seccion].*
             FROM [PREP_Casilla_Seccion]
             INNER JOIN [PREP_Seccion] ON
                 [PREP_Casilla_Seccion].[id_seccion] = [PREP_Seccion].[id_seccion]
@@ -61,7 +61,18 @@ class PREPCasillaSeccionSearch extends PREPCasillaSeccion
 
         $sql .= ' ORDER BY [PREP_Seccion].[seccion], [PREP_Casilla_Seccion].[descripcion]';
 
-        $query = PREPCasillaSeccion::findBySql($sql);
+        $query = PREPCasillaSeccion::findBySql($sql);*/
+
+        $query = PREPCasillaSeccion::find();
+        $query->innerJoin('PREP_Seccion', '[PREP_Casilla_Seccion].[id_seccion] = [PREP_Seccion].[id_seccion]');
+
+        $query->andFilterWhere([
+            '[PREP_Seccion].[municipio]' => $params['municipio'],
+            '[PREP_Casilla_Seccion].[id_seccion]' => $params['PREPCasillaSeccionSearch']['id_seccion'],
+            '[PREP_Casilla_Seccion].[activo]' => $params['PREPCasillaSeccionSearch']['activo']!=-1 ? $params['PREPCasillaSeccionSearch']['activo'] : null,
+        ]);
+
+        $query->orderBy('[PREP_Seccion].[seccion], [PREP_Casilla_Seccion].[descripcion]');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

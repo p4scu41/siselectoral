@@ -9,18 +9,28 @@ $(document).ready(function(){
             data: '_csrf='+$('[name=_csrf]').val()+'&municipio=' + $('#municipio').val(),
             dataType: 'json',
         }).done(function(response){
-            var secciones = ''+
-                '<label for="list-jefe-de-seccion">Secciones: </label>'+
+            var zonas = new Array();
+            var selectZonas = '<label for="list-zonas">Zonas: </label>'+
+                '<select id="list-zonas" class="form-control" name="zona">'+
+                    '<option value="0">Zonas</option>';
+            var secciones = '<label for="list-jefe-de-seccion">Secciones: </label>'+
                 '<select id="list-jefe-de-seccion" class="form-control" name="seccion">'+
                     '<option value="0">Jefes de Sección</option>';
 
             for (seccion in response) {
                 secciones += '<option value="' + response[seccion].IdNodoEstructuraMov+ '" data-nivel="5" data-zona="'+response[seccion].ZonaMunicipal+'">'+response[seccion].NumSector+' '+response[seccion].NOMBRECOMPLETO+'</option>';
+                zonas[response[seccion].ZonaMunicipal] = response[seccion].ZonaMunicipal;
+            }
+
+            for (iZona in zonas) {
+                selectZonas += '<option value="' + zonas[iZona]+ '">'+zonas[iZona]+'</option>';
             }
 
             secciones += '</select>';
+            selectZonas += '</select>';
 
             $('#listJefeSeccion').html(secciones);
+            $('#listZonas').html(selectZonas);
             $('#loadIndicator').hide();
 
             $('#list-jefe-de-seccion').change(function(){
@@ -44,7 +54,8 @@ $(document).ready(function(){
                     $('#resumen_promocion').html('');
 
                     if (response != 'null') {
-                        $('#resumen_promocion').html('<div class="alert alert-success" role="alert">'+
+                        $('#resumen_promocion').html('<div class="alert alert-success" role="alert"><div class="row">'+
+                            '<div class="col-md-6">'+
                             '<p>Contacto del Jefe de Sección:</p>'+
                             '<ul>'+
                             '<li>Domicilio: '+response.DOMICILIO+'</li>'+
@@ -55,7 +66,15 @@ $(document).ready(function(){
                             ' &nbsp; &rarr; &nbsp; <strong>Avance: </strong> '+response.Promovidos+
                             ' &nbsp; &rarr; &nbsp; <strong>% Avance: </strong> '+response.Avance+
                             ' &nbsp; &rarr; &nbsp; <strong>En espera: </strong> '+(parseInt(response.Meta) - parseInt(response.Promovidos))+
-                          '</div>');
+                            '</div>'+
+                            '<div class="col-md-6"><strong>AVANCE DE BINGO</strong><br>'+
+                            '<strong>Zona: </strong> '+response.zona+
+                            ' &nbsp; &rarr; &nbsp; <strong>Meta: </strong> '+response.MetaZona+
+                            ' &nbsp; &rarr; &nbsp; <strong>Avance: </strong> '+response.PromovidosZona+
+                            ' &nbsp; &rarr; &nbsp; <strong>% Avance: </strong> '+response.AvanceZona+
+                            ' &nbsp; &rarr; &nbsp; <strong>En espera: </strong> '+(parseInt(response.MetaZona) - parseInt(response.PromovidosZona))+
+                            '</div>'+
+                          '</div></div>');
                     }
                 });
             });
@@ -192,7 +211,7 @@ $(document).ready(function(){
 
             for (promovido in response) {
                 if (response[promovido].Participacion == null) {
-                    item = '<li class="liBingo" title="Promovido '+response[promovido].NOMBRECOMPLETO+' - Activista '+response[promovido].PROMOTOR+' ">'+
+                    item = '<li class="liBingo tooltip" title="Promovido '+response[promovido].NOMBRECOMPLETO+'<br>'+response[promovido].PROMOTOR+' ACT SEC '+response[promovido].IdSector+' Z'+response[promovido].ZonaMunicipal+'">'+
                         '<span class="glyphicon">'+contador+'</span>'+
                         '<span class="glyphicon-class"><input type="checkbox" name="chk_promovido" value="'+response[promovido].CLAVEUNICA+'"></span>'+
                     '</li>';
@@ -203,7 +222,11 @@ $(document).ready(function(){
                 contador++;
             }
 
-             $(".liBingo").tooltip({
+            $('.tooltip').tooltipster({
+                contentAsHTML: true
+            });
+
+             /*$(".liBingo").tooltip({
                 position: {
                   my: "center bottom-20",
                   at: "center top",
@@ -216,7 +239,7 @@ $(document).ready(function(){
                       .appendTo( this );
                   }
                 }
-              });
+              });*/
 
             if (bingo) {
                 $('#itemsBingo').html('<div class="jumbotron"><h1 class="text-center">Bingo!!!!</h1></div>');
@@ -360,7 +383,7 @@ $(document).ready(function(){
         }).done(function(response){
             var seccion = $('#list-jefe-de-seccion option:selected').text().split(' ');
             $('#modalListado .modal-body').html('<ul></ul>');
-            $('#modalListado .modal-title').html('Promovidos en espera Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+seccion[0]+' Activista '+$('#activista').text());
+            $('#modalListado .modal-title').html('Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+seccion[0]+' Activista '+$('#activista').text());
 
             for (item in response) {
                 if (response[item].Participacion == null) {
@@ -492,7 +515,7 @@ $(document).ready(function(){
                     '</td><td>'+(parseInt(response[seccion].participacionFaltantes)+parseInt(response[seccion].participacionEfectivos))+
                     '</td><td>'+response[seccion].participacionEfectivos+'</td></tr>';
 
-                item = '<li class="liBingo '+(response[seccion].participacionFaltantes==0 ? '' : 'red')+'">'+
+                item = '<li class="liBingo tooltip '+(response[seccion].participacionFaltantes==0 ? '' : 'red')+'" title="Z'+response[seccion].ZonaMunicipal+' '+response[seccion].coordZona+'">'+
                     '<span class="glyphicon">'+response[seccion].NumSector+'</span>'+
                     '<span class="glyphicon-class">'+response[seccion].participacionEfectivos+' / '+response[seccion].participacionFaltantes+'</span>'+
                 '</li>';
@@ -533,6 +556,10 @@ $(document).ready(function(){
 
             $('#content').val(tablaCSV);
 
+            $('.tooltip').tooltipster({
+                contentAsHTML: true
+            });
+
             $('#loadIndicator').hide();
             $('#modalStatusSecciones').modal('show');
         });
@@ -566,5 +593,14 @@ $(document).ready(function(){
             $(this).find('#itemsBingo').css('max-height', '515px');
         });
     }
+
+    $('#listZonas').on('change', 'select', function(event) {
+        event.preventDefault();
+        zona = $(this).val();
+        
+        $('#list-jefe-de-seccion option[data-zona="'+zona+'"]').show();
+        $('#list-jefe-de-seccion option:not([data-zona="'+zona+'"])').hide();
+        $('#list-jefe-de-seccion option:first').show();
+    });
 
 });

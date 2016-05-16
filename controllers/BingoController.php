@@ -92,6 +92,14 @@ class BingoController extends \yii\web\Controller
         $nodo = DetalleEstructuraMovilizacion::getInfoNodo($idNodo);
         //$metaPromo = DetalleEstructuraMovilizacion::getCountPromovidos($idNodo);
         $metaPromo = Promocion::getCountPromovidosBingo($idNodo);
+        $nodoZona = DetalleEstructuraMovilizacion::findOne(['Descripcion' => 'CZ' . str_pad($nodo['ZonaMunicipal'], 2, '0', STR_PAD_LEFT)]);
+        $metaZona = 0;
+        $avanceZona = 0;
+
+        if ($nodoZona) {
+            $metaZona = DetalleEstructuraMovilizacion::getMetaByPromotor($nodoZona->IdNodoEstructuraMov, false);
+            $avanceZona = DetalleEstructuraMovilizacion::getCountPromovidos($nodoZona->IdNodoEstructuraMov);
+        }
 
         $procentaje_avance = !empty($metaPromo['MetaByPromotor']) ? round($avanceBingo['total_participacion']/$metaPromo['MetaByPromotor']*100) : 0;
 
@@ -104,6 +112,9 @@ class BingoController extends \yii\web\Controller
             'zona' => $nodo['ZonaMunicipal'],
             'DOMICILIO' => $nodo['DOMICILIO'],
             'CODIGO_POSTAL' => (int)$nodo['CODIGO_POSTAL'],
+            'MetaZona' => $metaZona,
+            'PromovidosZona' => $avanceZona,
+            'AvanceZona' => !empty($avanceZona) ? round($avanceZona/$metaZona*100) : 0,
         ];
     }
 
@@ -128,6 +139,11 @@ class BingoController extends \yii\web\Controller
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $result = Promocion::statusSeccionesBingo(Yii::$app->getRequest()->post('muni'));
+        $coordZonas = DetalleEstructuraMovilizacion::getCoordZonaFromMuni(Yii::$app->getRequest()->post('muni'));
+
+        foreach ($result as $index => $value) {
+            $result[$index]['coordZona'] = $coordZonas[$result[$index]['ZonaMunicipal']]['NOMBRE'];
+        }
 
         return $result;
     }
