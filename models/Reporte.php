@@ -62,7 +62,7 @@ class Reporte extends \yii\db\ActiveRecord
             WHERE [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|\'+CAST(arbolEstructura.[IdNodoEstructuraMov] AS VARCHAR)+\'|%\' OR
             [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = arbolEstructura.[IdNodoEstructuraMov])
             ) AS Avance
-            ,\'\' as Duplicados
+            ,\'\' as \'Avance %\'
             ,[PadronGlobal].[TELMOVIL] AS \'Tel Móvil\'
             ,[PadronGlobal].[DOMICILIO]+\' \'+[PadronGlobal].[COLONIA] AS \'Domicilio\'
         FROM
@@ -94,7 +94,8 @@ class Reporte extends \yii\db\ActiveRecord
             }
 
             $sumaDuplicados +=  $duplicados;
-            $fila['Duplicados'] = $duplicados;
+            //$fila['Duplicados'] = $duplicados;
+            $fila['Avance %'] = round(($fila['Avance'] / $fila['Meta']) * 100);
 
             $sumaMeta += $fila['Meta'];
             $sumaAvance += $fila['Avance'];
@@ -106,7 +107,7 @@ class Reporte extends \yii\db\ActiveRecord
                 'Responsable' => 'TOTAL',
                 'Meta' => number_format($sumaMeta),
                 'Avance' => number_format($sumaAvance),
-                'Duplicados' => $sumaDuplicados,
+                'Avance %' => round(($sumaAvance / $sumaMeta) * 100),
                 'Tel Móvil' => '',
                 'Domicilio' => ''
             ]);
@@ -448,7 +449,7 @@ class Reporte extends \yii\db\ActiveRecord
                 [CSeccion].[IdMunicipio] = [DetalleEstructuraMovilizacion].[Municipio] AND
                 [CSeccion].[IdSector] = [DetalleEstructuraMovilizacion].[IdSector]
             ORDER BY descripcionPuesto, nombrePersonaPromueve';
-        
+
         $promotores = Yii::$app->db->createCommand($sqlPromotores)->queryAll();
 
         if (count($promotores) == 0) {
@@ -553,7 +554,7 @@ class Reporte extends \yii\db\ActiveRecord
 
         return json_decode(str_replace('},]', '}]', $reporte), true);
     }
-    
+
     /**
      * Obtiene el listado de promovidos efectivos con sus respectivos promotores
      *
@@ -581,11 +582,11 @@ class Reporte extends \yii\db\ActiveRecord
             ,(tblPersonaPromovida.DOMICILIO+\', #\'+tblPersonaPromovida.NUM_INTERIOR) AS Domicilio
             ,(tblPersonaPromovida.COLONIA) AS Colonia
             ,PREP_Seccion.zona
-        FROM 
+        FROM
             Promocion
         INNER JOIN DetalleEstructuraMovilizacion ON
             DetalleEstructuraMovilizacion.IdNodoEstructuraMov = Promocion.IdPuesto AND
-            DetalleEstructuraMovilizacion.Municipio = '.$idMuni.' 
+            DetalleEstructuraMovilizacion.Municipio = '.$idMuni.'
             '.($idNodo != null ? 'AND (DetalleEstructuraMovilizacion.Dependencias LIKE \'%|'.$idNodo.'|%\'
             OR DetalleEstructuraMovilizacion.IdNodoEstructuraMov = '.$idNodo.')' : '').'
         INNER JOIN PadronGlobal AS tblPersonaPromovida ON
@@ -602,7 +603,7 @@ class Reporte extends \yii\db\ActiveRecord
         LEFT JOIN PREP_Seccion ON
             PREP_Seccion.municipio = tblPersonaPromueve.MUNICIPIO AND
             PREP_Seccion.seccion = CSeccion.IdSector
-        ORDER BY 
+        ORDER BY
             CSeccion.NumSector, personaPuesto, personaPromovida';
 
         $sqlOrganizacion = 'SELECT
@@ -618,7 +619,7 @@ class Reporte extends \yii\db\ActiveRecord
             (DetalleEstructuraMovilizacion.IdPersonaPuesto = Organizaciones.IdPersonaEnlace OR
             DetalleEstructuraMovilizacion.IdPersonaPuesto = Organizaciones.IdPersonaRepresentante) AND
             DetalleEstructuraMovilizacion.IdPersonaPuesto != \'00000000-0000-0000-0000-000000000000\'*/
-        
+
         $promocion = Yii::$app->db->createCommand($sqlPromocion)->queryAll();
 
         if (count($promocion) == 0) {
@@ -641,7 +642,7 @@ class Reporte extends \yii\db\ActiveRecord
                             .'"Organización": " &nbsp; " },';
                     }
                     $infoPromotor = PadronGlobal::find()->where('CLAVEUNICA = \''.$promotor['IdPersonaPuesto'].'\'')->one();
-                    
+
                     $reporte .= '{ "Nombre": "<b>'.$promotor['Descripcion'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPuesto'])).' - Sección '.$promotor['NumSector'].'</b>",'
                         .'"Tel. Celular": "<b>'.$infoPromotor->TELMOVIL.'</b>", '
                         .'"Tel. Casa": "<b>'.$infoPromotor->TELCASA.'</b>", '
@@ -691,25 +692,25 @@ class Reporte extends \yii\db\ActiveRecord
 
     /**
      * Obtiene el listad de promovidos duplicados
-     * 
+     *
      * @param  int $idMuni
      * @param  int $idNodo
      * @return array
      */
     public static function promovidosDuplicados($idMuni, $idNodo = null)
     {
-        $sqlDuplicados = 'SELECT 
-                *, COUNT(IdpersonaPromovida) AS duplicados 
+        $sqlDuplicados = 'SELECT
+                *, COUNT(IdpersonaPromovida) AS duplicados
             FROM
                 (SELECT
                     Promocion.IdpersonaPromovida
                     ,(tblPersonaPromovida.NOMBRE+\' \'+tblPersonaPromovida.APELLIDO_PATERNO+\'  \'+
                         tblPersonaPromovida.APELLIDO_MATERNO) AS personaPromovida
-                FROM 
+                FROM
                     Promocion
                 INNER JOIN DetalleEstructuraMovilizacion ON
                     DetalleEstructuraMovilizacion.IdNodoEstructuraMov = Promocion.IdPuesto AND
-                    DetalleEstructuraMovilizacion.Municipio = '.$idMuni.' 
+                    DetalleEstructuraMovilizacion.Municipio = '.$idMuni.'
                     '.($idNodo != null ? 'AND (DetalleEstructuraMovilizacion.Dependencias LIKE \'%|'.$idNodo.'|%\'
                     OR DetalleEstructuraMovilizacion.IdNodoEstructuraMov = '.$idNodo.')' : '').'
                 INNER JOIN PadronGlobal AS tblPersonaPromovida ON
@@ -720,7 +721,7 @@ class Reporte extends \yii\db\ActiveRecord
                 INNER JOIN DetalleEstructuraMovilizacion AS tblEstructuraPromotor ON
                     tblEstructuraPromotor.IdPersonaPuesto = Promocion.IdPersonaPromueve
                 ) AS promovidos
-            GROUP BY 
+            GROUP BY
                 IdpersonaPromovida, personaPromovida
             HAVING COUNT(IdpersonaPromovida) > 1';
 
@@ -915,7 +916,7 @@ class Reporte extends \yii\db\ActiveRecord
                                 .'"Tel. Casa": "" },';
                                 //.'"Domicilio": "" },';
                 }
-                
+
                 $reporte .= '{ "Nombre": " &nbsp; ",'
                             .'"Tel. Celular": " &nbsp; ", '
                             .'"Tel. Casa": " &nbsp; " },';
