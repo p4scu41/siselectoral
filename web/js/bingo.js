@@ -210,7 +210,6 @@ $(document).ready(function(){
             $('#itemsBingo').html('');
 
             for (promovido in response) {
-                console.log(response[promovido]);
                 if (response[promovido].Participacion == null) {
                     item = '<li class="liBingo tooltip" title="Promovido '+response[promovido].Promovido+'<br>'+
                         response[promovido].PersonaPromueve+' '+(response[promovido].seccionPersonaPromueve!='-1' ? 'S'+response[promovido].seccionPersonaPromueve: '')+' Z'+response[promovido].zonaPersonaPromueve+'<br>'+
