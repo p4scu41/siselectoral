@@ -2,7 +2,7 @@ $(document).ready(function(){
     $('#municipio').change(function(){
         $('#loadIndicator').show();
         $('#alertResult').html('');
-        
+
         $.ajax({
             url: getSeccionesMuni,
             type: 'POST',
@@ -43,7 +43,7 @@ $(document).ready(function(){
                 }
 
                 $('#loadIndicator').show();
-                
+
                 $.ajax({
                     url: getAvance,
                     type: 'POST',
@@ -79,7 +79,7 @@ $(document).ready(function(){
                 });
             });
         });
-        
+
         $.ajax({
             url: getAvance,
             type: 'POST',
@@ -210,10 +210,14 @@ $(document).ready(function(){
             $('#itemsBingo').html('');
 
             for (promovido in response) {
+                console.log(response[promovido]);
                 if (response[promovido].Participacion == null) {
-                    item = '<li class="liBingo tooltip" title="Promovido '+response[promovido].NOMBRECOMPLETO+'<br>'+response[promovido].PROMOTOR+' ACT SEC '+response[promovido].IdSector+' Z'+response[promovido].ZonaMunicipal+'">'+
+                    item = '<li class="liBingo tooltip" title="Promovido '+response[promovido].Promovido+'<br>'+
+                        response[promovido].PersonaPromueve+' '+(response[promovido].seccionPersonaPromueve!='-1' ? 'S'+response[promovido].seccionPersonaPromueve: '')+' Z'+response[promovido].zonaPersonaPromueve+'<br>'+
+                        response[promovido].PersonaPuesto+' '+(response[promovido].SeccionPersonaPuesto!='-1' ? 'S'+response[promovido].SeccionPersonaPuesto: '')+' Z'+response[promovido].ZonaPersonaPuesto+
+                        '">'+
                         '<span class="glyphicon">'+contador+'</span>'+
-                        '<span class="glyphicon-class"><input type="checkbox" name="chk_promovido" value="'+response[promovido].CLAVEUNICA+'"></span>'+
+                        '<span class="glyphicon-class"><input type="checkbox" name="chk_promovido" value="'+response[promovido].IdpersonaPromovida+'"></span>'+
                     '</li>';
                     $('#itemsBingo').append(item);
                     bingo = false;
@@ -253,7 +257,7 @@ $(document).ready(function(){
 
     $('#itemsBingo').delegate('li', 'click', function(event){
         event.stopPropagation();
-        
+
         $(this).find('input[type="checkbox"]').trigger('click');
 
         if ($(this).find('input[type="checkbox"]').prop('checked')) {
@@ -306,12 +310,12 @@ $(document).ready(function(){
             $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar un Municipio</div>');
             return false;
         }
-        
+
         if ($('#list-jefe-de-seccion').val() == 0 || typeof($('#list-jefe-de-seccion').val()) == 'undefined') {
             $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar un Jefe de Sección</div>');
             return false;
         }
-        
+
         $('#alertResult').html('');
         $('#loadIndicator').show();
 
@@ -334,7 +338,7 @@ $(document).ready(function(){
                 }
                 letraActual = response[item].Letra;
 
-                li = '<li>'+response[item].NOMBRECOMPLETO+'</li>';
+                li = '<li>'+response[item].Promovido+'</li>';
                 $('#modalListado .modal-body ol').append(li);
             }
 
@@ -350,10 +354,10 @@ $(document).ready(function(){
                     '_csrf': $('[name=_csrf]').val(),
                 }
             }).done(function () { $('#loadIndicator').hide(); });
-            
+
             setTimeout(function(){$('#loadIndicator').hide();}, 19000);
             //$('#modalListado').modal('show');
-            
+
         });
     });
 
@@ -367,7 +371,7 @@ $(document).ready(function(){
             $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar un Jefe de Sección</div>');
             return false;
         }
-        
+
         if ($('.list-group-item.active').length == 0) {
             $('#infoPromotor').html('<div class="alert alert-danger">Debe seleccionar un Promotor</div>');
             return false;
@@ -597,7 +601,7 @@ $(document).ready(function(){
     $('#listZonas').on('change', 'select', function(event) {
         event.preventDefault();
         zona = $(this).val();
-        
+
         $('#list-jefe-de-seccion option[data-zona="'+zona+'"]').show();
         $('#list-jefe-de-seccion option:not([data-zona="'+zona+'"])').hide();
         $('#list-jefe-de-seccion option:first').show();

@@ -87,6 +87,8 @@ $this->registerJs('urlGetResultados = "'.Url::toRoute('prepresultado/get').'"', 
 </div>   <!-- /.row -->
 
 <div id="tabs_resultado" class="hidden">
+    <div id="totales_casillas"></div>
+
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#tab_grafica_resultado" aria-controls="tab_grafica_resultado" role="tab" data-toggle="tab">Gráfica</a></li>
         <li role="presentation"><a href="#tab_tabla_resultado" aria-controls="tab_tabla_resultado" role="tab" data-toggle="tab">Tabla</a></li>

@@ -258,10 +258,10 @@ class Promocion extends \yii\db\ActiveRecord
 
         return $result;
     }
-    
+
     public static function getByDepentNodo($idNodo)
     {
-        $sql = 'SELECT
+        /*$sql = 'SELECT
             SUBSTRING([PadronGlobal].APELLIDO_PATERNO,1,1) AS Letra,
             [PadronGlobal].[CLAVEUNICA],
             REPLACE(([PadronGlobal].APELLIDO_PATERNO+\' \'+[PadronGlobal].APELLIDO_MATERNO+\' \'+[PadronGlobal].NOMBRE), \'\\\', \'Ñ\') AS NOMBRECOMPLETO,
@@ -281,9 +281,45 @@ class Promocion extends \yii\db\ActiveRecord
         INNER JOIN [PadronGlobal] AS padronPromotor ON
             padronPromotor.CLAVEUNICA = [Promocion].[IdPersonaPromueve]
         WHERE
-            [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\' 
+            [DetalleEstructuraMovilizacion].[Dependencias] LIKE \'%|'.$idNodo.'|%\'
             OR [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov] = '.$idNodo.'
-        ORDER BY [PadronGlobal].APELLIDO_PATERNO, [PadronGlobal].APELLIDO_MATERNO, [PadronGlobal].NOMBRE';
+        ORDER BY [PadronGlobal].APELLIDO_PATERNO, [PadronGlobal].APELLIDO_MATERNO, [PadronGlobal].NOMBRE';*/
+        $sql = 'SELECT
+            SUBSTRING([PadronGlobal].APELLIDO_PATERNO,1,1) AS Letra
+            ,[Promocion].[IdpersonaPromovida]
+            ,([PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]+\' \'+[PadronGlobal].[NOMBRE]) AS Promovido
+            ,[PadronGlobal].[SECCION]
+            ,[PadronGlobal].[CASILLA]
+            ,([PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC]) AS COLONIA
+            ,[PadronGlobal].[SEXO]
+            ,[Promocion].[IdPersonaPromueve]
+            ,(PadronPersonaPromueve.[NOMBRE]+\' \'+PadronPersonaPromueve.[APELLIDO_PATERNO]+\' \'+PadronPersonaPromueve.[APELLIDO_MATERNO]+\' \'+EstructuraPersonaPromueve.Descripcion) AS PersonaPromueve
+            ,EstructuraPersonaPromueve.[IdNodoEstructuraMov] AS nodoPersonaPromueve
+            ,EstructuraPersonaPromueve.[ZonaMunicipal] AS zonaPersonaPromueve
+            ,EstructuraPersonaPromueve.[IdSector] AS seccionPersonaPromueve
+            ,[Promocion].[IdPuesto]
+            ,[Promocion].[IdPersonaPuesto]
+            ,(PadronPersonaPuesto.[NOMBRE]+\' \'+PadronPersonaPuesto.[APELLIDO_PATERNO]+\' \'+PadronPersonaPuesto.[APELLIDO_MATERNO]+\' \'+EstructuraPersonaPuesto.Descripcion) AS PersonaPuesto
+            ,EstructuraPersonaPuesto.[ZonaMunicipal] as ZonaPersonaPuesto
+            ,EstructuraPersonaPuesto.[IdSector] AS SeccionPersonaPuesto
+            ,[Promocion].[Participacion]
+        FROM
+            [Promocion]
+        INNER JOIN [PadronGlobal] ON
+            [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdpersonaPromovida]
+        INNER JOIN [PadronGlobal] AS PadronPersonaPromueve ON
+            PadronPersonaPromueve.[CLAVEUNICA] = [Promocion].[IdPersonaPromueve]
+        INNER JOIN [PadronGlobal] AS PadronPersonaPuesto ON
+            PadronPersonaPuesto.[CLAVEUNICA] = [Promocion].[IdPersonaPuesto]
+        INNER JOIN [DetalleEstructuraMovilizacion] AS EstructuraPersonaPuesto ON
+            EstructuraPersonaPuesto.[IdPersonaPuesto] = [Promocion].[IdPersonaPuesto]
+        INNER JOIN [DetalleEstructuraMovilizacion] AS EstructuraPersonaPromueve ON
+            EstructuraPersonaPromueve.[IdPersonaPuesto] = [Promocion].[IdPersonaPromueve]
+        WHERE
+            EstructuraPersonaPuesto.[Dependencias] LIKE \'%|'.$idNodo.'|%\' OR
+            EstructuraPersonaPuesto.[IdNodoEstructuraMov] = '.$idNodo.'
+        ORDER BY
+            Promovido';
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();
 
@@ -401,18 +437,18 @@ class Promocion extends \yii\db\ActiveRecord
 
     public static function findActivistasPromocion($nombre, $id=false, $personaPromueve = false)
     {
-        $sql = 'SELECT 
+        $sql = 'SELECT
                 DISTINCT([Promocion].['.($personaPromueve ? 'IdPersonaPromueve' : 'IdPersonaPuesto').'])
                 ,[PadronGlobal].[CLAVEUNICA] AS id
                 ,[DetalleEstructuraMovilizacion].[Descripcion]
                 ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto
-            FROM 
+            FROM
                 [Promocion]
             LEFT JOIN [PadronGlobal] ON
                 [PadronGlobal].[CLAVEUNICA] = [Promocion].['.($personaPromueve ? 'IdPersonaPromueve' : 'IdPersonaPuesto').']
             LEFT JOIN [DetalleEstructuraMovilizacion] ON
                 [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA]
-            WHERE 
+            WHERE
                 ([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) LIKE \'%'.$nombre.'%\''.
                 ($id ? ' AND [PadronGlobal].[CLAVEUNICA]=\''.$id.'\'' : '').'
             ORDER BY NombreCompleto';
@@ -422,17 +458,17 @@ class Promocion extends \yii\db\ActiveRecord
 
     public static function findOtrosPromocion($id)
     {
-        $sql = 'SELECT 
+        $sql = 'SELECT
                 [PadronGlobal].[CLAVEUNICA] AS id
                 ,[DetalleEstructuraMovilizacion].[Descripcion]
                 ,([PadronGlobal].[NOMBRE]+\' \'+[PadronGlobal].[APELLIDO_PATERNO]+\' \'+[PadronGlobal].[APELLIDO_MATERNO]) AS NombreCompleto
-            FROM 
+            FROM
                 [Promocion]
             LEFT JOIN [PadronGlobal] ON
                 [PadronGlobal].[CLAVEUNICA] = [Promocion].[IdPersonaPuesto]
             LEFT JOIN [DetalleEstructuraMovilizacion] ON
                 [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA]
-            WHERE 
+            WHERE
                 [Promocion].[IdPersonaPromueve]=\''.$id.'\' AND
                 [Promocion].[IdPersonaPuesto] != [Promocion].[IdPersonaPromueve]
             ORDER BY NombreCompleto';
@@ -441,7 +477,7 @@ class Promocion extends \yii\db\ActiveRecord
     }
 
     /**
-    * 
+    *
     */
     public function getSeccional($personaPromueve = true)
     {
@@ -456,7 +492,7 @@ class Promocion extends \yii\db\ActiveRecord
     }
 
     /**
-    * 
+    *
     */
     public function getZona($personaPromueve = true)
     {

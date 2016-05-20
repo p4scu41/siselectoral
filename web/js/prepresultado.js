@@ -271,11 +271,12 @@ function getResultados()
         tbody += '</tbody>';
         tabla += thead+tbody+'</table>';
 
-        tabla += '<h4 class="text-center">Total de Casillas: '+response.totalCasillas+
+        totales_casillas = '<h4 class="text-center">Total de Casillas: '+response.totalCasillas+
             ', Casillas Contabilizadas: '+response.casillasConsideradas+
             ', Porcentaje Contabilizadas: '+(response.totalCasillas!=0 ? Math.round(response.casillasConsideradas/response.totalCasillas*100) : 0)+'%</h4>';
 
         $('#tabla_resultado').html(tabla);
+        $('#totales_casillas').html(totales_casillas);
 
         for (index in listCandidatos) {
             listCandidatos[index] = listCandidatos[index].replace(/\s+/g, '\n');
