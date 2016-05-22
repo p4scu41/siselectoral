@@ -5,10 +5,10 @@ use yii\helpers\Url;
 use app\helpers\PerfilUsuario;
 
 /* @var $this yii\web\View */
-$this->title = 'Reporte de Promovidos';
+$this->title = 'Reporte de Promoción';
 $this->params['breadcrumbs'][] = $this->title;
 
-$this->registerJsFile(Url::to('@web/js/promovidos.js'));
+$this->registerJsFile(Url::to('@web/js/promotorespromovidos.js'));
 $this->registerJsFile(Url::to('@web/js/plugins/table2CSV.js'));
 $this->registerJs('urlPuestos="'.Url::toRoute('site/getpuestosonmuni', true).'";', \yii\web\View::POS_HEAD);
 $this->registerJs('urlNodoDepend="'.Url::toRoute('site/getpuestosdepend', true).'";', \yii\web\View::POS_HEAD);

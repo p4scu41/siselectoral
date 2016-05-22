@@ -51,7 +51,7 @@ use app\helpers\PerfilUsuario;
     <?PHP } ?>
 
     <?PHP if (PerfilUsuario::hasPermiso('ce7ad335-baee-498f-b4b0-94c283d9701b', 'R')) { ?>
-    <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'promocion') !== false ? 'active' : '' ?>">
+    <li class="treeview <?= stripos(Yii::$app->request->getPathInfo(), 'promocion/') !== false ? 'active' : '' ?>">
         <a href="#">
             <i class="fa fa-users"></i> <span>Promoción</span>
             <i class="fa fa-angle-left pull-right"></i>
@@ -88,6 +88,9 @@ use app\helpers\PerfilUsuario;
                 <a href="<?= Url::to(['reporte/promovidos']) ?>" style="margin-left: 10px;"><i class="fa fa-users"></i> Promovidos</a>
             </li>
             <?PHP } ?>
+            <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'reporte/promocion') !== false ? 'active' : '' ?>">
+                <a href="<?= Url::to(['reporte/promocion']) ?>" style="margin-left: 10px;"><i class="fa fa-users"></i> Promoción</a>
+            </li>
             <?PHP if (PerfilUsuario::hasPermiso('b3d614ee-f96d-4f42-8c36-2a6e4b6eabeb', 'R')) { ?>
             <li class="<?= stripos(Yii::$app->request->getPathInfo(), 'reporte/seccional') !== false ? 'active' : '' ?>">
                 <a href="<?= Url::to(['reporte/seccional']) ?>" style="margin-left: 10px;"><i class="fa fa-cubes"></i> Seccional</a>
