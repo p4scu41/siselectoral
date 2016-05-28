@@ -172,7 +172,7 @@ $(document).ready(function(){
                             '<p>Domicilio: ' + response.DOMICILIO + '<p>' +
                             '<p>Código Postal: ' + parseInt(response.CODIGO_POSTAL) + '<p>' +
                             '<p>Colonia: ' + response.COLONIA + '<p>' +
-                            '<p>Tel. Móvil: ' + response.TELMOVIL + '<p>' +
+                            '<p>Tel. Móvil: <span id="tel_promotor">' + response.TELMOVIL + '</span><p>' +
                             //'<p>Tel. Casa: ' + response.TELCASA + '<p>' +
                         '</div>'+
                     '</div>';
@@ -376,7 +376,7 @@ $(document).ready(function(){
             return false;
         }
 
-        $('#modalListado').removeClass('modal-wide');
+        //$('#modalListado').removeClass('modal-wide');
 
         $.ajax({
             url: getPromovidosByPromotor,
@@ -385,14 +385,21 @@ $(document).ready(function(){
             dataType: 'json'
         }).done(function(response){
             var seccion = $('#list-jefe-de-seccion option:selected').text().split(' ');
-            $('#modalListado .modal-body').html('<ul></ul>');
-            $('#modalListado .modal-title').html('Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+seccion[0]+' Activista '+$('#activista').text());
+            $('#modalListado .modal-body').html('<ol></ol>');
+            $('#modalListado .modal-title').html('Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+seccion[0]+' Activista '+$('#activista').text()+'; Tel '+$('#tel_promotor').text());
 
             for (item in response) {
                 if (response[item].Participacion == null) {
-                    li = '<li>'+response[item].NOMBRECOMPLETO+'</li>';
+                    li = '<li>'+
+                        response[item].NOMBRECOMPLETO+' - '+
+                        response[item].Descripcion+' '+
+                        response[item].nombrePromotor+
+                        ' Z'+response[item].ZonaMunicipal+
+                        (response[item].IdSector!='' && response[item].IdSector!= '-1' ? ' S'+response[item].IdSector : '')+
+                        ' Tel '+response[item].TelPromotor+
+                    '</li>';
 
-                    $('#modalListado .modal-body ul').append(li);
+                    $('#modalListado .modal-body ol').append(li);
                 }
             }
 

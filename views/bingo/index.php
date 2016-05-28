@@ -61,13 +61,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             </button> &nbsp;
                             <button type="button" class="btn btn-success" id="btnGenerarListado">
                                 <i class="fa fa-refresh fa-list-ol"></i> Generar Listado
-                            </button> &nbsp; 
+                            </button> &nbsp;
                             <button type="button" class="btn btn-success" id="btnGenerarBingo">
                                 <i class="fa fa-building-o"></i> Generar Bingo
-                            </button> &nbsp; 
+                            </button> &nbsp;
                             <button type="button" class="btn btn-success" id="btnVerRCs">
                                 <i class="fa fa-building-o"></i> Ver RCs
-                            </button> &nbsp; 
+                            </button> &nbsp;
                             <button type="button" class="btn btn-success" id="btnStatusSecciones">
                                 <i class="fa fa-building-o"></i> Status Secciones
                             </button>
@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </p>
 
                         <div id="resumen_promocion"></div>
-                        
+
                     <?php ActiveForm::end(); ?>
                 </div>
             </div>

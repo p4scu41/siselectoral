@@ -36,7 +36,7 @@ class BingoController extends \yii\web\Controller
         }
 
         $municipios = MunicipiosUsuario::getMunicipios();
-        
+
         return $this->render('index', [
             'municipios' => $municipios
         ]);
@@ -76,7 +76,7 @@ class BingoController extends \yii\web\Controller
 
         $muni = Yii::$app->getRequest()->post('municipio');
         $idNodo = '';
-        
+
         if (!empty($muni)) {
             $coordMuni = DetalleEstructuraMovilizacion::getCoordMuni($muni);
             $idNodo = $coordMuni['IdNodoEstructuraMov'];
@@ -97,8 +97,8 @@ class BingoController extends \yii\web\Controller
         $avanceZona = 0;
 
         if ($nodoZona) {
-            $metaZona = DetalleEstructuraMovilizacion::getMetaByPromotor($nodoZona->IdNodoEstructuraMov, false);
-            $avanceZona = DetalleEstructuraMovilizacion::getCountPromovidos($nodoZona->IdNodoEstructuraMov);
+            $metaZona = Promocion::getCountPromovidosBingo($nodoZona->IdNodoEstructuraMov);//DetalleEstructuraMovilizacion::getMetaByPromotor($nodoZona->IdNodoEstructuraMov, false);
+            $avanceZona = Promocion::getAvanceBingo($nodoZona->IdNodoEstructuraMov);//DetalleEstructuraMovilizacion::getCountPromovidos($nodoZona->IdNodoEstructuraMov);
         }
 
         $procentaje_avance = !empty($metaPromo['MetaByPromotor']) ? round($avanceBingo['total_participacion']/$metaPromo['MetaByPromotor']*100) : 0;
@@ -113,8 +113,8 @@ class BingoController extends \yii\web\Controller
             'DOMICILIO' => $nodo['DOMICILIO'],
             'CODIGO_POSTAL' => (int)$nodo['CODIGO_POSTAL'],
             'MetaZona' => $metaZona,
-            'PromovidosZona' => $avanceZona,
-            'AvanceZona' => !empty($avanceZona) ? round($avanceZona/$metaZona*100) : 0,
+            'PromovidosZona' => $avanceZona['total_participacion'],
+            'AvanceZona' => !empty($avanceZona) ? round($avanceZona['total_participacion']/$metaZona*100) : 0,
         ];
     }
 
@@ -133,7 +133,7 @@ class BingoController extends \yii\web\Controller
 
         return $promotor;
     }
-    
+
     public function actionStatussecciones()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

@@ -213,13 +213,22 @@ class Promocion extends \yii\db\ActiveRecord
             [PadronGlobal].[CASILLA],
             ([PadronGlobal].[DES_LOC]+\' \'+[PadronGlobal].[NOM_LOC]) AS COLONIA,
             [PadronGlobal].[SEXO],
-            [Participacion]
+            [Participacion],
+            REPLACE(([PadronPersonaPromueve].NOMBRE+\' \'+[PadronPersonaPromueve].APELLIDO_PATERNO+\' \'+[PadronPersonaPromueve].APELLIDO_MATERNO), \'\\\', \'Ñ\') nombrePromotor,
+            PadronPersonaPromueve.TELMOVIL AS TelPromotor,
+            DetalleEstructuraMovilizacion.Descripcion,
+            DetalleEstructuraMovilizacion.ZonaMunicipal,
+            DetalleEstructuraMovilizacion.IdSector
         FROM [Promocion]
         INNER JOIN [PadronGlobal] ON
             [Promocion].[IdpersonaPromovida] = [PadronGlobal].[CLAVEUNICA]
+        INNER JOIN [PadronGlobal] AS PadronPersonaPromueve ON
+            PadronPersonaPromueve.CLAVEUNICA = Promocion.IdPersonaPromueve
+        INNER JOIN DetalleEstructuraMovilizacion ON
+            DetalleEstructuraMovilizacion.IdPersonaPuesto = Promocion.IdPersonaPromueve
         WHERE
             [Promocion].[IdPuesto] = '.$promotor.'
-        ORDER BY NOMBRE, APELLIDO_PATERNO, APELLIDO_MATERNO';
+        ORDER BY [PadronGlobal].APELLIDO_PATERNO, [PadronGlobal].APELLIDO_MATERNO, [PadronGlobal].NOMBRE';
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();
 
