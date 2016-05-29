@@ -385,23 +385,33 @@ $(document).ready(function(){
             dataType: 'json'
         }).done(function(response){
             var seccion = $('#list-jefe-de-seccion option:selected').text().split(' ');
-            $('#modalListado .modal-body').html('<ol></ol>');
+            var tablaPromovidosFaltantes = '<table class="table table-bordered table-hover">'+
+                '<thead>'+
+                '<tr>'+
+                    '<th class="text-center">Promovido</th>'+
+                    '<th class="text-center">Promotor</th>'+
+                    '<th class="text-center">Zona</th>'+
+                    '<th class="text-center">Sección</th>'+
+                    '<th class="text-center">Tel</th>'+
+                '</tr>'+
+                '</thead><tbody>';
             $('#modalListado .modal-title').html('Zona '+$('#list-jefe-de-seccion option:selected').data('zona')+' Sección '+seccion[0]+' Activista '+$('#activista').text()+'; Tel '+$('#tel_promotor').text());
 
             for (item in response) {
                 if (response[item].Participacion == null) {
-                    li = '<li>'+
-                        response[item].NOMBRECOMPLETO+' - '+
-                        response[item].Descripcion+' '+
-                        response[item].nombrePromotor+
-                        ' Z'+response[item].ZonaMunicipal+
-                        (response[item].IdSector!='' && response[item].IdSector!= '-1' ? ' S'+response[item].IdSector : '')+
-                        ' Tel '+response[item].TelPromotor+
-                    '</li>';
-
-                    $('#modalListado .modal-body ol').append(li);
+                    tablaPromovidosFaltantes += '<tr>'+
+                        '<td>'+(parseInt(item)+1)+'. '+response[item].NOMBRECOMPLETO+'</td>'+
+                        '<td>'+response[item].Descripcion+' '+response[item].nombrePromotor+'</td>'+
+                        '<td class="text-center">'+(response[item].ZonaMunicipal!='-1' ? response[item].ZonaMunicipal : '')+'</td>'+
+                        '<td class="text-center">'+(response[item].IdSector!='' && response[item].IdSector!= '-1' ? ' '+response[item].IdSector : '')+'</td>'+
+                        '<td class="text-center">'+response[item].TelPromotor+'</td>'+
+                    '</tr>';
                 }
             }
+
+            tablaPromovidosFaltantes += '</tbody></table>';
+
+            $('#modalListado .modal-body').html(tablaPromovidosFaltantes);
 
             $('#modalListado').modal('show');
             $('#loadIndicator').hide();
