@@ -272,15 +272,16 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
      * @param INT $idMuni ID del Municipio
      * @return INT Id del puesto
      */
-    public function getMaxPuestoOnMuni($idMuni)
+    public function getMaxPuestoOnMuni($idMuni, $return_idnodo = false)
     {
         $sql = 'SELECT TOP (1)
-                [DetalleEstructuraMovilizacion].[IdPuesto]
+                [DetalleEstructuraMovilizacion].[IdPuesto],
+                [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
             FROM
                 [DetalleEstructuraMovilizacion]
             INNER JOIN
                 [Puestos] ON [Puestos].[IdPuesto] = [DetalleEstructuraMovilizacion].[IdPuesto] ';
-        
+
         if ( strtolower(Yii::$app->user->identity->getPerfil()->primaryModel->IdPerfil) == strtolower(Yii::$app->params['idDistrito']) ) {
             $sql .= 'INNER JOIN [CSeccion] ON
                 [DetalleEstructuraMovilizacion].[Municipio] = [CSeccion].[IdMunicipio] AND
@@ -292,12 +293,16 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector] AND
                 [CSeccion].[DistritoFederal] = '.Yii::$app->user->identity->distrito;
         }
-        
+
         $sql .= ' WHERE
             [DetalleEstructuraMovilizacion].[Municipio] = '.$idMuni.
             ' ORDER BY [Nivel] ASC';
 
         $Puesto = $this->findBySql($sql)->one();
+
+        if ($return_idnodo) {
+            return $Puesto->IdNodoEstructuraMov;
+        }
 
         return $Puesto->IdPuesto;
     }
@@ -929,7 +934,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
         return $seccion['NumSector'];
     }
-    
+
     public static function getSeccionesNodo($idNodo)
     {
         $sqlSecciones = 'SELECT DISTINCT [CSeccion].[NumSector]
@@ -938,7 +943,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
                 [DetalleEstructuraMovilizacion].[IdSector] = [CSeccion].[IdSector]
             WHERE [Dependencias] LIKE  \'%|'.$idNodo.'|%\' OR [IdNodoEstructuraMov] = '.$idNodo.'
             ORDER BY [NumSector]';
-        
+
         $secciones = Yii::$app->db->createCommand($sqlSecciones)->queryAll();
         $secciones = ArrayHelper::map($secciones, 'NumSector', 'NumSector');
 
@@ -1110,7 +1115,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
         } while (count($parents) != 0);
 
         if ($tipo) {
-            $nodosPadres = substr($ids, 0, -1);  
+            $nodosPadres = substr($ids, 0, -1);
         }
 
         return $nodosPadres;
@@ -1197,7 +1202,7 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
 
     public static function getCoordZonaFromMuni($muni)
     {
-        $sql = 'SELECT 
+        $sql = 'SELECT
                 [DetalleEstructuraMovilizacion].[IdNodoEstructuraMov]
                 ,[DetalleEstructuraMovilizacion].[IdPersonaPuesto]
                 ,[DetalleEstructuraMovilizacion].[Meta]
@@ -1207,8 +1212,8 @@ class DetalleEstructuraMovilizacion extends \yii\db\ActiveRecord
             FROM [DetalleEstructuraMovilizacion]
             INNER JOIN [PadronGlobal] ON
                 [DetalleEstructuraMovilizacion].[IdPersonaPuesto] = [PadronGlobal].[CLAVEUNICA]
-            WHERE 
-                [DetalleEstructuraMovilizacion].[IdPuesto] = 8 AND 
+            WHERE
+                [DetalleEstructuraMovilizacion].[IdPuesto] = 8 AND
                 [DetalleEstructuraMovilizacion].[Municipio] = '.$muni;
 
         $result = Yii::$app->db->createCommand($sql)->queryAll();

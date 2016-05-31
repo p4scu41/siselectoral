@@ -67,6 +67,9 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
                             <button type="button" class="btn btn-success" id="btnGenerarReporte">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Reporte
                             </button> &nbsp;
+                            <button type="button" class="btn btn-success" id="btnGenerarReporteOtros">
+                                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Otras Promociones
+                            </button> &nbsp;
                             <i class="fa fa-refresh fa-spin" style="display: none; font-size: x-large;" id="loadIndicator"></i>
                         </p>
                     <?php ActiveForm::end(); ?>

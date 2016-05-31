@@ -153,12 +153,15 @@ class ReporteController extends \yii\web\Controller
                 $nodo = null;
                 if (count($nodos)) {
                     $nodo = array_pop($nodos);
+                } else {
+                    $detalle = new DetalleEstructuraMovilizacion();
+                    $nodo = $detalle->getMaxPuestoOnMuni(Yii::$app->request->post('Municipio'));
                 }
 
                 $nodoEstructura = DetalleEstructuraMovilizacion::findOne(['IdNodoEstructuraMov' => $nodo]);
                 $descNodo = $nodoEstructura ? $nodoEstructura->Descripcion : $municipio->DescMunicipio ;
                 $respuesta['titulo'] = 'Reporte de Promotores - Promovidos '.$descNodo . ' ('.date('d-m-Y').')';
-                $reporteDatos = Reporte::promotoresPromovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('incluir_domicilio'));
+                $reporteDatos = Reporte::promotoresPromovidos(Yii::$app->request->post('Municipio'), $nodo, Yii::$app->request->post('incluir_domicilio'), Yii::$app->request->post('excluir_activistas'));
                 $totalPromovios = $reporteDatos ? array_shift($reporteDatos) : ['total' => 0];
                 $duplicados = Reporte::promovidosDuplicados(Yii::$app->request->post('Municipio'), $nodo);
                 $extra = '<div class="text-center">

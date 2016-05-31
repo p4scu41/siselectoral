@@ -699,7 +699,7 @@ class Reporte extends \yii\db\ActiveRecord
      * @param Int|Null $idNodo
      * @return JSON
      */
-    public static function promotoresPromovidos($idMuni, $idNodo = null, $incluir_domicilio)
+    public static function promotoresPromovidos($idMuni, $idNodo = null, $incluir_domicilio, $excluir_activistas = false)
     {
         $sqlPromocion = 'SELECT
             Promocion.IdPersonaPromueve
@@ -741,8 +741,9 @@ class Reporte extends \yii\db\ActiveRecord
             DetalleEstructuraMovilizacion.Municipio = CSeccion.IdMunicipio
         LEFT JOIN PREP_Seccion ON
             PREP_Seccion.municipio = tblPersonaPromueve.MUNICIPIO AND
-            PREP_Seccion.seccion = CSeccion.IdSector
-        ORDER BY
+            PREP_Seccion.seccion = CSeccion.IdSector '.
+        ($excluir_activistas ? ' WHERE tblEstructuraPromotor.IdPuesto != 7 ' : '').
+        'ORDER BY
             CSeccion.NumSector, personaPromueve, personaPromovida';
 
         $sqlOrganizacion = 'SELECT

@@ -183,6 +183,44 @@ $(document).ready(function(){
         });
     });
 
+    $('#btnGenerarReporteOtros').click(function(event) {
+        $('.alert').remove();
+
+        if ($('#municipio').val() == '') {
+            $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                '<span aria-hidden="true">&times;</span></button>Debe seleccionar un municipio</div>');
+            return false;
+        }
+
+        if ($('[name="tipo_promovido"][type="radio"]').length) {
+            if ($('[name=tipo_promovido]:checked').val() == undefined) {
+                $('#bodyForm').append('<div class="alert alert-danger" role="alert">'+
+                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                    '<span aria-hidden="true">&times;</span></button>Debe seleccionar el tipo de reporte: '+
+                    'Promovidos efectivos o Listado de Promoción</div>');
+                return false;
+            }
+        }
+
+        $('#loadIndicator').show();
+        $('#div_loading').show();
+
+        $.ajax({
+            type: 'POST',
+            url: urlReporte,
+            data: $('#formBuscar').serialize()+'&tipoReporte=5&excluir_activistas=true',
+            dataType: 'json',
+            success: function(result) {
+                $('#titulo').html(result.titulo);
+                $('#tabla_reporte').html(result.reporteHTML);
+                $('#loadIndicator').hide();
+                $('.opcionesExportar').show();
+                $('#div_loading').fadeOut('slow');
+            }
+        });
+    });
+
     /*$('#tabla_reporte').on('click', '.btnPromovidosDuplicados', function(event) {
         event.preventDefault();
 
