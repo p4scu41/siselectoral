@@ -74,7 +74,7 @@ $(document).ready(function(){
         $('#distritoLocal option:first').prop('selected', true);
         $('#distritoFederal option:first').prop('selected', true);
         $('#alertResult').html('');
-        
+
         switch ($(this).val()) {
             case '1': // Presidencia Municipal
                 $('#municipio').closest('div').removeClass('hidden');
@@ -90,7 +90,7 @@ $(document).ready(function(){
 
     $('#btnAceptar').click(function(){
         $('#alertResult').html('');
-        
+
         if ($('#tipoEleccion').val() == '' || typeof($('#tipoEleccion').val()) == 'undefined') {
             $('#alertResult').html('<div class="alert alert-danger">Debe seleccionar el Tipo de Elección</div>');
             return false;
@@ -153,6 +153,8 @@ $(document).ready(function(){
             sumTotalVotos();
             actualizaPorcentajes();
             creaGraficas();
+
+            getResultados();
         });
     });
 
@@ -221,6 +223,9 @@ $(document).ready(function(){
         $($imprimible).printArea({"mode":"popup","popClose":true});
     });
 
+    if ($('#municipio').val() != '') {
+        getResultados();
+    }
 });
 
 function creaGraficas()
@@ -334,5 +339,21 @@ function loadZonas()
                 $('#zona').append('<option value="'+response[zona].zona+'">'+response[zona].zona+'</option>');
             }
         }
+    });
+}
+
+function getResultados()
+{
+    $.ajax({
+        url: urlGetResultados,
+        method: 'POST',
+        dataType: 'json',
+        data: $('#formFiltroVotos').serialize()
+    }).done(function(response) {
+        totales_casillas = '<h4 class="text-center">Total de Casillas: '+response.totalCasillas+
+            ', Casillas Contabilizadas: '+response.casillasConsideradas+
+            ', Porcentaje Contabilizadas: '+(response.totalCasillas!=0 ? Math.round(response.casillasConsideradas/response.totalCasillas*100) : 0)+'%</h4>';
+
+        $('#totales_casillas').html(totales_casillas);
     });
 }

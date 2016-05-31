@@ -21,6 +21,7 @@ $this->registerJs('urlVotar = "'.Url::toRoute('prepvoto/votar').'"', yii\web\Vie
 $this->registerJs('urlObservacion = "'.Url::toRoute('prepcasillaseccion/observacion').'"', yii\web\View::POS_HEAD);
 $this->registerJs('urlGetSecciones = "'.Url::toRoute('prepseccion/getbyattr').'"', yii\web\View::POS_HEAD);
 $this->registerJs('urlGetZonas = "'.Url::toRoute('prepseccion/getzonas').'"', yii\web\View::POS_HEAD);
+$this->registerJs('urlGetResultados = "'.Url::toRoute('prepresultado/get').'"', yii\web\View::POS_HEAD);
 $this->registerCssFile(Url::to('@web/css/voto.css'));
 ?>
 <div class="prepvoto-index">
@@ -111,6 +112,8 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
 
     </div><!--/.col (left) -->
 
+    <div id="totales_casillas"></div>
+
     <div class="col-lg-12">
         <div class="table-responsive" id="tablaVotos">
         <?php
@@ -129,7 +132,7 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
             $thead .= '<th>Total</th>'
                 . '<th>Observaciones</th>'
                 . '</tr>';
-            
+
             $tbody = '<tbody>';
 
             foreach ($casillas as $casilla) {
@@ -144,7 +147,7 @@ $this->registerCssFile(Url::to('@web/css/voto.css'));
                     $sumaCasilla += $votos[$candidato->id_candidato][$casilla['id_casilla_seccion']];
                     $sumaCandidatos[$candidato->id_candidato] += $votos[$candidato->id_candidato][$casilla['id_casilla_seccion']];
                 }
-                
+
                 $tbody .= '<td class="sumaCasilla-'.$casilla['id_casilla_seccion'].'">'.$sumaCasilla.'</td>
                     <td><input type="text" id="observacion-'.$casilla['id_casilla_seccion'].'" name="observacion-'.$casilla['id_casilla_seccion'].'" value="'.$casilla['observaciones'].'" class="inputObservacion" maxlength="200"></td>
                 </tr>';

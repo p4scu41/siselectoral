@@ -191,7 +191,7 @@ class PrepresultadoController extends Controller
                 [PREP_Partido].[id_partido] = [PREP_Candidato].[id_partido]
             WHERE '.$nameColum.'='.(int)$valueColum.
                 ' AND activo = 1'.
-            ' ORDER BY id_candidato')->queryAll();
+            ' ORDER BY id_partido')->queryAll();
 
         $resultados = [];
         $totalCasillas = PREPVoto::getCountTotalCasillas(

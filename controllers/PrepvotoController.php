@@ -72,7 +72,7 @@ class PrepvotoController extends Controller
         $votos = [];
         $zonas = [];
         $secciones = [];
-        
+
         if (Yii::$app->request->post('tipoEleccion') != null) {
             if (Yii::$app->request->post('municipio') != null) {
                 $where = 'municipio = '.(int)Yii::$app->request->post('municipio');
@@ -92,7 +92,7 @@ class PrepvotoController extends Controller
                 $whereZonaSeccion .= ' AND seccion BETWEEN '.Yii::$app->request->post('iniSeccion'). ' AND '.Yii::$app->request->post('finSeccion');
             }
 
-            $candidatos = PREPCandidato::find()->where($where)->andWhere('activo = 1')->all();
+            $candidatos = PREPCandidato::find()->where($where)->andWhere('activo = 1')->orderBy('id_partido')->all();
             $casillas = PREPCasillaSeccion::getWhere($whereZonaSeccion);
 
             if (!empty($candidatos)) {
