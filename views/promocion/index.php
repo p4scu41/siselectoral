@@ -19,7 +19,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
 
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= 
+    <?=
     (Yii::$app->session->hasFlash('existsPromocion') ? '<div class="alert alert-danger">'.Yii::$app->session->getFlash('existsPromocion').'</div>' : '')
     ?>
 
@@ -36,7 +36,7 @@ $this->registerJsFile(Url::to('@web/js/plugins/json-to-table.js'));
             [
                 'attribute' => 'IdPersonaPromueve',
                 'value' => function ($model, $key, $index, $column) {
-                    return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto. ' - Z '.$model->zona.' - S '.$model->seccional;
+                    return $model->personaPromueve->puesto->Descripcion. ' '. $model->personaPromueve->nombreCompleto. ' - Z'.$model->zona.($model->seccional != '' && $model->seccional!='-1' ? ' - S'.$model->seccional : '');
                 }
             ],
             [

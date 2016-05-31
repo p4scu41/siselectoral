@@ -702,49 +702,50 @@ class Reporte extends \yii\db\ActiveRecord
     public static function promotoresPromovidos($idMuni, $idNodo = null, $incluir_domicilio, $excluir_activistas = false)
     {
         $sqlPromocion = 'SELECT
-            Promocion.IdPersonaPromueve
-            ,Promocion.IdPersonaPuesto
-            ,Promocion.IdpersonaPromovida
-            ,tblEstructuraPromotor.Descripcion
-            ,(tblPersonaPuesto.NOMBRE+\' \'+tblPersonaPuesto.APELLIDO_PATERNO+\' \'+
-                tblPersonaPuesto.APELLIDO_MATERNO) AS personaPuesto
-            ,CSeccion.NumSector
-            ,tblPersonaPromueve.TELCASA
-            ,tblPersonaPromueve.TELMOVIL
-            ,tblPersonaPuesto.TELCASA AS TELCASA_PersonaPuesto
-            ,tblPersonaPuesto.TELMOVIL AS TELMOVIL_PersonaPuesto
-            ,DetalleEstructuraMovilizacion.Descripcion as puestoPromotor
-            ,(tblPersonaPromueve.NOMBRE+\' \'+tblPersonaPromueve.APELLIDO_PATERNO+\' \'+
-                tblPersonaPromueve.APELLIDO_MATERNO) AS personaPromueve
-            ,(tblPersonaPromovida.NOMBRE+\' \'+tblPersonaPromovida.APELLIDO_PATERNO+\' \'+
-                tblPersonaPromovida.APELLIDO_MATERNO) AS personaPromovida
-            ,(tblPersonaPromovida.DOMICILIO+\', \'+tblPersonaPromovida.NUM_INTERIOR) AS Domicilio
-            ,(tblPersonaPromovida.COLONIA) AS Colonia
-            ,PREP_Seccion.zona
+            [Promocion].[IdpersonaPromovida]
+            ,[Promocion].[IdPuesto]
+            ,[Promocion].[IdPersonaPromueve]
+            ,[Promocion].[IdPersonaPuesto]
+            ,[Promocion].[Participacion]
+
+            ,(padronPersonaPromovida.NOMBRE+\' \'+padronPersonaPromovida.APELLIDO_PATERNO+\' \'+padronPersonaPromovida.APELLIDO_MATERNO) AS nombrePersonaPromovida
+            ,padronPersonaPromovida.COLONIA AS COLONIAPersonaPromovida
+            ,padronPersonaPromovida.DOMICILIO AS DOMICILIOPersonaPromovida
+            ,estructuraPersonaPromueve.Descripcion AS puestoPersonaPromueve
+
+            ,(padronPersonaPromueve.NOMBRE+\' \'+padronPersonaPromueve.APELLIDO_PATERNO+\' \'+padronPersonaPromueve.APELLIDO_MATERNO) AS nombrePersonaPromueve
+            ,padronPersonaPromueve.COLONIA AS COLONIAPersonaPromueve
+            ,padronPersonaPromueve.DOMICILIO AS DOMICILIOPersonaPromueve
+            ,padronPersonaPromueve.TELMOVIL AS TELMOVILPersonaPromueve
+            ,padronPersonaPromueve.TELCASA AS TELCASAPersonaPromueve
+            ,estructuraPersonaPromueve.IdSector AS seccionPersonaPromueve
+            ,estructuraPersonaPromueve.ZonaMunicipal AS ZonaPersonaPromueve
+
+            ,(padronPersonaPuesto.NOMBRE+\' \'+padronPersonaPuesto.APELLIDO_PATERNO+\' \'+padronPersonaPuesto.APELLIDO_MATERNO) AS nombrePersonaPuesto
+            ,padronPersonaPuesto.TELMOVIL AS TELMOVILPersonaPuesto
+            ,padronPersonaPuesto.TELCASA AS TELCASAPersonaPuesto
+            ,estructuraPersonaPuesto.Descripcion AS puestoPersonaPuesto
+            ,estructuraPersonaPuesto.IdSector AS seccionPersonaPuesto
+            ,estructuraPersonaPuesto.ZonaMunicipal AS ZonaPersonaPuesto
         FROM
-            Promocion
-        INNER JOIN DetalleEstructuraMovilizacion AS tblEstructuraPromotor ON
-            tblEstructuraPromotor.IdPersonaPuesto = Promocion.IdPersonaPromueve
-        INNER JOIN DetalleEstructuraMovilizacion ON
-            DetalleEstructuraMovilizacion.IdNodoEstructuraMov = tblEstructuraPromotor.IdNodoEstructuraMov AND
-            DetalleEstructuraMovilizacion.Municipio = '.$idMuni.'
-            '.($idNodo != null ? 'AND (DetalleEstructuraMovilizacion.Dependencias LIKE \'%|'.$idNodo.'|%\'
-            OR DetalleEstructuraMovilizacion.IdNodoEstructuraMov = '.$idNodo.')' : '').'
-        INNER JOIN PadronGlobal AS tblPersonaPromovida ON
-            Promocion.IdpersonaPromovida = tblPersonaPromovida.CLAVEUNICA
-        INNER JOIN PadronGlobal AS tblPersonaPromueve ON
-            Promocion.IdPersonaPromueve = tblPersonaPromueve.CLAVEUNICA
-        INNER JOIN PadronGlobal AS tblPersonaPuesto ON
-            Promocion.IdPersonaPuesto = tblPersonaPuesto.CLAVEUNICA
-        INNER JOIN CSeccion ON
-            DetalleEstructuraMovilizacion.IdSector = CSeccion.IdSector AND
-            DetalleEstructuraMovilizacion.Municipio = CSeccion.IdMunicipio
-        LEFT JOIN PREP_Seccion ON
-            PREP_Seccion.municipio = tblPersonaPromueve.MUNICIPIO AND
-            PREP_Seccion.seccion = CSeccion.IdSector '.
-        ($excluir_activistas ? ' WHERE tblEstructuraPromotor.IdPuesto != 7 ' : '').
-        'ORDER BY
-            CSeccion.NumSector, personaPromueve, personaPromovida';
+            [Promocion]
+        INNER JOIN [PadronGlobal] AS padronPersonaPromovida ON
+            padronPersonaPromovida.CLAVEUNICA = [Promocion].[IdpersonaPromovida]
+        INNER JOIN [PadronGlobal] AS padronPersonaPromueve ON
+            padronPersonaPromueve.CLAVEUNICA = [Promocion].[IdPersonaPromueve]
+        INNER JOIN [PadronGlobal] AS padronPersonaPuesto ON
+            padronPersonaPuesto.CLAVEUNICA = [Promocion].[IdPersonaPuesto]
+        INNER JOIN [DetalleEstructuraMovilizacion] AS estructuraPersonaPromueve ON
+            estructuraPersonaPromueve.IdPersonaPuesto = [Promocion].[IdPersonaPromueve]
+        INNER JOIN [DetalleEstructuraMovilizacion] AS estructuraPersonaPuesto ON
+            estructuraPersonaPuesto.IdPersonaPuesto = [Promocion].[IdPersonaPuesto]
+        WHERE
+            estructuraPersonaPromueve.Municipio = '.$idMuni.'
+            '.($idNodo != null ? ' AND (estructuraPersonaPromueve.Dependencias LIKE \'%|'.$idNodo.'|%\' OR
+            estructuraPersonaPromueve.IdNodoEstructuraMov = '.$idNodo.')' : ' ').
+            ($excluir_activistas ? ' AND estructuraPersonaPromueve.IdPuesto != 7 ' : ' ').
+        ' ORDER BY
+            seccionPersonaPromueve, nombrePersonaPromueve, nombrePersonaPromovida';
 
         $sqlOrganizacion = 'SELECT
                 Organizaciones.IdOrganizacion,
@@ -771,7 +772,7 @@ class Reporte extends \yii\db\ActiveRecord
 
             foreach ($promocion as $promotor) {
 
-                if ($anteriorPromotor != $promotor['personaPromueve']) {
+                if ($anteriorPromotor != $promotor['nombrePersonaPromueve']) {
                     if ($countPromovidos != 0) {
                         $reporte .= '{ "Nombre": " &nbsp; ",'
                             .'"Tel. Celular": " &nbsp; ", '
@@ -781,17 +782,17 @@ class Reporte extends \yii\db\ActiveRecord
                             .'"Asignado a": " &nbsp; ",'
                             .'"Organización": " &nbsp; " },';
                     }
-                    $infoPromotor = PadronGlobal::find()->where('CLAVEUNICA = \''.$promotor['IdPersonaPromueve'].'\'')->one();
+                    //$infoPromotor = PadronGlobal::find()->where('CLAVEUNICA = \''.$promotor['IdPersonaPromueve'].'\'')->one();
 
-                    $reporte .= '{ "Nombre": "<b>'.$promotor['Descripcion'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])).' - Sección '.$promotor['NumSector'].'</b>",'
-                        .'"Tel. Celular": "<b>'.$infoPromotor->TELMOVIL.'</b>", '
-                        .'"Tel. Casa": "<b>'.$infoPromotor->TELCASA.'</b>", '
-                        .($incluir_domicilio ? '"Domicilio": "<b>'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $infoPromotor->DOMICILIO)).'</b>" ,' : '')
-                        .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Colonia'])).'",'
+                    $reporte .= '{ "Nombre": "<b>'.$promotor['puestoPersonaPromueve'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['nombrePersonaPromueve'])).($promotor['seccionPersonaPromueve']!='' && $promotor['seccionPersonaPromueve']!='-1' ? ' - Sección '.$promotor['seccionPersonaPromueve'] : '').'</b>",'
+                        .'"Tel. Celular": "<b>'.$promotor['TELMOVILPersonaPromueve'].'</b>", '
+                        .'"Tel. Casa": "<b>'.$promotor['TELCASAPersonaPromueve'].'</b>", '
+                        .($incluir_domicilio ? '"Domicilio": "<b>'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['DOMICILIOPersonaPromueve'])).'</b>" ,' : '')
+                        .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['COLONIAPersonaPromueve'])).'",'
                         .'"Asignado a": " &nbsp; ",'
                         .'"Organización": "" },';
 
-                    $anteriorPromotor = $promotor['personaPromueve'];
+                    $anteriorPromotor = $promotor['nombrePersonaPromueve'];
                     $countPromovidos = 0;
                 }
 
@@ -804,21 +805,21 @@ class Reporte extends \yii\db\ActiveRecord
                     $organizaciones = implode(', ', ArrayHelper::map($listOrganizaciones, 'IdOrganizacion', 'Nombre'));
                 }
 
-                $nodoEstructura = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => $promotor['IdPersonaPuesto']]);
+                /*$nodoEstructura = DetalleEstructuraMovilizacion::findOne(['IdPersonaPuesto' => $promotor['IdPersonaPuesto']]);
                 $seccional = '';
 
                 if ($nodoEstructura) {
                     $querySeccional = 'SELECT NumSector FROM CSeccion WHERE IdMunicipio = '.$nodoEstructura->Municipio.' AND IdSector = '.$nodoEstructura->IdSector;
                     $seccional = Yii::$app->db->createCommand($querySeccional)->queryScalar();
-                }
+                }*/
 
-                $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromovida'])).'",'
-                    .'"Tel. Celular": "'.$promotor['TELMOVIL_PersonaPuesto'].'", '
-                    .'"Tel. Casa": "'.$promotor['TELCASA_PersonaPuesto'].'", '
-                    .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Domicilio'])).'",' : '')
-                    .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['Colonia'])).'",'
+                $reporte .= '{ "Nombre": "'.$countPromovidos.'. '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['nombrePersonaPromovida'])).'",'
+                    .'"Tel. Celular": "'.$promotor['TELMOVILPersonaPuesto'].'", '
+                    .'"Tel. Casa": "'.$promotor['TELCASAPersonaPuesto'].'", '
+                    .($incluir_domicilio ? '"Domicilio": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['DOMICILIOPersonaPromovida'])).'",' : '')
+                    .'"Colonia": "'.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['COLONIAPersonaPromovida'])).'",'
                     //.'"Asignado a": "'.($promotor['personaPuesto']!=$promotor['personaPromueve'] ? $promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPromueve'])) : ' &nbsp; ').'",'
-                    .'"Asignado a": "'.($promotor['puestoPromotor'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['personaPuesto']))).' - Z'.($nodoEstructura ? $nodoEstructura->ZonaMunicipal : '').' '.($seccional ? '- S'.$seccional : '').'",'
+                    .'"Asignado a": "'.($promotor['puestoPersonaPuesto'].' '.preg_replace("'\s+'", ' ',str_replace('\\', 'Ñ', $promotor['nombrePersonaPuesto']))).' - Z'.$promotor['ZonaPersonaPuesto'].' '.($promotor['seccionPersonaPuesto'] != '' && $promotor['seccionPersonaPuesto'] != '-1' ? '- S'.$promotor['seccionPersonaPuesto'] : '').'",'
                     .'"Organización": "'.$organizaciones.'" },';
             }
 
