@@ -92,7 +92,7 @@ class PrepvotoController extends Controller
                 $whereZonaSeccion .= ' AND seccion BETWEEN '.Yii::$app->request->post('iniSeccion'). ' AND '.Yii::$app->request->post('finSeccion');
             }
 
-            $candidatos = PREPCandidato::find()->where($where)->andWhere('activo = 1')->orderBy('id_partido')->all();
+            $candidatos = PREPCandidato::find()->where($where)->andWhere('activo = 1')->orderBy('orden')->all();
             $casillas = PREPCasillaSeccion::getWhere($whereZonaSeccion);
 
             if (!empty($candidatos)) {

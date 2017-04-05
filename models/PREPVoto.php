@@ -74,7 +74,7 @@ class PREPVoto extends \yii\db\ActiveRecord
                 $this->updated_at = date('Y-m-d H:i:s');
                 $this->updated_by = Yii::$app->user->identity->IdPersona;
             }
-            
+
             return true;
         } else {
             return false;
@@ -153,6 +153,9 @@ class PREPVoto extends \yii\db\ActiveRecord
             INNER JOIN [CSeccion] ON
                 [CSeccion].[IdMunicipio] = [PREP_Seccion].[municipio] AND
                 [CSeccion].[NumSector] = [PREP_Seccion].[seccion]
+            INNER JOIN [PREP_Candidato] ON
+                [PREP_Candidato].[id_candidato] = [PREP_Voto].[id_candidato] AND
+                [PREP_Candidato].[activo] = 1
             WHERE
                 1 = 1 AND
                 [PREP_Seccion].['.$nameColum.'] = '.$valueColum.'
@@ -194,7 +197,7 @@ class PREPVoto extends \yii\db\ActiveRecord
 
         return $result['total_casillas'];
     }
-    
+
     public static function getCountCasillasConsideradas($nameColum, $valueColum, $zona, $iniSeccion, $finSeccion, $fechaCorte)
     {
         $sql = 'SELECT
@@ -211,7 +214,7 @@ class PREPVoto extends \yii\db\ActiveRecord
             WHERE
                 1 = 1 AND
                 [PREP_Seccion].['.$nameColum.'] = '.$valueColum.'
-                '.($zona ? ' AND [PREP_Seccion].[zona] = '.$zona : '').' 
+                '.($zona ? ' AND [PREP_Seccion].[zona] = '.$zona : '').'
                 '.($iniSeccion ? ' AND [PREP_Seccion].[seccion] BETWEEN '.$iniSeccion.' AND '.$finSeccion : '').'
                 '.($fechaCorte != '' ? ' AND ([created_at] <= CONVERT(datetime, \''.$fechaCorte.'\', 111) OR [updated_at] <= CONVERT(datetime, \''.$fechaCorte.'\', 111))' : '').'
             GROUP BY
@@ -223,5 +226,5 @@ class PREPVoto extends \yii\db\ActiveRecord
 
         return count($result);
     }
-    
+
 }

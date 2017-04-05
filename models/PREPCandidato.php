@@ -15,6 +15,7 @@ use Yii;
  * @property integer $distrito_local
  * @property integer $distrito_federal
  * @property integer $activo
+ * @property integer $orden
  * @property string $observaciones
  */
 class PREPCandidato extends \yii\db\ActiveRecord
@@ -34,7 +35,7 @@ class PREPCandidato extends \yii\db\ActiveRecord
     {
         return [
             [['id_partido', 'id_tipo_eleccion'], 'required'],
-            [['id_partido', 'municipio', 'id_tipo_eleccion', 'distrito_local', 'distrito_federal', 'activo'], 'integer'],
+            [['id_partido', 'municipio', 'id_tipo_eleccion', 'distrito_local', 'distrito_federal', 'activo', 'orden'], 'integer'],
             [['nombre', 'observaciones'], 'string']
         ];
     }
@@ -54,6 +55,7 @@ class PREPCandidato extends \yii\db\ActiveRecord
             'distrito_federal' => 'Distrito Federal',
             'activo' => 'Activo',
             'observaciones' => 'Observaciones',
+            'orden' => 'Orden'
         ];
     }
 

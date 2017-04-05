@@ -84,7 +84,7 @@ class PrepresultadoController extends Controller
                 $whereZonaSeccion .= ' AND seccion BETWEEN '.Yii::$app->request->post('iniSeccion'). ' AND '.Yii::$app->request->post('finSeccion');
             }
 
-            $candidatos = ArrayHelper::map(PREPCandidato::find()->where($where)->andWhere('activo = 1')->all(), 'id_candidato', 'nombre');
+            $candidatos = ArrayHelper::map(PREPCandidato::find()->where($where)->andWhere('activo = 1')->orderBy('orden')->all(), 'id_candidato', 'nombre');
 
             $zonas = ArrayHelper::map(PREPSeccion::getZonas($where), 'zona', 'zona');
             $listSecciones = PREPSeccion::find()->select('id_seccion, seccion')->where('activo = 1')->orderBy('seccion');
@@ -191,7 +191,7 @@ class PrepresultadoController extends Controller
                 [PREP_Partido].[id_partido] = [PREP_Candidato].[id_partido]
             WHERE '.$nameColum.'='.(int)$valueColum.
                 ' AND activo = 1'.
-            ' ORDER BY id_partido')->queryAll();
+            ' ORDER BY [PREP_Candidato].[orden]')->queryAll();
 
         $resultados = [];
         $totalCasillas = PREPVoto::getCountTotalCasillas(

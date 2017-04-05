@@ -15,13 +15,13 @@ $this->registerJsFile(Url::to('@web/js/prepcandidato.js'));
 <div class="prepcandidato-form">
 
     <?php $form = ActiveForm::begin(); ?>
-    
+
     <?= $form->errorSummary($model, ['class' => 'alert alert-danger']) ?>
 
     <?= $form->field($model, 'id_partido')->dropDownList($partidos, ['prompt' => 'Seleccione un partido político']) ?>
 
     <?= $form->field($model, 'nombre')->textInput() ?>
-    
+
     <?= $form->field($model, 'id_tipo_eleccion')->dropDownList($tiposEleccion, ['prompt' => 'Seleccione el tipo de elección']) ?>
 
     <?= $form->field($model, 'municipio', ['options' => ['class' => (empty($model->municipio) ? 'hidden' : '' )]])->dropDownList($municipios, ['prompt' => 'Seleccione un municipio']) ?>
@@ -29,6 +29,8 @@ $this->registerJsFile(Url::to('@web/js/prepcandidato.js'));
     <?= $form->field($model, 'distrito_local', ['options' => ['class' => (empty($model->distrito_local) ? 'hidden' : '' )]])->textInput() ?>
 
     <?= $form->field($model, 'distrito_federal', ['options' => ['class' => (empty($model->distrito_federal) ? 'hidden' : '' )]])->textInput() ?>
+
+    <?= $form->field($model, 'orden')->input('number') ?>
 
     <?= $form->field($model, 'activo')->checkbox() ?>
 

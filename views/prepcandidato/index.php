@@ -56,6 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'distrito_local',
             // 'distrito_federal',
             'activo:boolean',
+            'orden',
             // 'observaciones',
 
             [

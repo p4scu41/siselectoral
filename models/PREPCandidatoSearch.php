@@ -67,6 +67,8 @@ class PREPCandidatoSearch extends PREPCandidato
         $query->andFilterWhere(['like', 'nombre', $this->nombre])
             ->andFilterWhere(['like', 'observaciones', $this->observaciones]);
 
+        $query->orderBy('orden');
+
         return $dataProvider;
     }
 }
